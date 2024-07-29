@@ -5,8 +5,9 @@ function Home(){
     return(
         <div className="h-screen bg-blue-100">
           <Navbar/>
-          <p className="text-3xl text-gray-900 dark:text-white">Home</p>
-            
+          <div className="flex justify-center items-center h-full">
+          <p className="text-3xl font-bold">Home</p>
+          </div>  
         </div>
         
     )
