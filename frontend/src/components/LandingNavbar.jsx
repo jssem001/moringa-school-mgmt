@@ -45,20 +45,20 @@ return(
                 </HashLink>
               </li>
               <li>
-                <Link
-                  to="/task"
+                <HashLink
+                  to="/#about"
                   className="block py-2 px-3 text-black bg-white rounded md:bg-white md:p-0 md:dark:text-black-400"
                 >
                   About Us
-                </Link>
+                </HashLink>
               </li>
               <li>
-                <Link
-                  to="/task"
+                <HashLink
+                  to="/#contacts"
                   className="block py-2 px-3 text-black bg-white rounded md:bg-white md:p-0 md:dark:text-black-400"
                 >
                   Contacts  
-                </Link>
+                </HashLink>
               </li>
             </ul>
           </div>

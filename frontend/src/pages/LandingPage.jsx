@@ -100,6 +100,34 @@ function LandingPage(){
               <img src={photo2} />
             </div>
           </div>
+
+          {/* About Us subpage */}
+
+          <div id='about' className="flex py-4 px-4 grid grid-flow-col justify-stretch items-front">
+            <div className="bg-white px-8 py-4 rounded-lg m-3">
+              <h1 className="text-3xl font-bold text-start break-normal mb-12">About Us:</h1>
+            </div>
+            <div className="bg-white px-8 py-4 rounded-lg shadow-lg m-3">
+              <p className="text-xl mb-2 break-normal">
+              At Moringa School, we’re enhancing tech education in Africa with a new project management platform. 
+              This tool supports our blended learning approach by offering advanced project and task management, collaboration tools, and insightful analytics. 
+              It empowers students and instructors to manage projects effectively, fostering creativity and preparing learners for successful tech careers.
+              </p>
+            </div>
+          </div>
+
+          {/* Contact Us subpage */}
+
+          <div id='contacts' className="flex py-4 px-4 grid grid-flow-col justify-stretch w-2/3 items-front">
+            <div className="bg-white px-4 py-4 rounded-lg m-3">
+              <h1 className="text-3xl font-bold text-start break-normal mb-12">Contact Us:</h1>
+            </div>
+            <div className="bg-white px-8 py-4 rounded-lg shadow-lg m-3">
+              <p className="text-xl mb-2 break-normal"><span className="font-bold">Phone:</span> +254207643533</p>
+              <p className="text-xl mb-2 break-normal"><span className="font-bold">Email:</span> admissions@moringaschool.com</p>
+              <p className="text-xl mb-2 break-normal">https://moringaschool.com</p>
+            </div>
+          </div>
     </div>
     </>    
     )
