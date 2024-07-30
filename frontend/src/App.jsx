@@ -13,7 +13,6 @@ function App() {
           <Route path="/projects" element={<Projects />} />
           <Route path="/task" element={<Task />} />
           <Route path="/reports" element={<Reports />} />
-          
         </Routes>
         <ToastContainer />
       {/* </AuthProvider> */}
