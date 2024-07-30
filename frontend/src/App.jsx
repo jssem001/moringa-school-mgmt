@@ -1,6 +1,6 @@
 import React from 'react'; import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify'; import 'react-toastify/dist/ReactToastify.css';
-import Projects from './pages/Projects'; import Home from './pages/Home';
+import Projects from './pages/Projects'; import LandingPage from './pages/LandingPage';
 import Task from './pages/Task'; import Reports from './pages/Reports';
 
 function App() {
@@ -9,7 +9,7 @@ function App() {
       {/* <AuthProvider> */}
         <Routes>
           
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<LandingPage />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/task" element={<Task />} />
           <Route path="/reports" element={<Reports />} />
