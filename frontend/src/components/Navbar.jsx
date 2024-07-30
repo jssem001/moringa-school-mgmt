@@ -51,13 +51,7 @@ return(
                   Tasks
                 </Link>
               </li>
-              <li>
-                {/* <button
-                  onClick={handleLogout}
-                  className="block py-3 px-4 text-black bg-green-900 rounded md:bg-yellow-400 md:p-1 md:dark:text-black"
-                >
-                  Log out
-                </button> */}
+              <li> 
               </li>
             </ul>
           </div>

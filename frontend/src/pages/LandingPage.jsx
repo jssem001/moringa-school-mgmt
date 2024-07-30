@@ -1,17 +1,18 @@
 import React from "react";
-import Navbar from "../components/Navbar";
+import LandingNavbar from "../components/LandingNavbar";
+import photo1 from "../images/land-image1.png"
+import photo2 from "../images/land-image2.png"
 
 function LandingPage(){
     return(
       <>
         <div className="h-screen bg-blue-100">
-          <Navbar/>
-          <div
-        className="h-screen bg-cover bg-center relative"
-        style={{
+          <LandingNavbar/>  
+          <div className="h-screen bg-cover bg-center relative"
+          style={{
           backgroundImage: `url('https://s3-alpha-sig.figma.com/img/cafa/5e8f/b86bafc3853580461c326f24743c095f?Expires=1723420800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=KaugZBvGBxCcbk75-tCVsg8~kC52sRyusJTyiCWdHyuVFwedfeRUdkUHb9Iad0EN8FT1FbQAuHiGqSmvv1RH-mjKkjcoKpgDlFDVtMfj4GFmHxyoPz7a77RiWQF-gyMctxCoMV8PG4zVW3UXTIKmAW-EPCbhEJcL4aA6fvUFjL~l4xKAMb3Qr2SIg2aS2fRQn~Y6ZCYuaKIlx35adx-bxNsm33toSpGsoMNDGE5pNbyAfXAyBeUDU6pSlUeoyyjURqTihFOXMvia~E~N-G-wGlosH8UTEm5zSrwtRYOfxRT7x1bvq2e6YHe2VrLRy4l3GmjbwxqrFKhrCp64NmdP2w__')`,
-        }}
-        > 
+          }}
+          > 
           <div className="flex justify-center items-end h-full py-4">
             <div className="bg-white bg-opacity-40 p-8 rounded-lg shadow-lg">
               <h1 className="text-2xl font-bold text-center break-normal">Increase team productivity with this</h1> 
@@ -29,8 +30,8 @@ function LandingPage(){
           </div>
         </div>
 
-          
-          <p className="flex justify-center text-4xl font-bold m-4">Our Features</p>
+          {/* Features subpage */}
+          <p id="features" className="flex justify-center text-4xl font-bold m-4">Our Features</p>
           <div className="flex py-4 px-4 grid grid-flow-col justify-stretch items-front">
             <div className="bg-yellow-400 px-8 py-4 rounded-lg shadow-lg m-3">
               <h1 className="text-3xl font-bold text-center break-normal mb-12">Project Management</h1>
@@ -73,6 +74,30 @@ function LandingPage(){
               <p className="text-xl mb-2 break-normal">Search for projects and tasks based on various criteria.</p>
               <p className="text-xl mb-2 break-normal">Filter tasks by status, priority, and deadline.</p>
               <button class="bg-black text-white text-base font-semibold rounded-md shadow-md hover:text-white hover:bg-slate-600 mt-8 p-3">Learn More</button>
+            </div>
+          </div>
+
+          {/* Pages subpage */}
+
+          
+          <div id="pages" className="flex py-4 px-4 grid grid-flow-col justify-stretch items-front">
+            <div className="bg-white px-8 py-4 rounded-lg m-3">
+              <img src={photo1} />
+            </div>
+            <div className="bg-white px-8 py-4 rounded-lg m-3">
+              <h1 className="text-3xl font-bold text-start break-normal mb-12">Increase Agility of Work</h1>
+              <p className="text-xl mb-2 break-normal">Empower Your Team with Real-Time Collaboration and Flexible Task Management.</p>
+              <button class="bg-black text-white text-base font-semibold rounded-md shadow-md hover:text-black hover:bg-indigo-400 mt-8 p-3">Learn More</button>
+            </div>
+          </div>
+          <div className="flex py-4 px-4 grid grid-flow-col justify-stretch items-front">
+            <div className="bg-white px-8 py-4 rounded-lg m-3">
+              <h1 className="text-3xl font-bold text-start break-normal mb-12">Perfect for Operations</h1>
+              <p className="text-xl mb-2 break-normal">Transform Your Workflow with Seamless Integration, Advanced Project Management and Insightful Analytics</p>
+              <button class="bg-black text-white text-base font-semibold rounded-md shadow-md hover:text-black hover:bg-indigo-400 mt-8 p-3">Learn More</button>
+            </div>
+            <div className="bg-white px-8 py-4 rounded-lg m-3">
+              <img src={photo2} />
             </div>
           </div>
     </div>
