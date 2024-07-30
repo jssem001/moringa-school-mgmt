@@ -2,8 +2,6 @@ import React from "react";
 import LandingNavbar from "../components/LandingNavbar";
 import photo1 from "../images/land-image1.png"
 import photo2 from "../images/land-image2.png"
-// import { Link } from "react-router-dom";
-import { Link } from "@material-ui/core/Link";
 
 function LandingPage(){
     const preventDefault = (event) => event.preventDefault();
@@ -129,13 +127,8 @@ function LandingPage(){
             <div className="bg-white px-8 py-4 rounded-lg shadow-lg m-3">
               <p className="text-xl mb-2 break-normal"><span className="font-bold">Phone:</span> +254207643533</p>
               <p className="text-xl mb-2 break-normal"><span className="font-bold">Email:</span> admissions@moringaschool.com</p>
-              <Link href="https://moringaschool.com"
-                    onClick={() => {
-                      alert("Redirecting to Moringa School Website...");
-                  }}
-                  >
               <p className="text-xl mb-2 break-normal">https://moringaschool.com</p>
-              </Link>
+              
             </div>
           </div>
     </div>
