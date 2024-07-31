@@ -8,7 +8,6 @@ function App() {
     <BrowserRouter>
       {/* <AuthProvider> */}
         <Routes>
-          
           <Route path="/" element={<LandingPage />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/task" element={<Task />} />
