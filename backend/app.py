@@ -96,3 +96,40 @@ def logout():
     jti = get_jwt()["jti"]
     BLACKLIST.add(jti)
     return jsonify({"success":"Successfully logged out"}), 200
+
+# Updating Profile(You have to be logged in to update your profile)
+@app.route('/users', methods=['PUT'])
+@jwt_required()
+def update_profile():
+    data = request.get_json()
+
+    loggedin_user_id = get_jwt_identity()
+    user = User.query.get(loggedin_user_id)
+    if user is None:
+        return jsonify({"message": "User not found"}), 404
+    
+
+    email_exists = User.query.filter_by(email=data['email']).first()
+    if email_exists:
+        return jsonify({"error": "Email already exists"}), 400
+
+    user.name = data.get('name', user.name)
+    user.email = user.email
+    user.password = bcrypt.generate_password_hash( data['password'] ).decode('utf-8') 
+    user.is_student= data.get('is_student', user.is_student)
+    user.is_admin = data.get('is_admin', user.is_admin)
+    user.is_instructor = data.get('is_instructor', user.is_instructor)
+    db.session.commit()
+    return jsonify({"success": "User updated successfully"}), 200
+
+
+#Delete User
+@app.route('/users/<int:id>', methods=['DELETE'])
+def delete_user(id):
+    user = User.query.get(id)
+    if user is None:
+        return jsonify({"message": "User not found"}), 404
+
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({"message": "User deleted successfully"}), 200
