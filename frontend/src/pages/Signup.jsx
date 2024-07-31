@@ -2,6 +2,8 @@ import React, { useContext, useState } from 'react';
 // import { UserContext } from '../context/UserContext';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
+import signupimage from '../assets/Images/abstract.jpeg'
+import logo from '../assets/Images/logo.jpeg'
 
 // function Register() {
 //   const { register_user } = useContext(UserContext);
@@ -43,7 +45,7 @@ export default function Signup() {
     <div className="h-screen flex">
       <div className="lg:w-1/2 items-center justify-center">
         <img 
-          src="../assets/images/abstract.jpeg" 
+          src={signupimage}
           alt="Signup Image" 
           className="w-full h-full object-cover"
         />
@@ -52,7 +54,7 @@ export default function Signup() {
         <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-6">
           <div className="text-center mb-4">
             <img 
-              src="../assets/images/logo.jpeg" 
+              src= {logo}
               alt="Logo" 
               className="mx-auto mb-4"
             />

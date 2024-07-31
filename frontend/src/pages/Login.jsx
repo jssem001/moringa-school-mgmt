@@ -1,5 +1,8 @@
 import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
+import loginimage from '../assets/Images/abstract.jpeg'
+import logo from '../assets/Images/logo.jpeg'
+import Footer from '../Layout/Footer';
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -17,7 +20,7 @@ export default function Login() {
     <div className="h-screen flex bg-blue-100">
       <div className="lg:w-1/2 items-center justify-center">
         <img 
-          src="../assets/images/abstract.jpeg" 
+          src= {loginimage}
           alt="Login Image" 
           className="w-full h-full object-cover"
         />
@@ -26,7 +29,7 @@ export default function Login() {
         <div className="w-full max-w-md bg-white rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6">
             <div className="flex flex-col items-center mb-6">
-              <img src="../assets/images/logo.jpeg" alt="Moringa School Logo" className="w-24 h-24 mb-4" />
+              <img src={logo}alt="Moringa School Logo" className="w-24 h-24 mb-4" />
               <h1 className="text-2xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white">
                 Project Management System
               </h1>
@@ -94,7 +97,9 @@ export default function Login() {
             </form>
           </div>
         </div>
+        <Footer />
       </section>
+      
     </div>
   );
 }
