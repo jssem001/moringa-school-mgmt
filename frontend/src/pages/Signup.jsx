@@ -3,7 +3,7 @@ import React, { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 
-function Register() {
+// function Register() {
 //   const { register_user } = useContext(UserContext);
 
 // import { UserContext } from '../context/UserContext';
@@ -152,4 +152,4 @@ export default function Signup() {
   );
 }
 
-export default Register;
+// export default Register;
