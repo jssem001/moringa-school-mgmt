@@ -1,9 +1,9 @@
 import React, { useContext, useState } from 'react';
-import { UserContext } from '../context/UserContext';
+// import { UserContext } from '../context/UserContext';
 import { Link } from 'react-router-dom';
 
 export default function Signup() {
-  const { register } = useContext(UserContext); // Assuming you have a register function in UserContext
+  // const { register } = useContext(UserContext); // Assuming you have a register function in UserContext
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

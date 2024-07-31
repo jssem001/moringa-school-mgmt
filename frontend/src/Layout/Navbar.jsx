@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
 import logo from '../logo192.png';
 import { Link } from 'react-router-dom';
-import { UserContext } from '../context/UserContext';
+// import { UserContext } from '../context/UserContext';
 
 function Navbar() {
-  const { currentUser, logout } = useContext(UserContext);
+  // const { currentUser, logout } = useContext(UserContext);
 
   return (
     <nav className="bg-blue-900 dark:bg-blue-900 fixed w-full z-20 top-0 start-0">
@@ -61,7 +61,7 @@ function Navbar() {
                 Pages
               </Link>
             </li>
-            {!currentUser ? (
+            {/* {!currentUser ? ( */}
               <>
                 <li>
                   <button className="btn btn-success btn-sm me-3">
@@ -74,16 +74,16 @@ function Navbar() {
                   </button>
                 </li>
               </>
-            ) : (
+            {/* ) : ( */}
               <li>
                 <button
-                  onClick={logout}
+                  // onClick={logout}
                   className="block py-2 px-3 text-white bg-red-600 rounded md:p-0"
                 >
                   Logout
                 </button>
               </li>
-            )}
+            {/* )} */}
           </ul>
         </div>
       </div>
