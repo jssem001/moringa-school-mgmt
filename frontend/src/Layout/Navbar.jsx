@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import logo from '../logo192.png';
+import logo from '../assets/images/logo.jpeg';
 import { Link } from 'react-router-dom';
 // import { UserContext } from '../context/UserContext';
 
@@ -7,11 +7,11 @@ function Navbar() {
   // const { currentUser, logout } = useContext(UserContext);
 
   return (
-    <nav className="bg-blue-900 dark:bg-blue-900 fixed w-full z-20 top-0 start-0">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+    <nav className="bg-white fixed w-full z-20 top-0 start-0 border-b border-gray-200">
+      <div className="max-w-screen-xl flex items-center justify-between mx-auto p-4">
         <h1 className="flex items-center space-x-3 rtl:space-x-reverse">
-          <img src={logo} className="h-4" alt="Logo" />
-          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
+          <img src={logo} className="h-8" alt="Logo" /> {/* Adjust height if needed */}
+          <span className="text-2xl font-semibold whitespace-nowrap text-gray-900">
             Moringa Management System
           </span>
         </h1>
@@ -19,11 +19,11 @@ function Navbar() {
           className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
           id="navbar-sticky"
         >
-          <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-green-900 md:dark:bg-blue-900 dark:border-gray-700">
+          <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-white md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white">
             <li>
               <Link
                 to="/"
-                className="block py-2 px-3 text-orange bg-blue-900 rounded md:bg-blue-900 md:p-0 md:dark:text-orange-400"
+                className="block py-2 px-3 text-gray-900 bg-white rounded md:bg-white md:p-0 md:text-gray-900"
                 aria-current="page"
               >
                 Home
@@ -32,15 +32,23 @@ function Navbar() {
             <li>
               <Link
                 to="/features"
-                className="block py-2 px-3 text-orange bg-blue-900 rounded md:bg-blue-900 md:p-0 md:dark:text-orange-400"
+                className="block py-2 px-3 text-gray-900 bg-white rounded md:bg-white md:p-0 md:text-gray-900"
               >
                 Features
               </Link>
             </li>
             <li>
               <Link
+                to="/pages"
+                className="block py-2 px-3 text-gray-900 bg-white rounded md:bg-white md:p-0 md:text-gray-900"
+              >
+                Pages
+              </Link>
+            </li>
+            <li>
+              <Link
                 to="/aboutus"
-                className="block py-2 px-3 text-orange bg-blue-900 rounded md:bg-blue-900 md:p-0 md:dark:text-orange-400"
+                className="block py-2 px-3 text-gray-900 bg-white rounded md:bg-white md:p-0 md:text-gray-900"
               >
                 About Us
               </Link>
@@ -48,37 +56,32 @@ function Navbar() {
             <li>
               <Link
                 to="/contact"
-                className="block py-2 px-3 text-orange bg-blue-900 rounded md:bg-blue-900 md:p-0 md:dark:text-orange-400"
+                className="block py-2 px-3 text-gray-900 bg-white rounded md:bg-white md:p-0 md:text-gray-900"
               >
                 Contact Us
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/pages"
-                className="block py-2 px-3 text-orange bg-blue-900 rounded md:bg-blue-900 md:p-0 md:dark:text-orange-400"
-              >
-                Pages
               </Link>
             </li>
             {/* {!currentUser ? ( */}
               <>
                 <li>
-                  <button className="btn btn-success btn-sm me-3">
-                    <Link to="/signup" className="nav-link active text-white">Sign Up</Link>
-                  </button>
+                  <Link to="/signup" className="block py-2 px-3 text-white bg-blue-600 rounded hover:bg-blue-700">
+                    Sign Up
+                  </Link>
                 </li>
                 <li>
-                  <button className="btn btn-success btn-sm">
-                    <Link to="/login" className="nav-link active text-white">Login</Link>
-                  </button>
+                  <Link to="/login" className="block py-2 px-3 text-white bg-blue-600 rounded hover:bg-blue-700">
+                    Login
+                  </Link>
                 </li>
               </>
             {/* ) : ( */}
               <li>
                 <button
+
                   // onClick={logout}
-                  className="block py-2 px-3 text-white bg-red-600 rounded md:p-0"
+                  className="block py-2 px-3 text-white bg-red-600 rounded hover:bg-red-700"
+                
+
                 >
                   Logout
                 </button>

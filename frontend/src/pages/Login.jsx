@@ -1,33 +1,36 @@
 import React, { useContext, useState } from 'react';
-//import { UserContext } from '../context/UserContext';
 import { Link } from 'react-router-dom';
 
 export default function Login() {
-  //const { login } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("student");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-   // login(email, password, role);
     setEmail("");
     setPassword("");
     setRole("student");
   };
 
   return (
-    <div className="h-screen flex flex-col md:flex-row bg-blue-100">
-      <div className="flex-1 flex items-center justify-center">
+    <div className="h-screen flex bg-blue-100">
+      <div className="lg:w-1/2 items-center justify-center">
         <img 
-          src="https://i.pinimg.com/564x/db/59/2e/db592eacd248afff9d03ad64906853d6.jpg" 
+          src="../assets/images/abstract.jpeg" 
           alt="Login Image" 
           className="w-full h-full object-cover"
         />
       </div>
-      <section className="flex-1 flex items-center justify-center p-6">
+      <section className="w-full lg:w-1/2 flex items-center justify-center p-6">
         <div className="w-full max-w-md bg-white rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6">
+            <div className="flex flex-col items-center mb-6">
+              <img src="../assets/images/logo.jpeg" alt="Moringa School Logo" className="w-24 h-24 mb-4" />
+              <h1 className="text-2xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white">
+                Project Management System
+              </h1>
+            </div>
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white md:text-2xl">
               Sign in to your account
             </h1>
