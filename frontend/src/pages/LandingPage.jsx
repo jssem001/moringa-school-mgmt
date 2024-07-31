@@ -2,6 +2,8 @@ import React from "react";
 import LandingNavbar from "../components/LandingNavbar";
 import photo1 from "../images/land-image1.png"
 import photo2 from "../images/land-image2.png"
+import Navbar from "../Layout/Navbar";
+import Footer from "../Layout/Footer";
 
 function LandingPage(){
     const preventDefault = (event) => event.preventDefault();
@@ -9,7 +11,8 @@ function LandingPage(){
     return(
         <>
         <div className="h-screen bg-blue-100">
-          <LandingNavbar/>  
+          {/* <LandingNavbar/> */}
+          <Navbar/>  
           <div className="h-screen bg-cover bg-center relative"
           style={{
           backgroundImage: `url('https://s3-alpha-sig.figma.com/img/cafa/5e8f/b86bafc3853580461c326f24743c095f?Expires=1723420800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=KaugZBvGBxCcbk75-tCVsg8~kC52sRyusJTyiCWdHyuVFwedfeRUdkUHb9Iad0EN8FT1FbQAuHiGqSmvv1RH-mjKkjcoKpgDlFDVtMfj4GFmHxyoPz7a77RiWQF-gyMctxCoMV8PG4zVW3UXTIKmAW-EPCbhEJcL4aA6fvUFjL~l4xKAMb3Qr2SIg2aS2fRQn~Y6ZCYuaKIlx35adx-bxNsm33toSpGsoMNDGE5pNbyAfXAyBeUDU6pSlUeoyyjURqTihFOXMvia~E~N-G-wGlosH8UTEm5zSrwtRYOfxRT7x1bvq2e6YHe2VrLRy4l3GmjbwxqrFKhrCp64NmdP2w__')`,
@@ -131,6 +134,7 @@ function LandingPage(){
               
             </div>
           </div>
+          <Footer/>
     </div>
     </>    
     )
