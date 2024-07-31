@@ -1,197 +1,238 @@
 import React, { createContext, useState, useEffect } from 'react';
-import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { server_url } from "../../config";
 
-export const UserContext = createContext();
+// Create a UserContext
+const UserContext = createContext();
 
-export default function UserProvider({ children }) {
-  const [onchange, setOnchange] = useState(false);
-  const [authToken, setAuthToken] = useState(() => sessionStorage.getItem('authToken') || null);
-  const [currentUser, setCurrentUser] = useState(null);
-  
+// Define permissions based on user roles
+const permissionsConfig = {
+  admin: {
+    createProject: true,
+    editProject: true,
+    deleteProject: true,
+    assignTask: true,
+    viewOwnReports: true,
+    viewInstructorsReports: true,
+    viewStudentReports: true,
+    viewStudents: true,
+    viewInstructors: true,
+    addInstructors: true,
+    addStudents: true,
+  },
+  instructor: {
+    createProject: true,
+    editProject: true,
+    assignTask: true,
+    viewReports: true,
+    viewStudents: true,
+    addStudents: true,
+    viewOwnReports: true,
+    viewStudentReports: true,
+  },
+  student: {
+    createProject: true,
+    viewProject: true,
+    updateTaskStatus: true,
+    commentOnTask: true,
+    createOwnProject: true,
+    editOwnProject: true,
+    viewOwnReports: true,
+  },
+};
+
+// Fetch data with retry logic
+const fetchWithRetry = async (url, options, retries = 3) => {
+  try {
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'An error occurred');
+    }
+    return await response.json();
+  } catch (error) {
+    if (retries > 0) {
+      return fetchWithRetry(url, options, retries - 1);
+    }
+    throw error;
+  }
+};
+
+// Define the UserProvider component
+const UserProvider = ({ children }) => {
   const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = useState(null);
+  const [authToken, setAuthToken] = useState(() => localStorage.getItem("access_token") || null);
+  const [permissions, setPermissions] = useState({});
+  const [loading, setLoading] = useState(false);
 
-  // Add user
-  function addUser(username, email, phone, password) {
-    fetch('https://moringa-overflow.onrender.com/users', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, email, phone, password }),
-    })
-      .then((res) => res.json())
-      .then((response) => {
-        if (response.success) {
-          navigate('/login');
-          Swal.fire({
-            position: 'center',
-            icon: 'success',
-            title: response.success,
-            showConfirmButton: false,
-            timer: 1500,
-          });
-          setOnchange((prev) => !prev);
-        } else {
-          Swal.fire({
-            position: 'center',
-            icon: 'error',
-            title: response.error,
-            showConfirmButton: false,
-            timer: 1500,
-          });
-          setOnchange((prev) => !prev);
-        }
-      });
-  }
-
-  // Update user
-  function updateUser(username, email, phone) {
-    fetch('https://moringa-overflow.onrender.com/users', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${authToken}`,
-      },
-      body: JSON.stringify({ username, email, phone }),
-    })
-      .then((res) => res.json())
-      .then((response) => {
-        if (response.success) {
-          Swal.fire({
-            position: 'center',
-            icon: 'success',
-            title: response.success,
-            showConfirmButton: false,
-            timer: 1500,
-          });
-          setOnchange((prev) => !prev);
-        } else {
-          Swal.fire({
-            position: 'center',
-            icon: 'error',
-            title: response.error,
-            showConfirmButton: false,
-            timer: 1500,
-          });
-          setOnchange((prev) => !prev);
-        }
-      });
-  }
-
-  // Login user
-  function login(username, password) {
-    fetch('https://moringa-overflow.onrender.com/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password }),
-    })
-      .then((res) => res.json())
-      .then((response) => {
-        if (response.access_token) {
-          sessionStorage.setItem('authToken', response.access_token);
-          setAuthToken(response.access_token);
-          navigate('/questions');
-          Swal.fire({
-            position: 'center',
-            icon: 'success',
-            title: 'Login success',
-            showConfirmButton: false,
-            timer: 1500,
-          });
-          setOnchange((prev) => !prev);
-        } else {
-          Swal.fire({
-            position: 'center',
-            icon: 'error',
-            title: response.error,
-            showConfirmButton: false,
-            timer: 1500,
-          });
-        }
-      });
-  }
-
-  // Delete user account
-  function deleteYourAccount() {
-    fetch('https://moringa-overflow.onrender.com/users', {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${authToken}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((response) => {
-        if (response.success) {
-          navigate('/register');
-          Swal.fire({
-            position: 'center',
-            icon: 'success',
-            title: response.success,
-            showConfirmButton: false,
-            timer: 1500,
-          });
-          setOnchange((prev) => !prev);
-        } else {
-          Swal.fire({
-            position: 'center',
-            icon: 'error',
-            title: response.error,
-            showConfirmButton: false,
-            timer: 1500,
-          });
-        }
-      });
-  }
-
-  // Logout user
-  function logout() {
-    sessionStorage.removeItem('authToken');
-    setCurrentUser(null);
-    navigate('/login');
-    Swal.fire({
-      position: 'center',
-      icon: 'success',
-      title: 'Logout success',
-      showConfirmButton: false,
-      timer: 1000,
-    });
-  }
-
-  // Get Authenticated user
+  // Fetch user data and handle authentication
   useEffect(() => {
     if (authToken) {
-      fetch('https://moringa-overflow.onrender.com/authenticated_user', {
-        method: 'GET',
+      setLoading(true);
+      fetchWithRetry(`${server_url}/current_user`, {
         headers: {
-          Accept: 'application/json',
-          Authorization: `Bearer ${authToken}`,
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
         },
       })
-        .then((res) => res.json())
-        .then((response) => {
-          if (response.email || response.username) {
-            setCurrentUser(response);
+        .then((data) => {
+          if (data.email) {
+            setCurrentUser(data);
+            setPermissions(permissionsConfig[data.role] || {});
           } else {
-            setCurrentUser(null);
+            handleLogout();
           }
-        });
+        })
+        .catch((error) => {
+          toast.error(`Failed to fetch user data: ${error.message}`);
+          handleLogout();
+        })
+        .finally(() => setLoading(false));
     }
-  }, [authToken, onchange]);
+  }, [authToken, navigate]);
 
-  console.log('current user', currentUser);
+  // Register a new user
+  const registerUser = async (name, email, phoneNumber, role, password) => {
+    setLoading(true);
+    try {
+      const result = await fetchWithRetry(`${server_url}/users`, {
+        method: 'POST',
+        body: JSON.stringify({ name, email, password, phoneNumber, role }),
+        headers: {
+          'Content-type': 'application/json',
+        },
+      });
+      if (result.success) {
+        toast.success(result.success);
+        navigate("/login");
+      } else {
+        toast.error(result.error || "Registration failed");
+      }
+    } catch (error) {
+      toast.error(`Failed to register user: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // Context data
+  // Log in a user
+  const loginUser = async (email, password) => {
+    setLoading(true);
+    try {
+      const result = await fetchWithRetry(`${server_url}/login`, {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+        headers: {
+          'Content-type': 'application/json',
+        },
+      });
+      if (result.access_token) {
+        setAuthToken(result.access_token);
+        localStorage.setItem("access_token", result.access_token);
+        toast.success("Logged in Successfully!");
+        navigate("/dashboard");
+      } else {
+        toast.error(result.error || "Login failed");
+      }
+    } catch (error) {
+      toast.error(`Failed to log in: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // // Log out a user
+  // const handleLogout = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const result = await fetchWithRetry(`${server_url}/logout`, {
+  //       method: 'DELETE',
+  //       headers: {
+  //         'Content-type': 'application/json',
+  //         'Authorization': `Bearer ${authToken}`,
+  //       },
+  //     });
+  //     if (result.success) {
+  //       localStorage.removeItem("access_token");
+  //       setCurrentUser(null);
+  //       setAuthToken(null);
+  //       toast.success(result.success);
+  //       navigate("/login");
+  //     } else {
+  //       toast.error(result.error || "Logout failed");
+  //     }
+  //   } catch (error) {
+  //     toast.error(`Failed to log out: ${error.message}`);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // // Update user profile
+  // const updateUser = async (name, phoneNumber, profileImage, password) => {
+  //   setLoading(true);
+  //   try {
+  //     const result = await fetchWithRetry(`${server_url}/users`, {
+  //       method: 'PUT',
+  //       body: JSON.stringify({ name, phoneNumber, profileImage, password }),
+  //       headers: {
+  //         'Content-type': 'application/json',
+  //         'Authorization': `Bearer ${authToken}`,
+  //       },
+  //     });
+  //     if (result.success) {
+  //       toast.success(result.success);
+  //       setCurrentUser({ ...currentUser, name, phoneNumber, profileImage });
+  //     } else {
+  //       toast.error(result.error || "Update failed");
+  //     }
+  //   } catch (error) {
+  //     toast.error(`Failed to update user: ${error.message}`);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // // Delete a user
+  // const deleteUser = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const result = await fetchWithRetry(`${server_url}/users/${currentUser.id}`, {
+  //       method: 'DELETE',
+  //       headers: {
+  //         'Content-type': 'application/json',
+  //         'Authorization': `Bearer ${authToken}`,
+  //       },
+  //     });
+  //     if (result.success) {
+  //       localStorage.removeItem("access_token");
+  //       setCurrentUser(null);
+  //       setAuthToken(null);
+  //       toast.success(result.success);
+  //       navigate("/login");
+  //     } else {
+  //       toast.error(result.error || "Deletion failed");
+  //     }
+  //   } catch (error) {
+  //     toast.error(`Failed to delete user: ${error.message}`);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // Provide context values
   const contextData = {
-    addUser,
-    login,
-    updateUser,
-    logout,
+    authToken,
     currentUser,
-    deleteYourAccount, // Adjusted the function name for consistency
+    permissions,
+    loading,
+    registerUser,
+    loginUser,
+    updateUser,
+    logout: handleLogout,
+    deleteUser
   };
 
   return (
@@ -199,4 +240,6 @@ export default function UserProvider({ children }) {
       {children}
     </UserContext.Provider>
   );
-}
+};
+
+export { UserProvider, UserContext };
