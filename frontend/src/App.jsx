@@ -1,23 +1,15 @@
-import React from 'react'; import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify'; import 'react-toastify/dist/ReactToastify.css';
-import Projects from './pages/Projects'; import Home from './pages/Home';
-import Task from './pages/Task'; import Reports from './pages/Reports';
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Home from "./pages/Home"; // Ensure this file exists
 
 function App() {
   return (
-    <BrowserRouter>
-      {/* <AuthProvider> */}
-        <Routes>
-          
-          <Route path="/" element={<Home />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/task" element={<Task />} />
-          <Route path="/reports" element={<Reports />} />
-          
-        </Routes>
-        <ToastContainer />
-      {/* </AuthProvider> */}
-    </BrowserRouter>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="*" element={<div>Page Not Found</div>} /> {/* Basic fallback for unknown routes */}
+      </Routes>
+    </Router>
   );
 }
 
