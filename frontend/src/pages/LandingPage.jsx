@@ -7,7 +7,7 @@ function LandingPage(){
     const preventDefault = (event) => event.preventDefault();
 
     return(
-      <>
+        <>
         <div className="h-screen bg-blue-100">
           <LandingNavbar/>  
           <div className="h-screen bg-cover bg-center relative"
