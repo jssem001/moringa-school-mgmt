@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
 import logo from '../assets/images/logo.jpeg';
 import { Link } from 'react-router-dom';
-import { UserContext } from '../context/UserContext';
+// import { UserContext } from '../context/UserContext';
 
 function Navbar() {
-  const { currentUser, logout } = useContext(UserContext);
+  // const { currentUser, logout } = useContext(UserContext);
 
   return (
     <nav className="bg-white fixed w-full z-20 top-0 start-0 border-b border-gray-200">
@@ -61,7 +61,7 @@ function Navbar() {
                 Contact Us
               </Link>
             </li>
-            {!currentUser ? (
+            {/* {!currentUser ? ( */}
               <>
                 <li>
                   <Link to="/signup" className="block py-2 px-3 text-white bg-blue-600 rounded hover:bg-blue-700">
@@ -74,16 +74,19 @@ function Navbar() {
                   </Link>
                 </li>
               </>
-            ) : (
+            {/* ) : ( */}
               <li>
                 <button
-                  onClick={logout}
+
+                  // onClick={logout}
                   className="block py-2 px-3 text-white bg-red-600 rounded hover:bg-red-700"
+                
+
                 >
                   Logout
                 </button>
               </li>
-            )}
+            {/* )} */}
           </ul>
         </div>
       </div>

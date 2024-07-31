@@ -1,10 +1,17 @@
 import React, { useContext, useState } from 'react';
-import { UserContext } from '../context/UserContext';
+// import { UserContext } from '../context/UserContext';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 
 function Register() {
-  const { register_user } = useContext(UserContext);
+//   const { register_user } = useContext(UserContext);
+
+// import { UserContext } from '../context/UserContext';
+
+
+export default function Signup() {
+  // const { register } = useContext(UserContext); // Assuming you have a register function in UserContext
+
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
