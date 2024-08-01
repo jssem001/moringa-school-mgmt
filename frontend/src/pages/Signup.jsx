@@ -37,6 +37,7 @@ export default function Signup() {
       .catch((error) => {
         toast.error("Registration failed");
         console.log("Registration failed:", error);
+        navigate("/login") //debuggin purposes
       });
 
     setEmail("");

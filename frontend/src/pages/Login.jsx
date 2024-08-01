@@ -1,16 +1,41 @@
 import React, { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate  } from 'react-router-dom';
 import loginimage from '../images/abstract-wavy.jpeg'
 import logo from '../images/MoringaLogo.png'
 import Footer from '../Layout/Footer'; import LandingNavbar from '../components/LandingNavbar';
+import { UserContext } from '../context/UserContext';
 
 export default function Login() {
+  const {loginUser}  = useContext(UserContext);
+
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("student");
+  
 
-  const handleSubmit = (e) => {
+  async function handleSubmit (e) {
     e.preventDefault();
+
+    if (!email || !password) {
+      console.log('Please enter both email and password.');
+      return;
+    }
+
+    try {
+      await loginUser(email, password); // Assuming login returns a promise for async handling
+      console.log('Login successful'); // Notify success
+      setTimeout(() => {
+        navigate('/studentprofile'); // Navigate to homepage on successful login after a delay
+      }, 2000); // Redirect after 2 seconds
+    } catch (error) {
+      //setError('Login failed. Please check your credentials.');
+      // toast.error('Login failed'); // Notify login failure
+      console.error('Login error:', error);
+
+    }
+
+
     setEmail("");
     setPassword("");
     setRole("student");
