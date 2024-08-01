@@ -6,7 +6,7 @@ import { HashLink } from 'react-router-hash-link';
 function LandingNavbar(){
 return(
     <div>
-      <nav className="bg-white dark:bg-white w-full z-20 top-0 start-0">
+      <nav className="bg-white dark:bg-white border-b-2 border-slate-700 w-full z-20 top-0 start-0">
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
           <h1 className="flex items-center space-x-3 rtl:space-x-reverse">
             <img src={logo} className="h-16" alt="Moringa Logo" />
@@ -55,9 +55,31 @@ return(
                   to="/#contacts"
                   className="block py-2 px-3 text-black bg-white rounded md:bg-white md:p-0 md:dark:text-black-400"
                 >
-                  Contacts  
+                  Contact Us  
                 </HashLink>
               </li>
+              {/* {!currentUser ? ( */}
+              <>
+                {/* <li>
+                  <Link to="/signup" className="bg-orange-200 text-black text-base font-semibold rounded-md shadow-md hover:text-white hover:bg-orange-600 p-3">
+                    Sign Up
+                  </Link>
+                </li> */}
+                <li>
+                  <Link to="/login" className="bg-orange-200 text-black text-base font-semibold rounded-md shadow-md hover:text-white hover:bg-orange-600 p-3">
+                    Login
+                  </Link>
+                </li>
+              </>
+              {/* ) : ( */}
+              {/* <li>
+                <button
+                  // onClick={logout}
+                  className="bg-red-400 text-black text-base font-semibold rounded-md shadow-md hover:text-white hover:bg-orange-600 p-3"
+                >
+                  Logout
+                </button>
+              </li> */}
             </ul>
           </div>
         </div>

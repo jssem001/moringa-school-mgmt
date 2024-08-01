@@ -2,9 +2,9 @@ import React, { useContext, useState } from 'react';
 // import { UserContext } from '../context/UserContext';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
-import signupimage from '../assets/Images/abstract.jpeg'
-import logo from '../assets/Images/logo.jpeg'
-
+import signupimage from '../images/abstract-wavy.jpeg'
+import logo from '../images/MoringaLogo.png'
+import Footer from '../Layout/Footer'; import LandingNavbar from '../components/LandingNavbar';
 // function Register() {
 //   const { register_user } = useContext(UserContext);
 
@@ -42,7 +42,9 @@ export default function Signup() {
   }
 
   return (
-    <div className="h-screen flex">
+    <>
+    <LandingNavbar/>
+    <div className="h-full flex">
       <div className="lg:w-1/2 items-center justify-center">
         <img 
           src={signupimage}
@@ -50,13 +52,13 @@ export default function Signup() {
           className="w-full h-full object-cover"
         />
       </div>
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 bg-gray-100">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 bg-blue-100">
         <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-6">
-          <div className="text-center mb-4">
+          <div className="flex flex-col items-center mb-6">
             <img 
               src= {logo}
               alt="Logo" 
-              className="mx-auto mb-4"
+              className="w-24 h-24 mb-4"
             />
             <h1 className="text-2xl font-bold mb-2">Project Management System</h1>
             <h2 className="text-xl font-medium">Sign Up</h2>
@@ -91,6 +93,7 @@ export default function Signup() {
                 value={password || ""} 
                 onChange={(e) => setPassword(e.target.value)} 
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
+                placeholder="••••••••"
                 required 
               />
             </div>
@@ -101,6 +104,7 @@ export default function Signup() {
                 value={repeatPassword || ""} 
                 onChange={(e) => setRepeatPassword(e.target.value)} 
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
+                placeholder="••••••••"
                 required 
               />
             </div>
@@ -140,17 +144,19 @@ export default function Signup() {
             </div>
             <button 
               type="submit" 
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="w-full text-black bg-orange-200 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center hover:text-white hover:bg-orange-600 dark:bg-orange-200 dark:hover:bg-orange-600 dark:focus:ring-blue-800"
             >
               Register
             </button>
           </form>
           <p className="text-center mt-4">
-            Already have an account? <Link to="/login" className="text-indigo-600 hover:text-indigo-500">Log in</Link>
+            Already have an account? <Link to="/login" className="font-medium text-blue-600 hover:underline hover:text-blue-500">Log in</Link>
           </p>
         </div>
       </div>
     </div>
+    <Footer/>
+    </>
   );
 }
 
