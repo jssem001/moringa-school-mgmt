@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from datetime import timedelta
+from flask_cors import CORS, cross_origin
 
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity, get_jwt
 
@@ -13,6 +14,10 @@ from models import db, User
 bcrypt = Bcrypt()
 
 app = Flask(__name__)
+
+CORS(app, resources={r"/*": {"origins":"*"}})
+# app.config['CORS_HEADERS'] = 'Content-Type'
+
 
 jwt = JWTManager(app)
 
@@ -26,8 +31,8 @@ migrate = Migrate(app, db)
 db.init_app(app)
 
 
-#User Registration
-@app.route('/users', methods=['POST'])
+#User Registration - OK
+@app.route('/user', methods=['POST'])
 def create_user():
     data = request.get_json()
 
@@ -43,14 +48,14 @@ def create_user():
 
         is_student=data.get('is_student', False),
         is_admin=data.get('is_admin', False),
-        is_instructor=True if data['is_instructor']=="true" else False
+        is_instructor=data.get('is_instructor', False)
     )
     db.session.add(new_user)
     db.session.commit()
     return jsonify({"success": "User created successfully"}), 201
 
 
-#User Login
+#User Login - OK
 @app.route("/login", methods=["POST"])
 def login_user():
     email = request.json.get("email", None)
@@ -66,7 +71,7 @@ def login_user():
         return jsonify({"error": "Wrong Details Entered"}), 401
 
 
-# Current User
+# Current User - OK
 @app.route("/current_user", methods=["GET"])
 @jwt_required()
 def current_user():
@@ -84,7 +89,7 @@ def current_user():
     return jsonify(user_data), 200
 
 
-#User Logout
+#User Logout - OK
 BLACKLIST=set()
 @jwt.token_in_blocklist_loader
 def check_if_token_in_blocklist(jwt_header, decrypted_token):
@@ -97,8 +102,9 @@ def logout():
     BLACKLIST.add(jti)
     return jsonify({"success":"Successfully logged out"}), 200
 
-# Updating Profile(You have to be logged in to update your profile)
-@app.route('/users', methods=['PUT'])
+
+# Updating Profile(You have to be logged in to update your profile) - OK
+@app.route('/user', methods=['PUT'])
 @jwt_required()
 def update_profile():
     data = request.get_json()
@@ -123,8 +129,8 @@ def update_profile():
     return jsonify({"success": "User updated successfully"}), 200
 
 
-#Delete User
-@app.route('/users/<int:id>', methods=['DELETE'])
+#Delete User - OK
+@app.route('/user/<int:id>', methods=['DELETE'])
 def delete_user(id):
     user = User.query.get(id)
     if user is None:
