@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from datetime import timedelta
+from flask_cors import CORS, cross_origin
 
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity, get_jwt
 
@@ -13,6 +14,10 @@ from models import db, User
 bcrypt = Bcrypt()
 
 app = Flask(__name__)
+
+CORS(app, resources={r"/*": {"origins":"*"}})
+# app.config['CORS_HEADERS'] = 'Content-Type'
+
 
 jwt = JWTManager(app)
 

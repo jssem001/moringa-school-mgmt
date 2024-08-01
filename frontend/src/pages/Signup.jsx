@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate }  from 'react-router-dom';
 import signupimage from '../images/abstract-wavy.jpeg';
 import logo from '../images/MoringaLogo.png';
 import Footer from '../Layout/Footer';
@@ -8,13 +8,14 @@ import LandingNavbar from '../components/LandingNavbar';
 import { UserContext } from '../context/UserContext';
 
 export default function Signup() {
-  const { register_user } = useContext(UserContext); 
+  const { register_user } = useContext(UserContext);
+  const navigate = useNavigate(); 
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const [name, setName] = useState("");
-  const [profile_image, setProfileImage] = useState("");
+  // const [profile_image, setProfileImage] = useState("");
   const [phone_number, setPhone_number] = useState("");
   const [role, setRole] = useState("student");
 
@@ -23,14 +24,25 @@ export default function Signup() {
 
     if (password !== repeatPassword) {
       toast.error("Passwords do not match");
+      console.log("Passwords do not match");
       return;
     }
 
-    register_user(name, email, profile_image, phone_number, role, password);
+    register_user(name, email, phone_number, role, password)
+      .then(() => {
+        toast.success("Registered successfully!");
+        console.log("Registered successfully!");
+        navigate("/login"); // Navigate after successful registration
+      })
+      .catch((error) => {
+        toast.error("Registration failed");
+        console.log("Registration failed:", error);
+      });
+
     setEmail("");
     setPassword("");
     setRepeatPassword("");
-    setProfileImage("");
+    // setProfileImage("");
     setName("");
     setPhone_number("");
     setRole("student");
@@ -103,7 +115,7 @@ export default function Signup() {
                   required 
                 />
               </div>
-              <div className="mb-4">
+              {/* <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">Profile Image URL</label>
                 <input 
                   type="url" 
@@ -111,9 +123,9 @@ export default function Signup() {
                   onChange={(e) => setProfileImage(e.target.value)} 
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
                   placeholder="https://example.com/image.jpg" 
-                  required 
+                  // required 
                 />
-              </div>
+              </div> */}
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">Phone Number</label>
                 <input 
@@ -133,14 +145,14 @@ export default function Signup() {
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
                   required
                 >
-                  <option value="student">Student</option>
-                  <option value="teacher">Teacher</option>
+                  <option value="student">student</option>
+                  <option value="teacher">teacher</option>
                 </select>
               </div>
               <button 
                 type="submit"
                 className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              onClick={handleSubmit}
+                
               >
                 Sign Up
               </button>

@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { server_url } from "../../config";
 
 // Create a UserContext
@@ -42,26 +42,26 @@ const permissionsConfig = {
   },
 };
 
-// // Fetch data with retry logic
-// const fetchWithRetry = async (url, options, retries = 3) => {
-//   try {
-//     const response = await fetch(url, options);
-//     if (!response.ok) {
-//       const error = await response.json();
-//       throw new Error(error.message || 'An error occurred');
-//     }
-//     return await response.json();
-//   } catch (error) {
-//     if (retries > 0) {
-//       return fetchWithRetry(url, options, retries - 1);
-//     }
-//     throw error;
-//   }
-// };
+// Fetch data with retry logic
+const fetchWithRetry = async (url, options, retries = 3, delay = 1000) => {
+  try {
+    const response = await fetch(url, { ...options, mode: 'no-cors' });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'An error occurred');
+    }
+    return await response.json();
+  } catch (error) {
+    if (retries > 0) {
+      return fetchWithRetry(url, options, retries - 1,delay);
+    }
+    throw error;
+  }
+};
 
 // Define the UserProvider component
 const UserProvider = ({ children }) => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(null);
   const [authToken, setAuthToken] = useState(() => localStorage.getItem("access_token") || null);
   const [permissions, setPermissions] = useState({});
@@ -91,7 +91,7 @@ const UserProvider = ({ children }) => {
         })
         .finally(() => setLoading(false));
     }
-  }, [authToken, navigate]);
+  }, [authToken]);
 
   // Register a new user
   const register_user = async (name, email, phoneNumber, role, password) => {
@@ -103,15 +103,18 @@ const UserProvider = ({ children }) => {
         headers: {
           'Content-type': 'application/json',
         },
+        mode: 'no-cors',
       });
       if (result.success) {
-        toast.success(result.success);
-        navigate("/login");
+        console.log("User registered successfully");
+        return result
       } else {
-        toast.error(result.error || "Registration failed");
+        console.error(result.error || "Registration failed");
+        throw new Error(result.error || "Registration failed");
       }
     } catch (error) {
-      toast.error(`Failed to register user: ${error.message}`);
+      console.error(`Failed to register user: ${error.message}`);
+      throw error;
     } finally {
       setLoading(false);
     }
@@ -132,7 +135,7 @@ const UserProvider = ({ children }) => {
         setAuthToken(result.access_token);
         localStorage.setItem("access_token", result.access_token);
         toast.success("Logged in Successfully!");
-        navigate("/dashboard");
+        // navigate("/dashboard");
       } else {
         toast.error(result.error || "Login failed");
       }
@@ -159,7 +162,7 @@ const UserProvider = ({ children }) => {
         setCurrentUser(null);
         setAuthToken(null);
         toast.success(result.success);
-        navigate("/login");
+        // navigate("/login");
       } else {
         toast.error(result.error || "Logout failed");
       }
@@ -211,7 +214,7 @@ const UserProvider = ({ children }) => {
         setCurrentUser(null);
         setAuthToken(null);
         toast.success(result.success);
-        navigate("/login");
+        // navigate("/login");
       } else {
         toast.error(result.error || "Deletion failed");
       }
