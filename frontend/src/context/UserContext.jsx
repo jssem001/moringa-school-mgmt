@@ -42,22 +42,22 @@ const permissionsConfig = {
   },
 };
 
-// Fetch data with retry logic
-const fetchWithRetry = async (url, options, retries = 3) => {
-  try {
-    const response = await fetch(url, options);
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'An error occurred');
-    }
-    return await response.json();
-  } catch (error) {
-    if (retries > 0) {
-      return fetchWithRetry(url, options, retries - 1);
-    }
-    throw error;
-  }
-};
+// // Fetch data with retry logic
+// const fetchWithRetry = async (url, options, retries = 3) => {
+//   try {
+//     const response = await fetch(url, options);
+//     if (!response.ok) {
+//       const error = await response.json();
+//       throw new Error(error.message || 'An error occurred');
+//     }
+//     return await response.json();
+//   } catch (error) {
+//     if (retries > 0) {
+//       return fetchWithRetry(url, options, retries - 1);
+//     }
+//     throw error;
+//   }
+// };
 
 // Define the UserProvider component
 const UserProvider = ({ children }) => {
@@ -94,10 +94,10 @@ const UserProvider = ({ children }) => {
   }, [authToken, navigate]);
 
   // Register a new user
-  const registerUser = async (name, email, phoneNumber, role, password) => {
+  const register_user = async (name, email, phoneNumber, role, password) => {
     setLoading(true);
     try {
-      const result = await fetchWithRetry(`${server_url}/users`, {
+      const result = await fetchWithRetry(`${server_url}/user`, {
         method: 'POST',
         body: JSON.stringify({ name, email, password, phoneNumber, role }),
         headers: {
@@ -174,7 +174,7 @@ const UserProvider = ({ children }) => {
   const updateUser = async (name, phoneNumber, profileImage, password) => {
     setLoading(true);
     try {
-      const result = await fetchWithRetry(`${server_url}/users`, {
+      const result = await fetchWithRetry(`${server_url}/user`, {
         method: 'PUT',
         body: JSON.stringify({ name, phoneNumber, profileImage, password }),
         headers: {
@@ -199,7 +199,7 @@ const UserProvider = ({ children }) => {
   const deleteUser = async () => {
     setLoading(true);
     try {
-      const result = await fetchWithRetry(`${server_url}/users/${currentUser.id}`, {
+      const result = await fetchWithRetry(`${server_url}/user/${currentUser.id}`, {
         method: 'DELETE',
         headers: {
           'Content-type': 'application/json',
@@ -228,7 +228,7 @@ const UserProvider = ({ children }) => {
     currentUser,
     permissions,
     loading,
-    registerUser,
+    register_user,
     loginUser,
     updateUser,
     logout: handleLogout,
