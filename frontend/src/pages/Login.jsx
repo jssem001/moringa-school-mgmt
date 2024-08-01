@@ -27,7 +27,7 @@ export default function Login() {
       console.log('Login successful'); // Notify success
       setTimeout(() => {
         navigate('/studentprofile'); // Navigate to homepage on successful login after a delay
-      }, 2000); // Redirect after 2 seconds
+      }, 1000); // Redirect after 1 seconds
     } catch (error) {
       //setError('Login failed. Please check your credentials.');
       // toast.error('Login failed'); // Notify login failure
