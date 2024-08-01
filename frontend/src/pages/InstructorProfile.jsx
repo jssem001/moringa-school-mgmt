@@ -2,7 +2,7 @@ import React from "react";
 import logo from '../images/MoringaLogo.png'
 import { Link } from 'react-router-dom'
 
-const StudentProfile = () => {
+const InstructorProfile = () => {
 
     
     return (
@@ -60,54 +60,58 @@ const StudentProfile = () => {
             <div class="p-4 rounded-lg">
                 <h1 class="text-3xl  font-semibold text-center">Profile</h1>
                 <ul class="border-b-2 border-gray-700 mb-3">
-                    <li><span class="font-semibold">Name:</span> John Snow </li>
-                    <li><span class="font-semibold">Email:</span> John@winterfell.com </li>
+                    <li><span class="font-semibold">Name:</span> Rob Stark </li>
+                    <li><span class="font-semibold">Email:</span> Rob@winterfell.com </li>
                     <li><span class="font-semibold">Phone:</span> 0712345678 </li>
-                    <li><span class="font-semibold">Role:</span> Student</li>
+                    <li><span class="font-semibold">Role:</span> Instructor</li>
                 </ul>
                 <div class="grid grid-cols-3 gap-4 mb-4 border">
-                    <div class="flex items-center justify-center h-24 rounded bg-red-900 ">
-                        <p class="text-2xl text-white">
+                    <div class="flex items-center justify-center h-24 rounded bg-cyan-800 ">
+                        <p class="text-2xl text-white ">
                         Courses
                         </p>
                     </div>
-                    <div class="flex items-center justify-center h-24 rounded bg-red-900 ">
-                        <p class="text-2xl text-white">
-                        Grades
+                    <div class="flex items-center justify-center h-24 rounded bg-cyan-800 ">
+                        <p class="text-2xl text-white ">
+                        Update Grades
                         </p>
                     </div>
-                    <div class="flex items-center justify-center h-24 rounded bg-red-900 ">
-                        <p class="text-2xl text-white">
+                    <div class="flex items-center justify-center h-24 rounded bg-cyan-800 ">
+                        <p class="text-2xl text-white ">
                         Schedule
                         </p>
                     </div>
                 </div>
                 
                 <div class="grid grid-cols-2 gap-4 mb-4">
-                    <div class="flex items-center justify-center rounded bg-red-900 h-28 ">
-                        <p class="text-2xl text-white">
-                        My Account
+                    <div class="flex items-center justify-center rounded bg-cyan-800 h-28 ">
+                        <p class="text-2xl text-white ">
+                        My Company Account
                         </p>
                     </div>
-                    <div class="flex items-center justify-center rounded bg-red-900 h-28 ">
-                        <p class="text-2xl text-white">
+                    <div class="flex items-center justify-center rounded bg-cyan-800 h-28 ">
+                        <p class="text-2xl text-white ">
                         Academic Advising
                         </p>
                     </div>
-                    <div class="flex items-center justify-center rounded bg-red-900 h-28 ">
-                        <p class="text-2xl text-white">
+                    <div class="flex items-center justify-center rounded bg-cyan-800 h-28 ">
+                        <p class="text-2xl text-white ">
                         Settings
                         </p>
                     </div>
-                    <div class="flex items-center justify-center rounded bg-red-900 h-28 ">
-                        <p class="text-2xl text-white">
+                    <div class="flex items-center justify-center rounded bg-cyan-800 h-28 ">
+                        <p class="text-2xl text-white ">
                         Update Profile
                         </p>
                     </div>
                 </div>
-                
+                <div class="flex items-center justify-center h-48 mb-4 rounded bg-cyan-800 ">
+                    <p class="text-2xl text-white ">
+                        Student Information    
+                    </p>
+                </div>
                 <div class="grid grid-cols-2 gap-4">
-                    {/* add more widgetd if needed */}
+                    {/* Add more widgets if needed */}
                 </div>
             </div>
             </div>
@@ -116,4 +120,4 @@ const StudentProfile = () => {
     );
 };
 
-export default StudentProfile
+export default InstructorProfile

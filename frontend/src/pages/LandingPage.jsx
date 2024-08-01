@@ -43,11 +43,9 @@ function LandingPage(){
               <p className="text-xl mb-2 break-normal">Create, edit and delete projects.</p>
               <p className="text-xl mb-2 break-normal">Assign roles to users within each project.</p>
               <p className="text-xl mb-2 break-normal">Project templates for common project types.</p>
-              <Link to="/studentprofile"
+              <Link to="/studentprofile" //Dummy Link to student
               ><button class="bg-black text-white text-base font-semibold rounded-md shadow-md hover:text-white hover:bg-yellow-600 mt-8 p-3">
-                
                 Learn More
-                
                 </button></Link>
             </div>
             <div className="bg-blue-400 px-8 py-4 rounded-lg shadow-lg m-3">
@@ -56,7 +54,9 @@ function LandingPage(){
               <p className="text-xl mb-2 break-normal">Task status updates (to-do, in progress, done).</p>
               <p className="text-xl mb-2 break-normal">Set task priorities and deadlines.</p>
               <p className="text-xl mb-2 break-normal">Comment on tasks for real-time collaboration.</p>
+              <Link to='/instructorprofile'> {/*Dummy Link to student*/} 
               <button class="bg-black text-white text-base font-semibold rounded-md shadow-md hover:text-white hover:bg-blue-600 mt-8 p-3">Learn More</button>
+              </Link>            
             </div>
             <div className="bg-purple-400 px-8 py-4 rounded-lg shadow-lg m-3">
               <h1 className="text-3xl font-bold text-center break-normal mb-12">Collaboration Tools</h1>
