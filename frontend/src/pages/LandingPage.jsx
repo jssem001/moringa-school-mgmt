@@ -54,7 +54,7 @@ function LandingPage(){
               <p className="text-xl mb-2 break-normal">Task status updates (to-do, in progress, done).</p>
               <p className="text-xl mb-2 break-normal">Set task priorities and deadlines.</p>
               <p className="text-xl mb-2 break-normal">Comment on tasks for real-time collaboration.</p>
-              <Link to='/instructorprofile'> {/*Dummy Link to student*/} 
+              <Link to='/instructorprofile'> {/*Dummy Link to instructors*/} 
               <button class="bg-black text-white text-base font-semibold rounded-md shadow-md hover:text-white hover:bg-blue-600 mt-8 p-3">Learn More</button>
               </Link>            
             </div>
@@ -63,7 +63,9 @@ function LandingPage(){
               <p className="text-xl mb-2 break-normal">Real-time comments on tasks and projects.</p>
               <p className="text-xl mb-2 break-normal">File attachments to tasks and projects.</p>
               <p className="text-xl mb-2 break-normal">Notifications for task updates and approaching deadlines.</p>
+              <Link to='/adminprofile'> {/*Dummy Link to admin*/}
               <button class="bg-black text-white text-base font-semibold rounded-md shadow-md hover:text-white hover:bg-purple-600 mt-8 p-3">Learn More</button>
+              </Link>
             </div>
           </div>
           <div className="flex py-4 px-4 grid grid-flow-col justify-stretch items-front">

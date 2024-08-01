@@ -1,11 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home"; // Ensure this file exists
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import LandingPage from "./pages/LandingPage";
-import StudentProfile from "./pages/StudentProfile";
-import InstructorProfile from "./pages/InstructorProfile";
+import Login from "./pages/Login"; import Signup from "./pages/Signup";
+import LandingPage from "./pages/LandingPage"; import StudentProfile from "./pages/StudentProfile";
+import InstructorProfile from "./pages/InstructorProfile"; import AdminProfile from "./pages/AdminProfile";
 
 function App() {
   return (
@@ -17,6 +15,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/studentprofile" element={<StudentProfile />} />
         <Route path="/instructorprofile" element={<InstructorProfile />} />
+        <Route path="/adminprofile" element={<AdminProfile />} />
       </Routes>
     </Router>
   );
