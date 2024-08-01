@@ -143,84 +143,84 @@ const UserProvider = ({ children }) => {
     }
   };
 
-  // // Log out a user
-  // const handleLogout = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const result = await fetchWithRetry(`${server_url}/logout`, {
-  //       method: 'DELETE',
-  //       headers: {
-  //         'Content-type': 'application/json',
-  //         'Authorization': `Bearer ${authToken}`,
-  //       },
-  //     });
-  //     if (result.success) {
-  //       localStorage.removeItem("access_token");
-  //       setCurrentUser(null);
-  //       setAuthToken(null);
-  //       toast.success(result.success);
-  //       navigate("/login");
-  //     } else {
-  //       toast.error(result.error || "Logout failed");
-  //     }
-  //   } catch (error) {
-  //     toast.error(`Failed to log out: ${error.message}`);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  // Log out a user
+  const handleLogout = async () => {
+    setLoading(true);
+    try {
+      const result = await fetchWithRetry(`${server_url}/logout`, {
+        method: 'DELETE',
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+        },
+      });
+      if (result.success) {
+        localStorage.removeItem("access_token");
+        setCurrentUser(null);
+        setAuthToken(null);
+        toast.success(result.success);
+        navigate("/login");
+      } else {
+        toast.error(result.error || "Logout failed");
+      }
+    } catch (error) {
+      toast.error(`Failed to log out: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // // Update user profile
-  // const updateUser = async (name, phoneNumber, profileImage, password) => {
-  //   setLoading(true);
-  //   try {
-  //     const result = await fetchWithRetry(`${server_url}/users`, {
-  //       method: 'PUT',
-  //       body: JSON.stringify({ name, phoneNumber, profileImage, password }),
-  //       headers: {
-  //         'Content-type': 'application/json',
-  //         'Authorization': `Bearer ${authToken}`,
-  //       },
-  //     });
-  //     if (result.success) {
-  //       toast.success(result.success);
-  //       setCurrentUser({ ...currentUser, name, phoneNumber, profileImage });
-  //     } else {
-  //       toast.error(result.error || "Update failed");
-  //     }
-  //   } catch (error) {
-  //     toast.error(`Failed to update user: ${error.message}`);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  // Update user profile
+  const updateUser = async (name, phoneNumber, profileImage, password) => {
+    setLoading(true);
+    try {
+      const result = await fetchWithRetry(`${server_url}/users`, {
+        method: 'PUT',
+        body: JSON.stringify({ name, phoneNumber, profileImage, password }),
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+        },
+      });
+      if (result.success) {
+        toast.success(result.success);
+        setCurrentUser({ ...currentUser, name, phoneNumber, profileImage });
+      } else {
+        toast.error(result.error || "Update failed");
+      }
+    } catch (error) {
+      toast.error(`Failed to update user: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // // Delete a user
-  // const deleteUser = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const result = await fetchWithRetry(`${server_url}/users/${currentUser.id}`, {
-  //       method: 'DELETE',
-  //       headers: {
-  //         'Content-type': 'application/json',
-  //         'Authorization': `Bearer ${authToken}`,
-  //       },
-  //     });
-  //     if (result.success) {
-  //       localStorage.removeItem("access_token");
-  //       setCurrentUser(null);
-  //       setAuthToken(null);
-  //       toast.success(result.success);
-  //       navigate("/login");
-  //     } else {
-  //       toast.error(result.error || "Deletion failed");
-  //     }
-  //   } catch (error) {
-  //     toast.error(`Failed to delete user: ${error.message}`);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  // Delete a user
+  const deleteUser = async () => {
+    setLoading(true);
+    try {
+      const result = await fetchWithRetry(`${server_url}/users/${currentUser.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+        },
+      });
+      if (result.success) {
+        localStorage.removeItem("access_token");
+        setCurrentUser(null);
+        setAuthToken(null);
+        toast.success(result.success);
+        navigate("/login");
+      } else {
+        toast.error(result.error || "Deletion failed");
+      }
+    } catch (error) {
+      toast.error(`Failed to delete user: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Provide context values
   const contextData = {
