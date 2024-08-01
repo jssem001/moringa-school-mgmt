@@ -2,7 +2,7 @@ import React from "react";
 import LandingNavbar from "../components/LandingNavbar";
 import photo1 from "../images/land-image1.png"
 import photo2 from "../images/land-image2.png"
-// import Navbar from "../Layout/Navbar";
+import {Link} from 'react-router-dom';
 import Footer from "../Layout/Footer";
 
 function LandingPage(){
@@ -43,7 +43,12 @@ function LandingPage(){
               <p className="text-xl mb-2 break-normal">Create, edit and delete projects.</p>
               <p className="text-xl mb-2 break-normal">Assign roles to users within each project.</p>
               <p className="text-xl mb-2 break-normal">Project templates for common project types.</p>
-              <button class="bg-black text-white text-base font-semibold rounded-md shadow-md hover:text-white hover:bg-yellow-600 mt-8 p-3">Learn More</button>
+              <Link to="/studentprofile"
+              ><button class="bg-black text-white text-base font-semibold rounded-md shadow-md hover:text-white hover:bg-yellow-600 mt-8 p-3">
+                
+                Learn More
+                
+                </button></Link>
             </div>
             <div className="bg-blue-400 px-8 py-4 rounded-lg shadow-lg m-3">
               <h1 className="text-3xl font-bold text-center break-normal mb-12">Task Management</h1>
