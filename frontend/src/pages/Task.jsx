@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import logo from '../images/MoringaLogo.png';
+import Sidebar from "../components/Sidebar";
 
 const Task = () => {
   const [tasks, setTasks] = useState([]);
@@ -57,7 +58,8 @@ const Task = () => {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Navbar */}
-      <header className="bg-white text-black p-4 shadow-md">
+      <Sidebar />
+      {/* <header className="bg-white text-black p-4 shadow-md">
         <nav className="flex justify-between items-center">
           <div className="flex items-center">
             <img src={logo} alt="Moringa Logo" className="h-12 w-12" />
@@ -86,11 +88,13 @@ const Task = () => {
             </a>
           </div>
         </nav>
-      </header>
+      </header> */}
 
+      <div class="p-4 sm:ml-64">
       <div className="flex flex-1">
         {/* Main content area */}
         <div className="flex-1 p-4 overflow-auto">
+        <h2 className="text-xl font-bold mb-2">New Task</h2>
           {/* Task Input */}
           <section className="mb-4">
             <input
@@ -228,6 +232,7 @@ const Task = () => {
             </table>
           </section>
         </div>
+      </div>
       </div>
     </div>
   );

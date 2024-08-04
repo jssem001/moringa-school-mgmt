@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import projectData from "../data/projects";
 import logo from '../images/MoringaLogo.png';
+import Sidebar from "../components/Sidebar";
 
 const Projects = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -15,18 +16,21 @@ const Projects = () => {
 
   return (
     <div className="flex">
-      {/* Sidebar for the abstract image */}
+      {/* Sidebar for the abstract image
       <aside className="w-1/6 bg-gray-200 p-4">
         <img
           src="https://s3-alpha-sig.figma.com/img/cafa/5e8f/b86bafc3853580461c326f24743c095f?Expires=1723420800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=KaugZBvGBxCcbk75-tCVsg8~kC52sRyusJTyiCWdHyuVFwedfeRUdkUHb9Iad0EN8FT1FbQAuHiGqSmvv1RH-mjKkjcoKpgDlFDVtMfj4GFmHxyoPz7a77RiWQF-gyMctxCoMV8PG4zVW3UXTIKmAW-EPCbhEJcL4aA6fvUFjL~l4xKAMb3Qr2SIg2aS2fRQn~Y6ZCYuaKIlx35adx-bxNsm33toSpGsoMNDGE5pNbyAfXAyBeUDU6pSlUeoyyjURqTihFOXMvia~E~N-G-wGlosH8UTEm5zSrwtRYOfxRT7x1bvq2e6YHe2VrLRy4l3GmjbwxqrFKhrCp64NmdP2w__"
           alt="Abstract"
           className="w-full h-full object-cover"
         />
-      </aside>
+      </aside> */}
+      <Sidebar />
 
+      <div class="p-4 sm:ml-64">
       <div className="flex-1 p-4">
         {/* Navbar */}
-        <header className="bg-white text-black p-4 shadow-md">
+        
+        {/* <header className="bg-white text-black p-4 shadow-md">
           <nav className="flex justify-between items-center">
             <div className="flex items-center">
               <img src={logo} alt="Moringa Logo" className="h-12 w-12" />
@@ -55,8 +59,10 @@ const Projects = () => {
               </Link>
             </div>
           </nav>
-        </header>
+        </header> */}
 
+        
+        {/* <div className="flex flex-1"></div> */}
         {/* Search Section */}
         <section className="mb-4">
           <input
@@ -122,6 +128,7 @@ const Projects = () => {
             ))}
           </div>
         </main>
+        </div>
       </div>
     </div>
   );
