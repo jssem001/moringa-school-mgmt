@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -10,7 +11,11 @@ import AdminProfile from "./pages/AdminProfile";
 import Projects from "./pages/Projects";
 import Task from "./pages/Task"; 
 import AddProject from "./pages/AddProject";
+import AnalyticsPage from "./pages/AnalyticsPage";
+import UserMgmt from "./pages/UserMgmt";
+import Dashboard from "./pages/Dashboard";
 import { UserProvider } from "./context/UserContext";
+
 
 function App() {
   return (
@@ -27,6 +32,9 @@ function App() {
           <Route path="/tasks" element={<Task />} /> 
           <Route path="/add-project" element={<AddProject />} />
           <Route path="*" element={<div>Page Not Found</div>} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/analytics" element={<AnalyticsPage />} />
+          <Route path="/usermgmt" element={<UserMgmt />} />
         </Routes>
       </UserProvider>
     </Router>
