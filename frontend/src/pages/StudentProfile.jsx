@@ -4,10 +4,9 @@ import { Link } from 'react-router-dom'
 import Sidebar from "../components/Sidebar";
 
 const StudentProfile = () => {
-
-    
-    return (
-        <>
+  return (
+    <>
+   
             <Sidebar />
             
             {/* <aside id="logo-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
@@ -58,64 +57,37 @@ const StudentProfile = () => {
             </div>
             </aside> */}
 
-            <div class="p-4 sm:ml-64">
-            <div class="p-4 rounded-lg">
-                <h1 class="text-3xl  font-semibold text-center">Profile</h1>
-                <ul class="border-b-2 border-gray-700 mb-3">
-                    <li><span class="font-semibold">Name:</span> John Snow </li>
-                    <li><span class="font-semibold">Email:</span> John@winterfell.com </li>
-                    <li><span class="font-semibold">Phone:</span> 0712345678 </li>
-                    <li><span class="font-semibold">Role:</span> Student</li>
-                </ul>
-                <div class="grid grid-cols-3 gap-4 mb-4 border">
-                    <div class="flex items-center justify-center h-24 rounded bg-red-900 ">
-                        <p class="text-2xl text-white">
-                        Courses
-                        </p>
-                    </div>
-                    <div class="flex items-center justify-center h-24 rounded bg-red-900 ">
-                        <p class="text-2xl text-white">
-                        Grades
-                        </p>
-                    </div>
-                    <div class="flex items-center justify-center h-24 rounded bg-red-900 ">
-                        <p class="text-2xl text-white">
-                        Schedule
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4 mb-4">
-                    <div class="flex items-center justify-center rounded bg-red-900 h-28 ">
-                        <p class="text-2xl text-white">
-                        My Account
-                        </p>
-                    </div>
-                    <div class="flex items-center justify-center rounded bg-red-900 h-28 ">
-                        <p class="text-2xl text-white">
-                        Academic Advising
-                        </p>
-                    </div>
-                    <div class="flex items-center justify-center rounded bg-red-900 h-28 ">
-                        <p class="text-2xl text-white">
-                        Settings
-                        </p>
-                    </div>
-                    <div class="flex items-center justify-center rounded bg-red-900 h-28 ">
-                        <p class="text-2xl text-white">
-                        Update Profile
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    {/* add more widgetd if needed */}
-                </div>
-            </div>
-            </div>
 
-        </>
-    );
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="flex items-center justify-center rounded bg-red-900 h-28 ">
+              <p className="text-2xl text-white">
+                My Account
+              </p>
+            </div>
+            <div className="flex items-center justify-center rounded bg-red-900 h-28 ">
+              <p className="text-2xl text-white">
+                Academic Advising
+              </p>
+            </div>
+            <div className="flex items-center justify-center rounded bg-red-900 h-28 ">
+              <p className="text-2xl text-white">
+                Settings
+              </p>
+            </div>
+            <div className="flex items-center justify-center rounded bg-red-900 h-28 ">
+              <p className="text-2xl text-white">
+                Update Profile
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            {/* add more widgets if needed */}
+          </div>
+        </div>
+      </div>
+    </>
+  );
 };
 
-export default StudentProfile
+export default StudentProfile;
