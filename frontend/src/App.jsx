@@ -15,10 +15,11 @@ import AnalyticsPage from "./pages/AnalyticsPage";
 import UserMgmt from "./pages/UserMgmt";
 import Dashboard from "./pages/Dashboard";
 import { UserProvider } from "./context/UserContext";
-
+import { ProjectProvider } from "./context/ProjectContext";
 
 function App() {
   return (
+    <ProjectProvider>
     <Router>
       <UserProvider>
         <Routes>
@@ -38,6 +39,7 @@ function App() {
         </Routes>
       </UserProvider>
     </Router>
+    </ProjectProvider>
   );
 }
 

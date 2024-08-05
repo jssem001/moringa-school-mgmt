@@ -1,10 +1,17 @@
-import React from "react";
+import React, {useEffect, useState, useContext} from "react";
 import logo from '../images/MoringaLogo.png'
 import { Link } from 'react-router-dom'
+import { ProjectContext } from "../context/ProjectContext";
 import Sidebar from "../components/Sidebar";
 
 const Dashboard = () => {
 
+    const { projects, getProjects } = useContext(ProjectContext);
+    
+    //fetch projects
+    useEffect(() => {
+        getProjects()
+    },[])
     
     return (
         <>
@@ -43,9 +50,14 @@ const Dashboard = () => {
                 </div>
                 <div class="grid grid-cols-3 gap-4 mb-4 border">
                     <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
-                        <p class="text-2xl text-white ">
-                        Projects
-                        </p>
+                        <p class="text-2xl text-white">Projects</p>
+                        <ul>
+                            {projects.map(project => (
+                                <li key={project.id} className="text-2xl text-white">
+                                    {project.name}
+                                </li>
+                            ))}
+                        </ul>
                     </div>
                     <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
                         <p class="text-2xl text-white ">

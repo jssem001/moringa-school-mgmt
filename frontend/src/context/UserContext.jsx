@@ -80,7 +80,7 @@ const UserProvider = ({ children }) => {
         .then((data) => {
           if (data.email) {
             setCurrentUser(data);
-            setPermissions(permissionsConfig[data.role] || {});
+            //setPermissions(permissionsConfig[data.role] || {});
           } else {
             handleLogout();
           }
@@ -94,12 +94,12 @@ const UserProvider = ({ children }) => {
   }, [authToken]);
 
   // Register a new user
-  const register_user =  (name, email, phoneNumber, role, password) => {
+  const register_user =  (name, email, phoneNumber, role, is_student, is_instructor, is_admin, password) => {
     setLoading(true);
     console.log(name,email,password,phoneNumber,role)
     fetch(`${server_url}/user`, {
       method: 'POST',
-      body: JSON.stringify({ name, email, password, phoneNumber, role }),
+      body: JSON.stringify({ name, email, password, phoneNumber, role, is_student, is_instructor, is_admin }),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -130,34 +130,8 @@ const UserProvider = ({ children }) => {
  
   };
 
-  // Log in a user
-  // const loginUser = async (email, password) => {
-  //   setLoading(true);
-  //   try {
-  //     const result = await fetchWithRetry(`${server_url}/login`, {
-  //       method: 'POST',
-  //       body: JSON.stringify({ email, password }),
-  //       headers: {
-  //         'Content-type': 'application/json',
-  //       },
-  //     });
-  //     if (result.access_token) {
-  //       setAuthToken(result.access_token);
-  //       localStorage.setItem("access_token", result.access_token);
-  //       setCurrentUser(result.user);
-  //       setPermissions(permissionsConfig[result.user.role] || {});
-  //       toast.success("Logged in Successfully!");
-  //       // navigate("/dashboard");
-  //     } else {
-  //       toast.error(result.error || "Login failed");
-  //     }
-  //   } catch (error) {
-  //     toast.error(`Failed to log in: ${error.message}`);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-// In UserContext.jsx
+ 
+//login User
 const loginUser = async (email, password, role) => {
   setLoading(true);
   fetch(`${server_url}/login`, {
@@ -173,7 +147,8 @@ const loginUser = async (email, password, role) => {
       setAuthToken(data.access_token);
       localStorage.setItem('access_token', data.access_token);
       setCurrentUser(data.user);
-      setPermissions(permissionsConfig[data.user.role] || {});
+      //setPermissions(permissionsConfig[data.user.role] || {});
+      setPermissions(permissionsConfig[data.is_admin ? 'admin' : (data.is_student ? 'student' : 'instructor')] || {});
       toast.success('Logged in Successfully!');
       console.log('Logged in Successfully!');
       navigate('/dashboard');
@@ -182,32 +157,9 @@ const loginUser = async (email, password, role) => {
     }
   })
 
-  // try {
-  //   const response = await fetch(`${server_url}/login`, {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify({ email, password, role }),
-  //   });
 
-  //   if (response.ok) {
-  //     const result = await response.json();
-  //     setAuthToken(result.access_token);
-  //     localStorage.setItem('access_token', result.access_token);
-  //     setCurrentUser(result.user);
-  //     setPermissions(permissionsConfig[result.user.role] || {});
-  //     toast.success('Logged in Successfully!');
-  //   } else {
-  //     const error = await response.json();
-  //     throw new Error(error.message || 'Login failed');
-  //   }
-  // } catch (error) {
-  //   toast.error(`Failed to log in: ${error.message}`);
-  // } finally {
-  //   setLoading(false);
-  // }
 };
+
 
   // Log out a user
   const handleLogout = async () => {

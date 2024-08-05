@@ -90,9 +90,9 @@ export default function Login() {
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
                   required
                 >
-                  <option value="student">Student</option>
-                  <option value="instructor">Instructor</option>
-                  <option value="admin">Admin</option>
+                  <option value="student">student</option>
+                  <option value="instructor">instructor</option>
+                  <option value="admin">admin</option>
                 </select>
               </div>
               <button 

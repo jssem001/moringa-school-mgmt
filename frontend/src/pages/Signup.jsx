@@ -15,9 +15,17 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const [name, setName] = useState("");
-  // const [profile_image, setProfileImage] = useState("");
   const [phone_number, setPhone_number] = useState("");
   const [role, setRole] = useState("student");
+  const [is_student, setIsStudent] = useState(true);
+  const [is_instructor, setIsInstructor] = useState(false);
+  const [is_admin, setIsAdmin] = useState(false);
+
+  function handleRoleChange(role) {
+    setIsStudent(role === "student");
+    setIsInstructor(role === "instructor");
+    setIsAdmin(role === "admin");
+  }
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -28,16 +36,17 @@ export default function Signup() {
       return;
     }
 
-    register_user(name, email, phone_number, role, password)
+    register_user(name, email, phone_number, role, is_student, is_instructor, is_admin, password)
     
 
     setEmail("");
     setPassword("");
     setRepeatPassword("");
-    // setProfileImage("");
     setName("");
     setPhone_number("");
     setRole("student");
+
+    handleRoleChange("student");
   }
 
   return (
@@ -107,17 +116,6 @@ export default function Signup() {
                   required 
                 />
               </div>
-              {/* <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Profile Image URL</label>
-                <input 
-                  type="url" 
-                  value={profile_image || ""} 
-                  onChange={(e) => setProfileImage(e.target.value)} 
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
-                  placeholder="https://example.com/image.jpg" 
-                  // required 
-                />
-              </div> */}
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">Phone Number</label>
                 <input 
@@ -133,12 +131,16 @@ export default function Signup() {
                 <label className="block text-sm font-medium text-gray-700">Role</label>
                 <select 
                   value={role}
-                  onChange={(e) => setRole(e.target.value)} 
+                  onChange={(e) => {
+                    setRole(e.target.value);
+                    handleRoleChange(e.target.value);
+                  }} 
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
                   required
                 >
                   <option value="student">student</option>
-                  <option value="teacher">teacher</option>
+                  <option value="instructor">instructor</option>
+                  <option value="admin">admin</option>
                 </select>
               </div>
               <button 
