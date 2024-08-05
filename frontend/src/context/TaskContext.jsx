@@ -6,6 +6,5 @@ export const TaskContext = createContext()
 export const TaskProvider = ({children}) => {
     
     const [task, setTask] = useState([])
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState(null)
+    
 }

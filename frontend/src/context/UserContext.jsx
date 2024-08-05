@@ -5,7 +5,8 @@ import { server_url } from "../../config";
 
 // Create a UserContext
 const UserContext = createContext();
-// const navigate = useNavigate();
+
+
 // Define permissions based on user roles
 const permissionsConfig = {
   admin: {
@@ -45,7 +46,7 @@ const permissionsConfig = {
 // Fetch data with retry logic
 const fetchWithRetry = async (url, options, retries = 3, delay = 1000) => {
   try {
-    const response = await fetch(url, { ...options, mode: 'no-cors' });
+    const response = await fetch(url, { ...options });
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message || 'An error occurred');
@@ -67,7 +68,8 @@ const UserProvider = ({ children }) => {
   const [permissions, setPermissions] = useState({});
   const [loading, setLoading] = useState(false);
 
-  // Fetch user data and handle authentication
+  
+  // Fetch current user data and handle authentication
   useEffect(() => {
     if (authToken) {
       setLoading(true);
@@ -93,6 +95,8 @@ const UserProvider = ({ children }) => {
     }
   }, [authToken]);
 
+
+
   // Register a new user
   const register_user =  (name, email, phoneNumber, role, is_student, is_instructor, is_admin, password) => {
     setLoading(true);
@@ -103,7 +107,7 @@ const UserProvider = ({ children }) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      // mode: 'no-cors',
+
     })
     .then((response) => response.json())
     .then((data) => {
