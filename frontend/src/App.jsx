@@ -17,9 +17,12 @@ import Dashboard from "./pages/Dashboard";
 import SingleProject from "./pages/SingleProject";
 import EditProject from "./pages/EditProject"; // Import the EditProject component
 import { UserProvider } from "./context/UserContext";
+import { ProjectProvider } from "./context/ProjectContext";
+
 
 function App() {
   return (
+    <ProjectProvider>
     <Router>
       <UserProvider>
         <Routes>
@@ -41,6 +44,7 @@ function App() {
         </Routes>
       </UserProvider>
     </Router>
+    </ProjectProvider>
   );
 }
 
