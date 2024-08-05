@@ -1,115 +1,178 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ProjectContext } from '../context/ProjectContext';
+import abstractImage from '../images/abstract-wavy.jpeg'; // Path to the abstract image
 
-export default function AddProject() {
-  const { addProject } = useContext(ProjectContext);
+const AddProject = () => {
+  const [project, setProject] = useState({
+    title: '',
+    description: '',
+    githubLink: '',
+    image: '',
+    templateLink: '',
+    additionalDetails: '',
+    startDate: '',
+    dueDate: '',
+    isTeam: false,
+    teamMembers: '',
+  });
   const navigate = useNavigate();
 
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [date, setDate] = useState('');
-  const [dueDate, setDueDate] = useState('');
-  const [status, setStatus] = useState('');
-  const [image, setImage] = useState('');
-  const [githubLink, setGithubLink] = useState('');
+  const handleChange = (e) => {
+    setProject({ ...project, [e.target.name]: e.target.value });
+  };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    addProject(title, description, date, dueDate, status, image, githubLink);
-    navigate('/projects'); // Redirect to projects list after adding
+
+    try {
+      const response = await fetch('http://localhost:5000/api/projects', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(project),
+      });
+
+      if (response.ok) {
+        navigate('/projects');
+      } else {
+        console.error('Failed to add project');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   return (
-    <div className='mt-10'>
-      <div className='grid grid-cols-2 h-[80vh] mt-6'>
-        <div className='flex justify-center'>
-          {image && (
-            <img src={image} alt='Project' className='h-[80vh] rounded-lg' />
-          )}
-        </div>
-        <div className='p-6'>
-          <h1 className='text-center font-semibold text-2xl'>Add Project</h1>
+    <div className="relative overflow-hidden p-6 max-w-3xl mx-auto">
+      {/* Back to Projects Button */}
+      <button
+        onClick={() => navigate('/projects')}
+        className="absolute top-6 left-6 px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 z-20"
+      >
+        Back to Projects
+      </button>
 
-          <form onSubmit={handleSubmit} className='max-w-md mx-auto'>
-            <label className='block mb-2'>
-              Title:
+      {/* Background Image */}
+      <div className="absolute inset-0 z-10">
+        <img
+          src={abstractImage}
+          alt="Abstract"
+          className="w-full h-full object-cover blur-lg"
+          style={{ position: 'absolute', top: 0, left: 0 }}
+        />
+        <div className="absolute inset-0 bg-black opacity-40"></div> {/* Optional overlay for better text visibility */}
+      </div>
+
+      {/* Form Container */}
+      <div className="relative flex flex-col items-center bg-white p-6 rounded shadow-lg z-20 mt-24">
+        <h2 className="text-3xl font-bold mb-4">Add New Project</h2>
+        <form onSubmit={handleSubmit} className="w-full space-y-4">
+          <input
+            type="text"
+            name="title"
+            placeholder="Project Title"
+            value={project.title}
+            onChange={handleChange}
+            className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+          <textarea
+            name="description"
+            placeholder="Project Description"
+            value={project.description}
+            onChange={handleChange}
+            className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+          <input
+            type="url"
+            name="githubLink"
+            placeholder="GitHub Link"
+            value={project.githubLink}
+            onChange={handleChange}
+            className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="url"
+            name="image"
+            placeholder="Image URL"
+            value={project.image}
+            onChange={handleChange}
+            className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="url"
+            name="templateLink"
+            placeholder="Template Link (Figma/PDF)"
+            value={project.templateLink}
+            onChange={handleChange}
+            className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <textarea
+            name="additionalDetails"
+            placeholder="Additional Details (if any)"
+            value={project.additionalDetails}
+            onChange={handleChange}
+            className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          
+          {/* Start Date and Due Date Section */}
+          <div className="grid grid-cols-1 gap-4">
+            <div className="space-y-2">
+              <label className="block text-lg font-semibold">Start Date</label>
               <input
-                type='text'
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className='border border-gray-300 p-2 w-full'
+                type="date"
+                name="startDate"
+                value={project.startDate}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
-            </label>
-            <label className='block mb-2'>
-              Description:
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className='border border-gray-300 p-2 w-full'
-                required
-              />
-            </label>
-            <label className='block mb-2'>
-              Date:
+            </div>
+            <div className="space-y-2">
+              <label className="block text-lg font-semibold">Due Date</label>
               <input
-                type='date'
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className='border border-gray-300 p-2 w-full'
+                type="date"
+                name="dueDate"
+                value={project.dueDate}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
-            </label>
-            <label className='block mb-2'>
-              Due Date:
-              <input
-                type='date'
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                className='border border-gray-300 p-2 w-full'
-                required
-              />
-            </label>
-            <label className='block mb-2'>
-              Status:
-              <input
-                type='text'
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                className='border border-gray-300 p-2 w-full'
-                required
-              />
-            </label>
-            <label className='block mb-2'>
-              Image URL:
-              <input
-                type='text'
-                value={image}
-                onChange={(e) => setImage(e.target.value)}
-                className='border border-gray-300 p-2 w-full'
-                required
-              />
-            </label>
-            <label className='block mb-2'>
-              GitHub Link:
-              <input
-                type='text'
-                value={githubLink}
-                onChange={(e) => setGithubLink(e.target.value)}
-                className='border border-gray-300 p-2 w-full'
-                required
-              />
-            </label>
-            <button
-              type='submit'
-              className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center'
-            >
-              Add Project
-            </button>
-          </form>
-        </div>
+            </div>
+          </div>
+
+          <label className="flex items-center space-x-2 mt-4">
+            <input
+              type="checkbox"
+              name="isTeam"
+              checked={project.isTeam}
+              onChange={(e) => setProject({ ...project, isTeam: e.target.checked })}
+              className="form-checkbox h-5 w-5 text-blue-600"
+            />
+            <span className="text-lg">Team Project</span>
+          </label>
+          {project.isTeam && (
+            <input
+              type="text"
+              name="teamMembers"
+              placeholder="Team Members' Emails (comma separated)"
+              value={project.teamMembers}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          )}
+          <button
+            type="submit"
+            className="w-full px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
+          >
+            Add Project
+          </button>
+        </form>
       </div>
     </div>
   );
-}
+};
+
+export default AddProject;
