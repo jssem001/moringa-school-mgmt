@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { server_url } from "../../config";
 
 // Create a UserContext
@@ -43,9 +43,9 @@ const permissionsConfig = {
 };
 
 // Fetch data with retry logic
-const fetchWithRetry = async (url, options, retries = 3) => {
+const fetchWithRetry = async (url, options, retries = 3, delay = 1000) => {
   try {
-    const response = await fetch(url, options);
+    const response = await fetch(url, { ...options, mode: 'no-cors' });
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message || 'An error occurred');
@@ -53,7 +53,7 @@ const fetchWithRetry = async (url, options, retries = 3) => {
     return await response.json();
   } catch (error) {
     if (retries > 0) {
-      return fetchWithRetry(url, options, retries - 1);
+      return fetchWithRetry(url, options, retries - 1,delay);
     }
     throw error;
   }
@@ -61,7 +61,7 @@ const fetchWithRetry = async (url, options, retries = 3) => {
 
 // Define the UserProvider component
 const UserProvider = ({ children }) => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(null);
   const [authToken, setAuthToken] = useState(() => localStorage.getItem("access_token") || null);
   const [permissions, setPermissions] = useState({});
@@ -91,136 +91,170 @@ const UserProvider = ({ children }) => {
         })
         .finally(() => setLoading(false));
     }
-  }, [authToken, navigate]);
+  }, [authToken]);
 
   // Register a new user
-  const registerUser = async (name, email, phoneNumber, role, password) => {
+  const register_user = async (name, email, phoneNumber, role, password) => {
     setLoading(true);
     try {
-      const result = await fetchWithRetry(`${server_url}/users`, {
+      const result = await fetchWithRetry(`${server_url}/user`, {
         method: 'POST',
         body: JSON.stringify({ name, email, password, phoneNumber, role }),
         headers: {
           'Content-type': 'application/json',
         },
+        mode: 'no-cors',
       });
       if (result.success) {
-        toast.success(result.success);
-        navigate("/login");
+        console.log("User registered successfully");
+        return result
       } else {
-        toast.error(result.error || "Registration failed");
+        console.error(result.error || "Registration failed");
+        throw new Error(result.error || "Registration failed");
       }
     } catch (error) {
-      toast.error(`Failed to register user: ${error.message}`);
+      console.error(`Failed to register user: ${error.message}`);
+      throw error;
     } finally {
       setLoading(false);
     }
   };
 
   // Log in a user
-  const loginUser = async (email, password) => {
+  // const loginUser = async (email, password) => {
+  //   setLoading(true);
+  //   try {
+  //     const result = await fetchWithRetry(`${server_url}/login`, {
+  //       method: 'POST',
+  //       body: JSON.stringify({ email, password }),
+  //       headers: {
+  //         'Content-type': 'application/json',
+  //       },
+  //     });
+  //     if (result.access_token) {
+  //       setAuthToken(result.access_token);
+  //       localStorage.setItem("access_token", result.access_token);
+  //       setCurrentUser(result.user);
+  //       setPermissions(permissionsConfig[result.user.role] || {});
+  //       toast.success("Logged in Successfully!");
+  //       // navigate("/dashboard");
+  //     } else {
+  //       toast.error(result.error || "Login failed");
+  //     }
+  //   } catch (error) {
+  //     toast.error(`Failed to log in: ${error.message}`);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+// In UserContext.jsx
+const loginUser = async (email, password, role) => {
+  setLoading(true);
+  try {
+    const response = await fetch(`${server_url}/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password, role }),
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      setAuthToken(result.access_token);
+      localStorage.setItem('access_token', result.access_token);
+      setCurrentUser(result.user);
+      setPermissions(permissionsConfig[result.user.role] || {});
+      toast.success('Logged in Successfully!');
+    } else {
+      const error = await response.json();
+      throw new Error(error.message || 'Login failed');
+    }
+  } catch (error) {
+    toast.error(`Failed to log in: ${error.message}`);
+  } finally {
+    setLoading(false);
+  }
+};
+
+  // Log out a user
+  const handleLogout = async () => {
     setLoading(true);
     try {
-      const result = await fetchWithRetry(`${server_url}/login`, {
-        method: 'POST',
-        body: JSON.stringify({ email, password }),
+      const result = await fetchWithRetry(`${server_url}/logout`, {
+        method: 'DELETE',
         headers: {
           'Content-type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
         },
       });
-      if (result.access_token) {
-        setAuthToken(result.access_token);
-        localStorage.setItem("access_token", result.access_token);
-        toast.success("Logged in Successfully!");
-        navigate("/dashboard");
+      if (result.success) {
+        localStorage.removeItem("access_token");
+        setCurrentUser(null);
+        setAuthToken(null);
+        toast.success(result.success);
+        // navigate("/login");
       } else {
-        toast.error(result.error || "Login failed");
+        toast.error(result.error || "Logout failed");
       }
     } catch (error) {
-      toast.error(`Failed to log in: ${error.message}`);
+      toast.error(`Failed to log out: ${error.message}`);
     } finally {
       setLoading(false);
     }
   };
 
-  // // Log out a user
-  // const handleLogout = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const result = await fetchWithRetry(`${server_url}/logout`, {
-  //       method: 'DELETE',
-  //       headers: {
-  //         'Content-type': 'application/json',
-  //         'Authorization': `Bearer ${authToken}`,
-  //       },
-  //     });
-  //     if (result.success) {
-  //       localStorage.removeItem("access_token");
-  //       setCurrentUser(null);
-  //       setAuthToken(null);
-  //       toast.success(result.success);
-  //       navigate("/login");
-  //     } else {
-  //       toast.error(result.error || "Logout failed");
-  //     }
-  //   } catch (error) {
-  //     toast.error(`Failed to log out: ${error.message}`);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  // Update user profile
+  const updateUser = async (name, phoneNumber, profileImage, password) => {
+    setLoading(true);
+    try {
+      const result = await fetchWithRetry(`${server_url}/user`, {
+        method: 'PUT',
+        body: JSON.stringify({ name, phoneNumber, profileImage, password }),
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+        },
+      });
+      if (result.success) {
+        toast.success(result.success);
+        setCurrentUser({ ...currentUser, name, phoneNumber, profileImage });
+      } else {
+        toast.error(result.error || "Update failed");
+      }
+    } catch (error) {
+      toast.error(`Failed to update user: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // // Update user profile
-  // const updateUser = async (name, phoneNumber, profileImage, password) => {
-  //   setLoading(true);
-  //   try {
-  //     const result = await fetchWithRetry(`${server_url}/users`, {
-  //       method: 'PUT',
-  //       body: JSON.stringify({ name, phoneNumber, profileImage, password }),
-  //       headers: {
-  //         'Content-type': 'application/json',
-  //         'Authorization': `Bearer ${authToken}`,
-  //       },
-  //     });
-  //     if (result.success) {
-  //       toast.success(result.success);
-  //       setCurrentUser({ ...currentUser, name, phoneNumber, profileImage });
-  //     } else {
-  //       toast.error(result.error || "Update failed");
-  //     }
-  //   } catch (error) {
-  //     toast.error(`Failed to update user: ${error.message}`);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  // // Delete a user
-  // const deleteUser = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const result = await fetchWithRetry(`${server_url}/users/${currentUser.id}`, {
-  //       method: 'DELETE',
-  //       headers: {
-  //         'Content-type': 'application/json',
-  //         'Authorization': `Bearer ${authToken}`,
-  //       },
-  //     });
-  //     if (result.success) {
-  //       localStorage.removeItem("access_token");
-  //       setCurrentUser(null);
-  //       setAuthToken(null);
-  //       toast.success(result.success);
-  //       navigate("/login");
-  //     } else {
-  //       toast.error(result.error || "Deletion failed");
-  //     }
-  //   } catch (error) {
-  //     toast.error(`Failed to delete user: ${error.message}`);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  // Delete a user
+  const deleteUser = async () => {
+    setLoading(true);
+    try {
+      const result = await fetchWithRetry(`${server_url}/user/${currentUser.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+        },
+      });
+      if (result.success) {
+        localStorage.removeItem("access_token");
+        setCurrentUser(null);
+        setAuthToken(null);
+        toast.success(result.success);
+        // navigate("/login");
+      } else {
+        toast.error(result.error || "Deletion failed");
+      }
+    } catch (error) {
+      toast.error(`Failed to delete user: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Provide context values
   const contextData = {
@@ -228,7 +262,7 @@ const UserProvider = ({ children }) => {
     currentUser,
     permissions,
     loading,
-    registerUser,
+    register_user,
     loginUser,
     updateUser,
     logout: handleLogout,
