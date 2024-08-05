@@ -1,11 +1,11 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { server_url } from "../../config";
 
 // Create a UserContext
 const UserContext = createContext();
-
+// const navigate = useNavigate();
 // Define permissions based on user roles
 const permissionsConfig = {
   admin: {
@@ -61,7 +61,7 @@ const fetchWithRetry = async (url, options, retries = 3, delay = 1000) => {
 
 // Define the UserProvider component
 const UserProvider = ({ children }) => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(null);
   const [authToken, setAuthToken] = useState(() => localStorage.getItem("access_token") || null);
   const [permissions, setPermissions] = useState({});
@@ -94,30 +94,40 @@ const UserProvider = ({ children }) => {
   }, [authToken]);
 
   // Register a new user
-  const register_user = async (name, email, phoneNumber, role, password) => {
+  const register_user =  (name, email, phoneNumber, role, password) => {
     setLoading(true);
-    try {
-      const result = await fetchWithRetry(`${server_url}/user`, {
-        method: 'POST',
-        body: JSON.stringify({ name, email, password, phoneNumber, role }),
-        headers: {
-          'Content-type': 'application/json',
-        },
-        mode: 'no-cors',
-      });
-      if (result.success) {
-        console.log("User registered successfully");
-        return result
+    console.log(name,email,password,phoneNumber,role)
+    fetch(`${server_url}/user`, {
+      method: 'POST',
+      body: JSON.stringify({ name, email, password, phoneNumber, role }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      // mode: 'no-cors',
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("test")
+      console.log(data)
+      if (data.success) {
+        toast.success("Registered successfully!");
+        console.log("Registered successfully!");
+        navigate("/login"); // Navigate after successful registration
+        // console.log("User registered successfully");
+        return data
       } else {
-        console.error(result.error || "Registration failed");
-        throw new Error(result.error || "Registration failed");
+        console.error(data.error || "Registration failed");
+        throw new Error(data.error || "Registration failed");
       }
-    } catch (error) {
+    })
+    .catch((error) => {
       console.error(`Failed to register user: ${error.message}`);
       throw error;
-    } finally {
+    })
+    .finally(() => {
       setLoading(false);
-    }
+    })
+ 
   };
 
   // Log in a user
@@ -150,31 +160,53 @@ const UserProvider = ({ children }) => {
 // In UserContext.jsx
 const loginUser = async (email, password, role) => {
   setLoading(true);
-  try {
-    const response = await fetch(`${server_url}/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password, role }),
-    });
-
-    if (response.ok) {
-      const result = await response.json();
-      setAuthToken(result.access_token);
-      localStorage.setItem('access_token', result.access_token);
-      setCurrentUser(result.user);
-      setPermissions(permissionsConfig[result.user.role] || {});
+  fetch(`${server_url}/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email, password, role }),
+  })
+  .then((response) => response.json())
+  .then((data) => {
+    if (data.access_token) {
+      setAuthToken(data.access_token);
+      localStorage.setItem('access_token', data.access_token);
+      setCurrentUser(data.user);
+      setPermissions(permissionsConfig[data.user.role] || {});
       toast.success('Logged in Successfully!');
+      console.log('Logged in Successfully!');
+      navigate('/dashboard');
     } else {
-      const error = await response.json();
-      throw new Error(error.message || 'Login failed');
+      toast.error(data.error || 'Login failed');
     }
-  } catch (error) {
-    toast.error(`Failed to log in: ${error.message}`);
-  } finally {
-    setLoading(false);
-  }
+  })
+
+  // try {
+  //   const response = await fetch(`${server_url}/login`, {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify({ email, password, role }),
+  //   });
+
+  //   if (response.ok) {
+  //     const result = await response.json();
+  //     setAuthToken(result.access_token);
+  //     localStorage.setItem('access_token', result.access_token);
+  //     setCurrentUser(result.user);
+  //     setPermissions(permissionsConfig[result.user.role] || {});
+  //     toast.success('Logged in Successfully!');
+  //   } else {
+  //     const error = await response.json();
+  //     throw new Error(error.message || 'Login failed');
+  //   }
+  // } catch (error) {
+  //   toast.error(`Failed to log in: ${error.message}`);
+  // } finally {
+  //   setLoading(false);
+  // }
 };
 
   // Log out a user

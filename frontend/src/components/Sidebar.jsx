@@ -15,19 +15,19 @@ const Sidebar = () => {
                 </div>
                 <ul class="space-y-2 font-semibold">
                     <li>
-                        <div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
-                            <Link to='/'><span class="ms-3">Home</span></Link>
-                        </div>
+                        <Link to='/'><div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
+                            <span class="ms-3">Home</span>
+                        </div></Link>
                     </li>
                     <li>
-                        <div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
+                        <Link to="/projects"><div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
                             <span class="flex-1 ms-3 whitespace-nowrap">Projects</span>
-                        </div>
+                        </div></Link>
                     </li>
                     <li>
-                        <div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
+                        <Link to="/tasks"><div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
                             <span class="flex-1 ms-3 whitespace-nowrap">Tasks</span>
-                        </div>
+                        </div></Link>
                     </li>
                     <li>
                         <div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
@@ -40,14 +40,19 @@ const Sidebar = () => {
                         </div>
                     </li>
                     <li>
-                        <div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
-                            <Link to="/dashboard"><span class="flex-1 ms-3 whitespace-nowrap">Dashboard</span></Link>
-                        </div>
+                        <Link to="/dashboard"><div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
+                            <span class="flex-1 ms-3 whitespace-nowrap">Dashboard</span>
+                        </div></Link>
                     </li>
+                </ul>
+                <ul class=" mt-[185px] space-y-2 font-semibold">
                     <li>
-                        <div class="flex items-center p-2 text-black rounded-lg hover:text-white hover:bg-red-700 group">
+                        <Link to="/studentprofile"><div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
+                            <span class="flex-1 ms-3 whitespace-nowrap">User Profile</span>
+                        </div></Link>
+                        <Link to="/login"><div class="flex items-center p-2 text-black rounded-lg hover:text-white hover:bg-red-700 group">
                             <span class="flex-1 ms-3 whitespace-nowrap">Sign Out</span>
-                        </div>
+                        </div></Link>
                     </li>
                 </ul>
             </div>

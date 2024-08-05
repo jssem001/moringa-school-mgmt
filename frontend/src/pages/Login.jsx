@@ -9,7 +9,7 @@ import { UserContext } from '../context/UserContext';
 
 export default function Login() {
   const { loginUser } = useContext(UserContext);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,14 +19,9 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    try {
-      await loginUser(email, password, role);
-      navigate('/studentprofile'); // Changed navigation to /studentprofile
-    } catch (error) {
-      toast.error(`Login failed: ${error.message}`);
-    } finally {
-      setLoading(false);
-    }
+
+    loginUser(email, password, role);
+    
   };
 
   return (
