@@ -96,21 +96,41 @@ const UserProvider = ({ children }) => {
   }, [authToken]);
 
   //All Users
-  const fetchUsers = async () => {
+  // const fetchUsers = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const result = await fetchWithRetry(`${server_url}/users`, {
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': `Bearer ${authToken}`,
+  //       },
+  //     });
+  //     setAllUsers(result);  // fetched users
+  //   } catch (error) {
+  //     toast.error(`Failed to fetch users: ${error.message}`);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  //All Users
+  const fetchUsers= async () => {
     setLoading(true);
-    try {
-      const result = await fetchWithRetry(`${server_url}/users`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`,
-        },
-      });
-      setAllUsers(result);  // fetched users
-    } catch (error) {
+    fetch(`${server_url}/users`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        // 'Authorization': `Bearer ${authToken}`,
+      },
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      setAllUsers(data);  // fetched users
+    })
+    .catch((error) => {
       toast.error(`Failed to fetch users: ${error.message}`);
-    } finally {
-      setLoading(false);
-    }
+    })
+    .finally(() => setLoading(false));
   };
 
 
