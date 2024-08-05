@@ -115,12 +115,12 @@ const UserProvider = ({ children }) => {
 
   //All Users
   const fetchUsers= async () => {
-    setLoading(true);
+    setLoading(false);
     fetch(`${server_url}/users`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        // 'Authorization': `Bearer ${authToken}`,
+        'Authorization': `Bearer ${authToken}`,
       },
     })
     .then((response) => response.json())
