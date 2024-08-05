@@ -29,16 +29,16 @@ export default function Signup() {
     }
 
     register_user(name, email, phone_number, role, password)
-      .then(() => {
-        toast.success("Registered successfully!");
-        console.log("Registered successfully!");
-        navigate("/login"); // Navigate after successful registration
-      })
-      .catch((error) => {
-        toast.error("Registration failed");
-        console.log("Registration failed:", error);
-        navigate("/login") //debuggin purposes
-      });
+      // .then(() => {
+      //   toast.success("Registered successfully!");
+      //   console.log("Registered successfully!");
+      //   navigate("/login"); // Navigate after successful registration
+      // })
+      // .catch((error) => {
+      //   toast.error("Registration failed");
+      //   console.log("Registration failed:", error);
+      //   navigate("/login") //debuggin purposes
+      // });
 
     setEmail("");
     setPassword("");

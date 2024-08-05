@@ -1,11 +1,11 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { server_url } from "../../config";
 
 // Create a UserContext
 const UserContext = createContext();
-
+// const navigate = useNavigate();
 // Define permissions based on user roles
 const permissionsConfig = {
   admin: {
@@ -61,7 +61,7 @@ const fetchWithRetry = async (url, options, retries = 3, delay = 1000) => {
 
 // Define the UserProvider component
 const UserProvider = ({ children }) => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(null);
   const [authToken, setAuthToken] = useState(() => localStorage.getItem("access_token") || null);
   const [permissions, setPermissions] = useState({});
@@ -94,30 +94,69 @@ const UserProvider = ({ children }) => {
   }, [authToken]);
 
   // Register a new user
-  const register_user = async (name, email, phoneNumber, role, password) => {
+  const register_user =  (name, email, phoneNumber, role, password) => {
     setLoading(true);
-    try {
-      const result = await fetchWithRetry(`${server_url}/user`, {
-        method: 'POST',
-        body: JSON.stringify({ name, email, password, phoneNumber, role }),
-        headers: {
-          'Content-type': 'application/json',
-        },
-        mode: 'no-cors',
-      });
-      if (result.success) {
-        console.log("User registered successfully");
-        return result
+    console.log(name,email,password,phoneNumber,role)
+    fetch(`${server_url}/user`, {
+      method: 'POST',
+      body: JSON.stringify({ name, email, password, phoneNumber, role }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      // mode: 'no-cors',
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("test")
+      console.log(data)
+      if (data.success) {
+        toast.success("Registered successfully!");
+        console.log("Registered successfully!");
+        navigate("/login"); // Navigate after successful registration
+        // console.log("User registered successfully");
+        return data
       } else {
-        console.error(result.error || "Registration failed");
-        throw new Error(result.error || "Registration failed");
+        console.error(data.error || "Registration failed");
+        throw new Error(data.error || "Registration failed");
       }
-    } catch (error) {
+    })
+    .catch((error) => {
       console.error(`Failed to register user: ${error.message}`);
       throw error;
-    } finally {
+    })
+    .finally(() => {
       setLoading(false);
-    }
+    })
+
+
+
+
+    // try {
+    //   const result = await fetchWithRetry(`${server_url}/user`, {
+    //     method: 'POST',
+    //     body: JSON.stringify({ name, email, password, phoneNumber, role }),
+    //     headers: {
+    //       'Content-type': 'application/json',
+    //     },
+    //     mode: 'no-cors',
+    //   });
+    //   console.log(result)
+    //   if (result.success) {
+    //     toast.success("Registered successfully!");
+    //     console.log("Registered successfully!");
+    //     navigate("/login"); // Navigate after successful registration
+    //     // console.log("User registered successfully");
+    //     return result
+    //   } else {
+    //     console.error(result.error || "Registration failed");
+    //     throw new Error(result.error || "Registration failed");
+    //   }
+    // } catch (error) {
+    //   console.error(`Failed to register user: ${error.message}`);
+    //   throw error;
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   // Log in a user
