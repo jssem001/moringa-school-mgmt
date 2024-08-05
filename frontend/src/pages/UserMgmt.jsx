@@ -1,29 +1,23 @@
-import React, { useContext,useState, useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { Link } from 'react-router-dom'
 import Sidebar from "../components/Sidebar";
-//import {server_url} from "../config";
+import { UserContext } from "../context/UserContext";
 
 const UserMgmt = () => {
-     //Fetch all users
-     const [allUsers, setAllUsers] = useState([]);
-     const [loading, setLoading] = useState(true);
- 
-     useEffect(() => {
-         const fetchUsers = async () => {
-             try {
-                 const response = await fetch(`http://127.0.0.1:5000/api/user`);
-                 const data = await response.json();
-                 setAllUsers(data);
-                 setLoading(false);
-             } catch (error) {
-                 console.error("Error fetching users:", error);
-                 setLoading(false);
-             }
-         };
- 
-         fetchUsers();
-     }, []);
+    //Fetch all users
+    const {allUsers,fetchUsers, loading} = useContext(UserContext);
 
+    useEffect(() => {
+       fetchUsers();  
+    }, [fetchUsers]);
+     
+    // const role = currentUser.is_admin ? "Admin" : currentUser.is_instructor ? "Instructor" : "Student";
+    const getUserRole = (user) => {
+        if (user.is_admin) return "Admin";
+        if (user.is_instructor) return "Instructor";
+        if (user.is_student) return "Student";
+        return "Unknown";
+    }; 
 
     return (
        <> 
@@ -65,7 +59,7 @@ const UserMgmt = () => {
                                         {user.email}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {user.role}
+                                        {getUserRole(user)}
                                     </td>
                                     <td className="px-6 py-4">
                                         {user.status || '-'}

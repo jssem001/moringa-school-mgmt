@@ -67,7 +67,7 @@ const UserProvider = ({ children }) => {
   const [authToken, setAuthToken] = useState(() => localStorage.getItem("access_token") || null);
   const [permissions, setPermissions] = useState({});
   const [loading, setLoading] = useState(false);
-
+  const [allUsers, setAllUsers] = useState([]);
   
   // Fetch current user data and handle authentication
   useEffect(() => {
@@ -95,6 +95,23 @@ const UserProvider = ({ children }) => {
     }
   }, [authToken]);
 
+  //All Users
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const result = await fetchWithRetry(`${server_url}/users`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+        },
+      });
+      setAllUsers(result);  // fetched users
+    } catch (error) {
+      toast.error(`Failed to fetch users: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   // Register a new user
@@ -250,6 +267,8 @@ const loginUser = async (email, password, role) => {
     currentUser,
     permissions,
     loading,
+    allUsers,
+    fetchUsers,
     register_user,
     loginUser,
     updateUser,
