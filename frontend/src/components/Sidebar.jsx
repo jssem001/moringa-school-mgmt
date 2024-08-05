@@ -5,7 +5,7 @@ import { UserContext } from "../context/UserContext";
 
 const Sidebar = () => {
     //User profile link on sidebar should navigate to a different page depending on user type
-    const {currentUser} = useContext(UserContext);
+    const {currentUser, logout} = useContext(UserContext);
 
     let profileLink = "/studentprofile";
     if (currentUser) {
@@ -63,9 +63,12 @@ const Sidebar = () => {
                         <Link to={profileLink}><div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
                             <span class="flex-1 ms-3 whitespace-nowrap">User Profile</span>
                         </div></Link>
-                        <Link to="/login"><div class="flex items-center p-2 text-black rounded-lg hover:text-white hover:bg-red-700 group">
+                        {/* <Link to="/login"><div class="flex items-center p-2 text-black rounded-lg hover:text-white hover:bg-red-700 group">
                             <span class="flex-1 ms-3 whitespace-nowrap">Sign Out</span>
-                        </div></Link>
+                        </div></Link> */}
+                        <div onClick={logout} class="flex items-center p-2 text-black rounded-lg hover:text-white hover:bg-red-700 group">
+                            <span class="flex-1 ms-3 whitespace-nowrap">Sign Out</span>
+                        </div>
                     </li>
                 </ul>
             </div>

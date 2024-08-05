@@ -181,7 +181,7 @@ const loginUser = async (email, password, role) => {
         setCurrentUser(null);
         setAuthToken(null);
         toast.success(result.success);
-        // navigate("/login");
+        navigate("/login");
       } else {
         toast.error(result.error || "Logout failed");
       }
