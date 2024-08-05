@@ -127,36 +127,7 @@ const UserProvider = ({ children }) => {
     .finally(() => {
       setLoading(false);
     })
-
-
-
-
-    // try {
-    //   const result = await fetchWithRetry(`${server_url}/user`, {
-    //     method: 'POST',
-    //     body: JSON.stringify({ name, email, password, phoneNumber, role }),
-    //     headers: {
-    //       'Content-type': 'application/json',
-    //     },
-    //     mode: 'no-cors',
-    //   });
-    //   console.log(result)
-    //   if (result.success) {
-    //     toast.success("Registered successfully!");
-    //     console.log("Registered successfully!");
-    //     navigate("/login"); // Navigate after successful registration
-    //     // console.log("User registered successfully");
-    //     return result
-    //   } else {
-    //     console.error(result.error || "Registration failed");
-    //     throw new Error(result.error || "Registration failed");
-    //   }
-    // } catch (error) {
-    //   console.error(`Failed to register user: ${error.message}`);
-    //   throw error;
-    // } finally {
-    //   setLoading(false);
-    // }
+ 
   };
 
   // Log in a user
@@ -189,31 +160,53 @@ const UserProvider = ({ children }) => {
 // In UserContext.jsx
 const loginUser = async (email, password, role) => {
   setLoading(true);
-  try {
-    const response = await fetch(`${server_url}/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password, role }),
-    });
-
-    if (response.ok) {
-      const result = await response.json();
-      setAuthToken(result.access_token);
-      localStorage.setItem('access_token', result.access_token);
-      setCurrentUser(result.user);
-      setPermissions(permissionsConfig[result.user.role] || {});
+  fetch(`${server_url}/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email, password, role }),
+  })
+  .then((response) => response.json())
+  .then((data) => {
+    if (data.access_token) {
+      setAuthToken(data.access_token);
+      localStorage.setItem('access_token', data.access_token);
+      setCurrentUser(data.user);
+      setPermissions(permissionsConfig[data.user.role] || {});
       toast.success('Logged in Successfully!');
+      console.log('Logged in Successfully!');
+      navigate('/dashboard');
     } else {
-      const error = await response.json();
-      throw new Error(error.message || 'Login failed');
+      toast.error(data.error || 'Login failed');
     }
-  } catch (error) {
-    toast.error(`Failed to log in: ${error.message}`);
-  } finally {
-    setLoading(false);
-  }
+  })
+
+  // try {
+  //   const response = await fetch(`${server_url}/login`, {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify({ email, password, role }),
+  //   });
+
+  //   if (response.ok) {
+  //     const result = await response.json();
+  //     setAuthToken(result.access_token);
+  //     localStorage.setItem('access_token', result.access_token);
+  //     setCurrentUser(result.user);
+  //     setPermissions(permissionsConfig[result.user.role] || {});
+  //     toast.success('Logged in Successfully!');
+  //   } else {
+  //     const error = await response.json();
+  //     throw new Error(error.message || 'Login failed');
+  //   }
+  // } catch (error) {
+  //   toast.error(`Failed to log in: ${error.message}`);
+  // } finally {
+  //   setLoading(false);
+  // }
 };
 
   // Log out a user

@@ -5,8 +5,13 @@ import Sidebar from "../components/Sidebar";
 
 const StudentProfile = () => {
   return (
+
+// Fetch function
+
     <>
    
+
+
       <Sidebar />
       
       <div className="p-4 sm:ml-64">
