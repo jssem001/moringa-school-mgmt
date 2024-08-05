@@ -61,6 +61,9 @@ const SingleProject = () => {
               <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
                 View Reports & Analytics
               </button>
+              <Link to={`/edit-project/${projectId}`} className="inline-block px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition duration-300 mt-4">
+                Edit Project
+              </Link>
             </div>
           </div>
 

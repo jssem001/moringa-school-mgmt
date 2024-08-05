@@ -14,7 +14,8 @@ import AddProject from "./pages/AddProject";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import UserMgmt from "./pages/UserMgmt";
 import Dashboard from "./pages/Dashboard";
-import SingleProject from "./pages/SingleProject"; // Import the SingleProject component
+import SingleProject from "./pages/SingleProject";
+import EditProject from "./pages/EditProject"; // Import the EditProject component
 import { UserProvider } from "./context/UserContext";
 
 function App() {
@@ -31,7 +32,8 @@ function App() {
           <Route path="/projects" element={<Projects />} />
           <Route path="/tasks" element={<Task />} />
           <Route path="/add-project" element={<AddProject />} />
-          <Route path="/projects/:projectId" element={<SingleProject />} /> {/* Add this route */}
+          <Route path="/projects/:projectId" element={<SingleProject />} /> {/* View single project */}
+          <Route path="/edit-project/:projectId" element={<EditProject />} /> {/* Edit project */}
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/analytics" element={<AnalyticsPage />} />
           <Route path="/usermgmt" element={<UserMgmt />} />
