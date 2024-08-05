@@ -50,9 +50,9 @@ const Sidebar = () => {
                         <Link to="/studentprofile"><div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
                             <span class="flex-1 ms-3 whitespace-nowrap">User Profile</span>
                         </div></Link>
-                        <div class="flex items-center p-2 text-black rounded-lg hover:text-white hover:bg-red-700 group">
+                        <Link to="/login"><div class="flex items-center p-2 text-black rounded-lg hover:text-white hover:bg-red-700 group">
                             <span class="flex-1 ms-3 whitespace-nowrap">Sign Out</span>
-                        </div>
+                        </div></Link>
                     </li>
                 </ul>
             </div>
