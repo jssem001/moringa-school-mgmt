@@ -1,8 +1,21 @@
-import React from "react";
+import React, {useContext} from "react";
 import logo from '../images/MoringaLogo.png'
 import { Link } from 'react-router-dom'
+import { UserContext } from "../context/UserContext";
 
 const Sidebar = () => {
+    //User profile link on sidebar should navigate to a different page depending on user type
+    const {currentUser} = useContext(UserContext);
+
+    let profileLink = "/studentprofile";
+    if (currentUser) {
+        if (currentUser.is_admin) {
+        profileLink = "/adminprofile";
+        } else if (currentUser.is_instructor) {
+        profileLink = "/instructorprofile";
+        }
+    }
+
     return (
         <>
             <aside id="logo-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
@@ -47,7 +60,7 @@ const Sidebar = () => {
                 </ul>
                 <ul class=" mt-[185px] space-y-2 font-semibold">
                     <li>
-                        <Link to="/studentprofile"><div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
+                        <Link to={profileLink}><div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
                             <span class="flex-1 ms-3 whitespace-nowrap">User Profile</span>
                         </div></Link>
                         <Link to="/login"><div class="flex items-center p-2 text-black rounded-lg hover:text-white hover:bg-red-700 group">
