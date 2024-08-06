@@ -164,6 +164,104 @@ def delete_user(id):
     return jsonify({"message": "User deleted successfully"}), 200
 
 
+#CRUD FOR PROJECTS
+
+#1. ADDING A PROJECT
+@app.route('/project', methods=['POST'])
+@jwt_required()
+def create_event():
+    current_user_id = get_jwt_identity()
+
+    current_user = User.query.get(current_user_id)
+
+    if current_user:
+       data = request.get_json()
+       new_event = Project(
+          name=data['name'],
+          description=data['description'],
+          deadline=data['deadline'],
+          file_attachments=data['file_attachments'],
+          user_id=current_user_id
+    )
+    db.session.add(new_event)
+    db.session.commit()
+    return jsonify({"success": "Project created successfully"}), 201
+
+
+#2. GETTING ALL PROJECTS BY THE USER
+@app.route('/project', methods=['GET'])
+@jwt_required()
+def get_projects():
+    current_user_id = get_jwt_identity()
+
+    user = User.query.get(current_user_id)
+
+    if user is None:
+        return jsonify({"message": "You are not authorized to access this resource"}), 404
+    
+    projects = Project.query.filter_by(user_id=current_user_id).all()
+    project_data = []
+    for project in projects:
+        project_data.append({
+            "id": project.id,
+            "name": project.name,
+            "description": project.description,
+            "deadline": project.deadline,
+            "file_attachments": project.file_attachments
+        })
+    return jsonify(project_data), 200
+
+
+#3. VIEWING PROJECT DETAILS
+@app.route('/project/<int:id>', methods=['GET'])
+def get_project(id):
+    project = Project.query.get(id)
+    if project is None:
+        return jsonify({"message": "Project not found"}), 404
+    project_data = {
+        "id": project.id,
+        "name": project.name,
+        "description": project.description,
+        "deadline": project.deadline,
+        "file_attachments": project.file_attachments
+    }
+    return jsonify(project_data), 200
+
+#4. EDITING DETAILS OF A PROJECT
+@app.route('/project/<int:id>', methods=['PUT'])
+@jwt_required()
+def update_project(id):
+    data = request.get_json()
+
+    project = Project.query.get(id)
+
+    if project is None:
+        return jsonify({"message": "Project not found"}), 404
+
+    current_user_id = get_jwt_identity()
+    if project.user_id != current_user_id:
+        return jsonify({"message": "You are not authorized to access this resource"}), 404
+    
+    project.name = data.get('name', project.name)
+    project.description = data.get('description', project.description)
+    project.deadline = data.get('deadline', project.deadline)
+    project.file_attachments = data.get('file_attachments', project.file_attachments)
+    db.session.commit()
+    return jsonify({"success": "Project updated successfully"}), 200
+
+#5. DELETING A PROJECT
+@app.route('/project/<int:id>', methods=['DELETE'])
+@jwt_required()
+def delete_project(id):
+    project = Project.query.get(id)
+    if project is None:
+        return jsonify({"message": "Project not found"}), 404
+    db.session.delete(project)
+    db.session.commit()
+    return jsonify({"message": "Project deleted successfully"}), 200
+
+
+
 #CRUD FOR TASK
 
 
