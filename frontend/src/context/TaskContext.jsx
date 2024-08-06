@@ -78,17 +78,6 @@ export const TaskProvider = ({ children }) => {
     setDoneTasks([]);
     }
 
-//   const clearDoneTasks = () => {
-//     fetch(`${server_url}/tasks`, {
-//       method: 'DELETE',
-//     })
-//       .then(response => response.json())
-//       .then(data => {
-//         setDoneTasks([]);
-//         setTasks([...data]);
-//       })
-//       .catch(error => console.error('Failed to clear done tasks:', error));
-//   };
 
 
 
