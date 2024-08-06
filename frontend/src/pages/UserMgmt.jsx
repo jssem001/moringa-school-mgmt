@@ -41,9 +41,9 @@ const UserMgmt = () => {
                                 <th scope="col" className="px-6 py-3">
                                     Role
                                 </th>
-                                <th scope="col" className="px-6 py-3">
+                                {/* <th scope="col" className="px-6 py-3">
                                     Status
-                                </th>
+                                </th> */}
                                 <th scope="col" className="px-6 py-3">
                                     <span className="sr-only">Edit</span>
                                 </th>
@@ -61,9 +61,9 @@ const UserMgmt = () => {
                                     <td className="px-6 py-4">
                                         {getUserRole(user)}
                                     </td>
-                                    <td className="px-6 py-4">
+                                    {/* <td className="px-6 py-4">
                                         {user.status || '-'}
-                                    </td>
+                                    </td> */}
                                     <td className="px-6 py-4 text-right">
                                         <Link to={`/edit-user/${user.id}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</Link>
                                     </td>
