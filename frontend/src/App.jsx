@@ -9,16 +9,20 @@ import StudentProfile from "./pages/StudentProfile";
 import InstructorProfile from "./pages/InstructorProfile";
 import AdminProfile from "./pages/AdminProfile";
 import Projects from "./pages/Projects";
-import Task from "./pages/Task"; 
+import Task from "./pages/Task";
 import AddProject from "./pages/AddProject";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import UserMgmt from "./pages/UserMgmt";
 import Dashboard from "./pages/Dashboard";
+import SingleProject from "./pages/SingleProject";
+import EditProject from "./pages/EditProject"; // Import the EditProject component
 import { UserProvider } from "./context/UserContext";
+import { ProjectProvider } from "./context/ProjectContext";
 
 
 function App() {
   return (
+    <ProjectProvider>
     <Router>
       <UserProvider>
         <Routes>
@@ -29,15 +33,18 @@ function App() {
           <Route path="/instructorprofile" element={<InstructorProfile />} />
           <Route path="/adminprofile" element={<AdminProfile />} />
           <Route path="/projects" element={<Projects />} />
-          <Route path="/tasks" element={<Task />} /> 
+          <Route path="/tasks" element={<Task />} />
           <Route path="/add-project" element={<AddProject />} />
-          <Route path="*" element={<div>Page Not Found</div>} />
+          <Route path="/projects/:projectId" element={<SingleProject />} /> {/* View single project */}
+          <Route path="/edit-project/:projectId" element={<EditProject />} /> {/* Edit project */}
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/analytics" element={<AnalyticsPage />} />
           <Route path="/usermgmt" element={<UserMgmt />} />
+          <Route path="*" element={<div>Page Not Found</div>} />
         </Routes>
       </UserProvider>
     </Router>
+    </ProjectProvider>
   );
 }
 

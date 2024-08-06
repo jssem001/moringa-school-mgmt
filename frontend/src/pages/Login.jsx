@@ -9,7 +9,7 @@ import { UserContext } from '../context/UserContext';
 
 export default function Login() {
   const { loginUser } = useContext(UserContext);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,14 +19,9 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    try {
-      await loginUser(email, password, role);
-      navigate('/studentprofile'); // Changed navigation to /studentprofile
-    } catch (error) {
-      toast.error(`Login failed: ${error.message}`);
-    } finally {
-      setLoading(false);
-    }
+
+    loginUser(email, password, role);
+    
   };
 
   return (
@@ -83,7 +78,7 @@ export default function Login() {
                   required 
                 />
               </div>
-              <div>
+              {/* <div>
                 <label htmlFor="role" className="block mb-2 text-sm font-medium text-gray-900">
                   Role
                 </label>
@@ -95,11 +90,11 @@ export default function Login() {
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
                   required
                 >
-                  <option value="student">Student</option>
-                  <option value="instructor">Instructor</option>
-                  <option value="admin">Admin</option>
+                  <option value="student">student</option>
+                  <option value="instructor">instructor</option>
+                  <option value="admin">admin</option>
                 </select>
-              </div>
+              </div> */}
               <button 
                 type="submit" 
                 className={`w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}

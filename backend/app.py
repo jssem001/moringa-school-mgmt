@@ -9,13 +9,13 @@ from flask_cors import CORS, cross_origin
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity, get_jwt
 
 
-from models import db, User
+from models import db, User,Task
 
 bcrypt = Bcrypt()
 
 app = Flask(__name__)
 
-CORS(app, resources={r"/*": {"origins":"*"}})
+CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
 # app.config['CORS_HEADERS'] = 'Content-Type'
 
 
@@ -29,6 +29,29 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
 migrate = Migrate(app, db)
 
 db.init_app(app)
+
+#Get all Users
+@app.route("/users", methods=["GET"])
+@jwt_required()
+def get_all_users():
+    try:
+        # Fetch all users from the database
+        users = User.query.all()
+        # Serialize the user data
+        user_list = [
+            {
+                "id": user.id,
+                "name": user.name,
+                "email": user.email,
+                "is_student": user.is_student,
+                "is_admin": user.is_admin,
+                "is_instructor": user.is_instructor
+            }
+            for user in users
+        ]
+        return jsonify(user_list), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 #User Registration - OK
@@ -139,3 +162,106 @@ def delete_user(id):
     db.session.delete(user)
     db.session.commit()
     return jsonify({"message": "User deleted successfully"}), 200
+
+
+#CRUD FOR TASK
+
+
+# Create a new task
+@app.route('/tasks', methods=['POST'])
+def create_task():
+    data = request.get_json()
+    title = data.get('task_name')
+    project_id = data.get('project_id')
+    user_id = data.get('user_id')
+    # deadline = data.get('deadline')
+    status = data.get('status', 'Pending')
+
+    task = Task(
+        task_name=title,
+        project_id=project_id,
+        user_id=user_id,
+        #deadline=deadline,
+        status=status
+    )
+    db.session.add(task)
+    db.session.commit()
+
+    return jsonify({'message': 'Task created successfully'}), 201
+
+# Get all tasks
+@app.route('/tasks', methods=['GET'])
+def get_tasks():
+    try:
+        tasks = Task.query.all()
+        task_list = []
+
+        for task in tasks:
+            task_data = {
+                'id': task.id,
+                'task_name': task.task_name,
+                'project_id': task.project_id,
+                'user_id': task.user_id,
+                'deadline': task.deadline.isoformat() if task.deadline else None,
+                'status': task.status
+            }
+            task_list.append(task_data)
+
+        return jsonify(task_list), 200
+    except Exception as e:
+        return jsonify({'message': 'Failed to fetch tasks', 'error': str(e)}), 500
+
+# Get single task
+@app.route('/tasks/<int:id>', methods=['GET'])
+def get_task(id):
+    task = Task.query.get_or_404(id)
+    if not task:
+        return jsonify({'message': 'Task not found'}), 404
+    
+    task_data = {
+        'id': task.id,
+        'task_name': task.task_name,
+        'project_id': task.project_id,
+        'user_id': task.user_id,
+        'deadline': task.deadline.isoformat() if task.deadline else None,
+        'status': task.status
+    }
+    return jsonify(task_data), 200
+
+# Update task
+@app.route('/tasks/<int:id>', methods=['PATCH'])
+def update_task(id):
+    data = request.get_json()
+    task = Task.query.get(id)
+
+    if not task:
+        return jsonify({'message': 'Task not found'}), 404
+
+    if 'task_name' in data:
+        task.task_name = data['task_name']
+    if 'project_id' in data:
+        task.project_id = data['project_id']
+    if 'user_id' in data:
+        task.user_id = data['user_id']
+    if 'deadline' in data:
+        task.deadline = data['deadline']
+    if 'status' in data:
+        task.status = data['status']
+
+    db.session.commit()
+    return jsonify({'message': 'Task updated successfully'}), 200
+
+# Delete task
+@app.route('/tasks/<int:id>', methods=['DELETE'])
+def delete_task(id):
+    task = Task.query.get_or_404(id)
+
+    if not task:
+        return jsonify({'message': 'Task not found'}), 404
+
+    db.session.delete(task)
+    db.session.commit()
+    return jsonify({'message': 'Task deleted successfully'}), 200
+
+if __name__ == '__main__':
+    app.run(debug=True) 
