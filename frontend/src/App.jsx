@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import ResetPassword from "./pages/ResetPassword";
-import Home from "./pages/Home";
+// import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import LandingPage from "./pages/LandingPage";
@@ -18,11 +18,13 @@ import SingleProject from "./pages/SingleProject";
 import EditProject from "./pages/EditProject";
 import { UserProvider } from "./context/UserContext";
 import { ProjectProvider } from "./context/ProjectContext";
-
+import { TaskProvider } from "./context/TaskContext";
+// import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
     <ProjectProvider>
+    <TaskProvider>
     <Router>
       <UserProvider>
         <Routes>
@@ -45,6 +47,7 @@ function App() {
         </Routes>
       </UserProvider>
     </Router>
+    </TaskProvider>
     </ProjectProvider>
   );
 }

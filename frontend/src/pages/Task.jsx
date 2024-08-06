@@ -1,95 +1,91 @@
-import React, { useState } from "react";
-import logo from '../images/MoringaLogo.png';
+import React, { useContext, useState } from "react";
+import { TaskContext } from "../context/TaskContext";
 import Sidebar from "../components/Sidebar";
 
+
 const Task = () => {
-  const [tasks, setTasks] = useState([]);
-  const [doneTasks, setDoneTasks] = useState([]);
+  
+  const { tasks, doneTasks, addTask, updateTaskStatus, clearDoneTasks } = useContext(TaskContext);
+
+  // const [tasks, setTasks] = useState([]);
+  // const [doneTasks, setDoneTasks] = useState([]);
   const [taskName, setTaskName] = useState("");
   const [taskStatus, setTaskStatus] = useState("to-do");
   const [assignedTo, setAssignedTo] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [notes, setNotes] = useState("");
+  // const [notes, setNotes] = useState("");
+  const [assignedProject, setAssignedProject] = useState("");
+  // const [files, setFiles] = useState(null); //include later
 
-  const addTask = () => {
+  // const addTask = () => {
+  //   if (taskName.trim() === "") return;
+
+  //   const newTask = {
+  //     id: Date.now(),
+  //     name: taskName,
+  //     status: taskStatus,
+  //     assignedTo,
+  //     dueDate,
+  //     notes,
+  //   };
+  // const handleFileChange = (e) => {
+  //   setFiles(e.target.files);
+  // };
+
+  const handleAddTask = () => {
     if (taskName.trim() === "") return;
 
     const newTask = {
-      id: Date.now(),
-      name: taskName,
+      task_name: taskName,
       status: taskStatus,
-      assignedTo,
-      dueDate,
-      notes,
+      project_id: assignedProject,
+      user_id: assignedTo,
+      deadline: dueDate,
+      // notes,
+      // file_attachments: files,
     };
 
-    if (taskStatus === "done") {
-      setDoneTasks([...doneTasks, newTask]);
-    } else {
-      setTasks([...tasks, newTask]);
-    }
+    addTask(newTask);
+
+    // if (taskStatus === "done") {
+    //   setDoneTasks([...doneTasks, newTask]);
+    // } else {
+    //   setTasks([...tasks, newTask]);
+    // }
 
     // Reset fields
     setTaskName("");
     setTaskStatus("to-do");
     setAssignedTo("");
+    setAssignedProject("");
     setDueDate("");
-    setNotes("");
+    // setNotes("");
+    // setFiles(null);
   };
 
-  const updateTaskStatus = (taskId, newStatus) => {
-    // Update the status of the task
-    setTasks(tasks.map(task => 
-      task.id === taskId ? { ...task, status: newStatus } : task
-    ));
+  // const updateTaskStatus = (taskId, newStatus) => {
+  //   // Update the status of the task
+  //   setTasks(tasks.map(task => 
+  //     task.id === taskId ? { ...task, status: newStatus } : task
+  //   ));
 
-    // If the new status is "done", move the task to the done list
-    if (newStatus === "done") {
-      const taskToMove = tasks.find(task => task.id === taskId);
-      setDoneTasks([...doneTasks, taskToMove]);
-      setTasks(tasks.filter(task => task.id !== taskId));
-    }
-  };
+  //   // If the new status is "done", move the task to the done list
+  //   if (newStatus === "done") {
+  //     const taskToMove = tasks.find(task => task.id === taskId);
+  //     setDoneTasks([...doneTasks, taskToMove]);
+  //     setTasks(tasks.filter(task => task.id !== taskId));
+  //   }
+  // };
 
-  const clearDoneTasks = () => {
-    setDoneTasks([]);
-  };
+  // const clearDoneTasks = () => {
+  //   setDoneTasks([]);
+  // };
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Navbar */}
+      
       <Sidebar />
-      {/* <header className="bg-white text-black p-4 shadow-md">
-        <nav className="flex justify-between items-center">
-          <div className="flex items-center">
-            <img src={logo} alt="Moringa Logo" className="h-12 w-12" />
-          </div>
-          <div className="space-x-4">
-            <a href="/studentprofile" className="hover:underline">
-              Profile
-            </a>
-            <a href="/projects" className="hover:underline">
-              Projects
-            </a>
-            <a href="/tasks" className="hover:underline">
-              Tasks
-            </a>
-            <a href="/calendar" className="hover:underline">
-              Calendar
-            </a>
-            <a href="/teams" className="hover:underline">
-              Teams
-            </a>
-            <a href="/dashboard" className="hover:underline">
-              Dashboard
-            </a>
-            <a href="/logout" className="hover:underline">
-              Sign Out
-            </a>
-          </div>
-        </nav>
-      </header> */}
-
+      
       <div class="p-4 sm:ml-64">
       <div className="flex flex-1">
         {/* Main content area */}
@@ -118,7 +114,14 @@ const Task = () => {
               type="text"
               value={assignedTo}
               onChange={(e) => setAssignedTo(e.target.value)}
-              placeholder="Assigned To"
+              placeholder="Assigned User id"
+              className="mt-2 w-full p-2 border border-gray-300 rounded"
+            />
+            <input
+              type="text"
+              value={assignedProject}
+              onChange={(e) => setAssignedProject(e.target.value)}
+              placeholder="Assigned Project id"
               className="mt-2 w-full p-2 border border-gray-300 rounded"
             />
             <input
@@ -127,16 +130,23 @@ const Task = () => {
               onChange={(e) => setDueDate(e.target.value)}
               className="mt-2 w-full p-2 border border-gray-300 rounded"
             />
-            <textarea
+            {/* <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Notes"
               rows="4"
               className="mt-2 w-full p-2 border border-gray-300 rounded"
-            />
+            /> */}
+            {/* <input
+              type="file"
+              name="files"
+              multiple
+              onChange={handleFileChange}
+              className="w-full  mt-2 p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            /> */}
             <button
-              onClick={addTask}
-              className="mt-2 px-4 py-2 bg-orange-200 text-white rounded hover:bg-orange-300"
+              onClick={handleAddTask}
+              className="mt-2 px-4 py-2 bg-orange-200 text-black rounded hover:text-white hover:bg-orange-300"
             >
               Add Task
             </button>
@@ -169,19 +179,22 @@ const Task = () => {
               <thead>
                 <tr>
                   <th className="border border-gray-300 p-2">Task Name</th>
-                  <th className="border border-gray-300 p-2">Assigned To</th>
+                  <th className="border border-gray-300 p-2">Assigned User</th>
+                  <th className="border border-gray-300 p-2">Assigned Project</th>
                   <th className="border border-gray-300 p-2">Due Date</th>
-                  <th className="border border-gray-300 p-2">Notes</th>
+                  {/* <th className="border border-gray-300 p-2">Notes</th> */}
                   <th className="border border-gray-300 p-2">Status</th>
+                  {/* <th className="border border-gray-300 p-2">Files</th> */}
                 </tr>
               </thead>
               <tbody>
                 {tasks.filter(task => task.status !== "done").map(task => (
                   <tr key={task.id}>
-                    <td className="border border-gray-300 p-2">{task.name}</td>
-                    <td className="border border-gray-300 p-2">{task.assignedTo}</td>
-                    <td className="border border-gray-300 p-2">{task.dueDate}</td>
-                    <td className="border border-gray-300 p-2">{task.notes}</td>
+                    <td className="border border-gray-300 p-2">{task.task_name}</td>
+                    <td className="border border-gray-300 p-2">{task.user_id}</td>
+                    <td className="border border-gray-300 p-2">{task.project_id}</td>
+                    <td className="border border-gray-300 p-2">{task.deadline}</td>
+                    {/* <td className="border border-gray-300 p-2">{task.notes}</td> */}
                     <td className="border border-gray-300 p-2">
                       <select
                         value={task.status}
@@ -194,6 +207,7 @@ const Task = () => {
                         <option value="done">Done</option>
                       </select>
                     </td>
+                    {/* <td className="border border-gray-300 p-2">{task.file_attachments}</td> */}
                   </tr>
                 ))}
               </tbody>
@@ -212,20 +226,35 @@ const Task = () => {
               <thead>
                 <tr>
                   <th className="border border-gray-300 p-2">Task Name</th>
-                  <th className="border border-gray-300 p-2">Assigned To</th>
+                  <th className="border border-gray-300 p-2">Assigned User</th>
+                  <th className="border border-gray-300 p-2">Assigned Project</th>
                   <th className="border border-gray-300 p-2">Due Date</th>
-                  <th className="border border-gray-300 p-2">Notes</th>
+                  {/* <th className="border border-gray-300 p-2">Notes</th> */}
                   <th className="border border-gray-300 p-2">Status</th>
+                  {/* <th className="border border-gray-300 p-2">Files</th> */}
                 </tr>
               </thead>
               <tbody>
-                {doneTasks.map(task => (
+                {doneTasks.filter(task => task.status !== "done").map(task => (
                   <tr key={task.id}>
-                    <td className="border border-gray-300 p-2">{task.name}</td>
-                    <td className="border border-gray-300 p-2">{task.assignedTo}</td>
-                    <td className="border border-gray-300 p-2">{task.dueDate}</td>
-                    <td className="border border-gray-300 p-2">{task.notes}</td>
-                    <td className="border border-gray-300 p-2">{task.status}</td>
+                    <td className="border border-gray-300 p-2">{task.task_name}</td>
+                    <td className="border border-gray-300 p-2">{task.user_id}</td>
+                    <td className="border border-gray-300 p-2">{task.project_id}</td>
+                    <td className="border border-gray-300 p-2">{task.deadline}</td>
+                    {/* <td className="border border-gray-300 p-2">{task.notes}</td> */}
+                    <td className="border border-gray-300 p-2">
+                      <select
+                        value={task.status}
+                        onChange={(e) => updateTaskStatus(task.id, e.target.value)}
+                        className="p-1 border border-gray-300 rounded"
+                      >
+                        <option value="to-do">To Do</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="stuck">Stuck</option>
+                        <option value="done">Done</option>
+                      </select>
+                    </td>
+                    {/* <td className="border border-gray-300 p-2">{task.file_attachments}</td> */}
                   </tr>
                 ))}
               </tbody>
