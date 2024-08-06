@@ -68,6 +68,7 @@ const UserProvider = ({ children }) => {
   const [permissions, setPermissions] = useState({});
   const [loading, setLoading] = useState(false);
   const [allUsers, setAllUsers] = useState([]);
+  // const [userRole, setUserRole] = useState('');
   
   // Fetch current user data and handle authentication
   useEffect(() => {
@@ -254,6 +255,57 @@ const loginUser = async (email, password, role) => {
     }
   };
 
+  // Update user role
+  // const updateRole = async (userId, newRole) => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await fetchWithRetry(`${server_url}/users/${userId}/role`, {
+  //       method: 'PUT',
+  //       body: JSON.stringify({ role: newRole }),
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': `Bearer ${authToken}`,
+  //       },
+  //     });
+  //     const updatedUser = response.data;
+  //     setAllUsers((prevUsers) =>
+  //       prevUsers.map((user) => (user.id === userId ? updatedUser : user))
+  //     );
+  //     toast.success("User role updated successfully!");
+  //   } catch (error) {
+  //     toast.error(`Error updating user role: ${error.message}`);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const updateRole = async (userId, newRole) => {
+    try {
+      const response = await fetch(`${server_url}/user/${userId}/role`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`, // Include the auth token if needed
+        },
+        body: JSON.stringify({ role: newRole }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to update user role');
+      }
+  
+      const updatedUser = await response.json();
+      setAllUsers((prevUsers) =>
+        prevUsers.map((user) => (user.id === userId ? { ...user, role: newRole } : user))
+      );
+    } catch (error) {
+      console.error("Error updating user role:", error);
+    }
+  };
+
+
+
+
   // Delete a user
   const deleteUser = async () => {
     setLoading(true);
@@ -288,6 +340,8 @@ const loginUser = async (email, password, role) => {
     permissions,
     loading,
     allUsers,
+    // userRole,
+    updateRole,
     fetchUsers,
     register_user,
     loginUser,

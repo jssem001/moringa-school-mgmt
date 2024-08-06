@@ -1,23 +1,32 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext,useState, useEffect } from "react";
 import { Link } from 'react-router-dom'
 import Sidebar from "../components/Sidebar";
 import { UserContext } from "../context/UserContext";
 
 const UserMgmt = () => {
-    //Fetch all users
-    const {allUsers,fetchUsers, loading} = useContext(UserContext);
+    const {allUsers,fetchUsers, updateRole, loading} = useContext(UserContext);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [newRole, setNewRole] = useState("");
 
+    //Fetch all users
     useEffect(() => {
        fetchUsers();  
     }, [fetchUsers]);
-     
-    // const role = currentUser.is_admin ? "Admin" : currentUser.is_instructor ? "Instructor" : "Student";
+
     const getUserRole = (user) => {
         if (user.is_admin) return "Admin";
         if (user.is_instructor) return "Instructor";
         if (user.is_student) return "Student";
         return "Unknown";
     }; 
+
+    //Update user role
+    const handleRoleChange = (userId) => {
+        updateRole(userId, newRole);
+        setSelectedUser(null);
+        setNewRole("");
+    };
+
 
     return (
        <> 
@@ -41,9 +50,6 @@ const UserMgmt = () => {
                                 <th scope="col" className="px-6 py-3">
                                     Role
                                 </th>
-                                {/* <th scope="col" className="px-6 py-3">
-                                    Status
-                                </th> */}
                                 <th scope="col" className="px-6 py-3">
                                     <span className="sr-only">Edit</span>
                                 </th>
@@ -60,12 +66,36 @@ const UserMgmt = () => {
                                     </td>
                                     <td className="px-6 py-4">
                                         {getUserRole(user)}
+                                        {selectedUser === user.id && (
+                                                <select
+                                                    value={newRole}
+                                                    onChange={(e) => setNewRole(e.target.value)}
+                                                    className="ml-2"
+                                                >
+                                                    <option value="">Select Role</option>
+                                                    <option value="Admin">Admin</option>
+                                                    <option value="Instructor">Instructor</option>
+                                                    <option value="Student">Student</option>
+                                                </select>
+                                        )}
                                     </td>
-                                    {/* <td className="px-6 py-4">
-                                        {user.status || '-'}
-                                    </td> */}
                                     <td className="px-6 py-4 text-right">
-                                        <Link to={`/edit-user/${user.id}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</Link>
+                                        {/* <Link to={`/edit-user/${user.id}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</Link> */}
+                                        {selectedUser === user.id ? (
+                                                <button
+                                                    onClick={() => handleRoleChange(user.id)}
+                                                    className="font-medium text-green-600 dark:text-green-500 hover:underline"
+                                                >
+                                                    Save
+                                                </button>
+                                            ) : (
+                                                <button
+                                                    onClick={() => setSelectedUser(user.id)}
+                                                    className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                                                >
+                                                    Edit
+                                                </button>
+                                            )}
                                     </td>
                                 </tr>
                             ))}
