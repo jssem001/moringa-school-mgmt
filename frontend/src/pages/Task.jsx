@@ -235,7 +235,7 @@ const Task = () => {
                 </tr>
               </thead>
               <tbody>
-                {doneTasks.filter(task => task.status !== "done").map(task => (
+                {doneTasks.filter(task => task.status === "done").map(task => (
                   <tr key={task.id}>
                     <td className="border border-gray-300 p-2">{task.task_name}</td>
                     <td className="border border-gray-300 p-2">{task.user_id}</td>
