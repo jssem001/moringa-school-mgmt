@@ -48,13 +48,6 @@ const Dashboard = () => {
                 <div class="grid grid-cols-3 gap-4 mb-4 border">
                     <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
                         <p class="text-2xl text-white">Projects</p>
-                        {/* <ul>
-                            {projects.map(project => (
-                                <li key={project.id} className="text-2xl text-white">
-                                    {project.name}
-                                </li>
-                            ))}
-                        </ul> */}
                     </div>
                     <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
                         <p class="text-2xl text-white ">
