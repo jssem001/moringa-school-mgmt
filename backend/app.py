@@ -12,7 +12,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity, get_jwt
 
 
-from models import db, User, Project, Task
+from models import db, User, Project, Task, Template
 
 bcrypt = Bcrypt()
 
@@ -286,9 +286,7 @@ def delete_project(id):
     return jsonify({"message": "Project deleted successfully"}), 200
 
 
-
 #CRUD FOR TASK
-
 
 # Create a new task
 @app.route('/tasks', methods=['POST'])
@@ -385,6 +383,93 @@ def delete_task(id):
     db.session.delete(task)
     db.session.commit()
     return jsonify({'message': 'Task deleted successfully'}), 200
+
+##CRUD FOR TEMPLATES 
+
+# Create a new template
+@app.route('/templates', methods=['POST'])
+def create_template():
+    data = request.get_json()
+    name = data.get('name')
+    link = data.get('link')
+    user_id = data.get('user_id')
+
+    template = Template(
+        name=name,
+        link=link,
+        user_id=user_id
+    )
+    db.session.add(template)
+    db.session.commit()
+
+    return jsonify({'message': 'Template created successfully'}), 201
+
+# Get all templates
+@app.route('/templates', methods=['GET'])
+def get_templates():
+    try:
+        templates = Template.query.all()
+        template_list = []
+
+        for template in templates:
+            template_data = {
+                'id': template.id,
+                'name': template.name,
+                'link': template.link,
+                'user_id': template.user_id
+            }
+            template_list.append(template_data)
+
+        return jsonify(template_list), 200
+    except Exception as e:
+        return jsonify({'message': 'Failed to fetch templates', 'error': str(e)}), 500
+
+# Get a single template
+@app.route('/templates/<int:id>', methods=['GET'])
+def get_template(id):
+    try:
+        template = Template.query.get(id)
+        template_data = {
+            'id': template.id,
+            'name': template.name,
+            'link': template.link,
+            'user_id': template.user_id
+        }
+        return jsonify(template_data), 200
+    except Exception as e:
+        return jsonify({'message': 'Failed to fetch template', 'error': str(e)}), 500
+
+# Update a template
+@app.route('/templates/<int:id>', methods=['PATCH'])
+def update_template(id):
+    data = request.get_json()
+    template = Template.query.get(id)
+
+    if not template:
+        return jsonify({'message': 'Template not found'}), 404
+
+    if 'name' in data:
+        template.name = data['name']
+    if 'link' in data:
+        template.link = data['link']
+    if 'user_id' in data:
+        template.user_id = data['user_id']
+
+    db.session.commit()
+    return jsonify({'message': 'Template updated successfully'}), 200
+
+# Delete a template
+@app.route('/templates/<int:id>', methods=['DELETE'])
+def delete_template(id):
+    template = Template.query.get(id)
+
+    if not template:
+        return jsonify({'message': 'Template not found'}), 404
+
+    db.session.delete(template)
+    db.session.commit()
+    return jsonify({'message': 'Template deleted successfully'}), 200
+
 
 if __name__ == '__main__':
     app.run(debug=True) 
