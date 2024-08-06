@@ -57,9 +57,9 @@ const AdminProfile = () => {
                         </p>
                     </div>
                     <div class="flex items-center justify-center rounded bg-gray-700 h-28 ">
-                        <Link to="/usermgmt"><p class="text-2xl text-white ">
+                        <p class="text-2xl text-white ">
                         Employee/User Information
-                        </p></Link>
+                        </p>
                     </div>
                     <div class="flex items-center justify-center rounded bg-gray-700 h-28 ">
                         <p class="text-2xl text-white ">
@@ -73,9 +73,9 @@ const AdminProfile = () => {
                     </div>
                 </div>
                 <div class="flex items-center justify-center h-48 mb-4 rounded bg-gray-700 ">
-                    <p class="text-2xl text-white ">
+                    <Link to="/usermgmt"><p class="text-2xl text-white ">
                         Assign Roles    
-                    </p>
+                    </p></Link>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     {/* Add more widgets if needed */}
