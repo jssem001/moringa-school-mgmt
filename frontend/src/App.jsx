@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-
+import ResetPassword from "./pages/ResetPassword";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -15,7 +15,7 @@ import AnalyticsPage from "./pages/AnalyticsPage";
 import UserMgmt from "./pages/UserMgmt";
 import Dashboard from "./pages/Dashboard";
 import SingleProject from "./pages/SingleProject";
-import EditProject from "./pages/EditProject"; // Import the EditProject component
+import EditProject from "./pages/EditProject";
 import { UserProvider } from "./context/UserContext";
 import { ProjectProvider } from "./context/ProjectContext";
 
@@ -28,6 +28,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/studentprofile" element={<StudentProfile />} />
           <Route path="/instructorprofile" element={<InstructorProfile />} />
