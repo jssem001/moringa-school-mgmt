@@ -6,16 +6,19 @@ from flask_bcrypt import Bcrypt
 from datetime import timedelta
 from flask_cors import CORS, cross_origin
 
+from flask_mail import Mail, Message
+from werkzeug.security import generate_password_hash, check_password_hash
+
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity, get_jwt
 
 
-from models import db, User,Task
+from models import db, User, Project, Task
 
 bcrypt = Bcrypt()
 
 app = Flask(__name__)
 
-CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
+CORS(app, resources={r"/*": {"origins":"*"}})
 # app.config['CORS_HEADERS'] = 'Content-Type'
 
 
@@ -29,29 +32,6 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
 migrate = Migrate(app, db)
 
 db.init_app(app)
-
-#Get all Users
-@app.route("/users", methods=["GET"])
-@jwt_required()
-def get_all_users():
-    try:
-        # Fetch all users from the database
-        users = User.query.all()
-        # Serialize the user data
-        user_list = [
-            {
-                "id": user.id,
-                "name": user.name,
-                "email": user.email,
-                "is_student": user.is_student,
-                "is_admin": user.is_admin,
-                "is_instructor": user.is_instructor
-            }
-            for user in users
-        ]
-        return jsonify(user_list), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
 
 
 #User Registration - OK
@@ -81,6 +61,8 @@ def create_user():
 #User Login - OK
 @app.route("/login", methods=["POST"])
 def login_user():
+    # data = request.get_json()
+
     email = request.json.get("email", None)
     password = request.json.get("password", None)
 
@@ -92,6 +74,48 @@ def login_user():
 
     else:
         return jsonify({"error": "Wrong Details Entered"}), 401
+    
+
+
+# RESETTING PASSWORD WHEN USER FORGETS
+app.config['MAIL_SERVER'] = 'sandbox.smtp.mailtrap.io'  # Replace with your mail server
+app.config['MAIL_PORT'] = 2525 # Replace with your mail server port
+app.config['MAIL_USERNAME'] = "47944be92d11e6"  # Replace with your email address
+app.config['MAIL_PASSWORD'] = '77eaae86c8e97e'  # Replace with your email password
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+
+mail = Mail(app)
+
+
+@app.route('/forgot_password', methods=['POST'])
+def forgot_password():
+    data = request.get_json()
+
+    your_email = data.get('email')
+    new_password = data.get('new_password')
+
+    print(f"Received email: {your_email}")
+
+    user = User.query.filter_by(email=your_email).first()
+
+    if user:
+        # Generate new password hash
+        hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
+        user.password = hashed_password
+        db.session.commit()
+
+        mail_message = Message(
+         subject='Password Reset Confirmation',  # Subject of the email
+            sender='nimrodnjau@student.moringaschool.com',
+            recipients=[your_email],
+            body="\n frontend/MoringaLogo.png" f'\n Hello {user.name},\n \nYour new password is: {new_password}\n  \nBest regards,\nYour Company')
+        mail.send(mail_message)
+
+
+        return jsonify({"success": "Password changed successfully and email sent"}), 200
+    else:
+        return jsonify({"error": "User not found"}), 404
 
 
 # Current User - OK
@@ -162,6 +186,7 @@ def delete_user(id):
     db.session.delete(user)
     db.session.commit()
     return jsonify({"message": "User deleted successfully"}), 200
+
 
 
 #CRUD FOR PROJECTS
