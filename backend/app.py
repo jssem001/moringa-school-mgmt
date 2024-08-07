@@ -226,7 +226,28 @@ def delete_user(id):
     db.session.commit()
     return jsonify({"message": "User deleted successfully"}), 200
 
-
+#fetching all users- OK
+@app.route("/users", methods=["GET"])
+@jwt_required()
+def get_all_users():
+    try:
+        # Fetch all users from the database
+        users = User.query.all()
+        # Serialize the user data
+        user_list = [
+            {
+                "id": user.id,
+                "name": user.name,
+                "email": user.email,
+                "is_student": user.is_student,
+                "is_admin": user.is_admin,
+                "is_instructor": user.is_instructor
+            }
+            for user in users
+        ]
+        return jsonify(user_list), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 #CRUD FOR PROJECTS
 
