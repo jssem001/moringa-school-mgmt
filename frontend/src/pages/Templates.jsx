@@ -1,4 +1,4 @@
-// src/pages/Templates.jsx
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
