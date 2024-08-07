@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-
-import Home from "./pages/Home";
+import ResetPassword from "./pages/ResetPassword";
+// import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import LandingPage from "./pages/LandingPage";
@@ -19,14 +19,22 @@ import EditProject from "./pages/EditProject";
 import Templates from "./pages/Templates";
 import AddTemplate from "./pages/AddTemplate"; // Import the AddTemplate component
 import { UserProvider } from "./context/UserContext";
+import { ProjectProvider } from "./context/ProjectContext";
+import { TaskProvider } from "./context/TaskContext";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+
 
 function App() {
   return (
+    <ProjectProvider>
+    <TaskProvider>
     <Router>
       <UserProvider>
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/studentprofile" element={<StudentProfile />} />
           <Route path="/instructorprofile" element={<InstructorProfile />} />
@@ -43,8 +51,12 @@ function App() {
           <Route path="/add-template" element={<AddTemplate />} /> {/* Add this line */}
           <Route path="*" element={<div>Page Not Found</div>} />
         </Routes>
+        <ToastContainer />
       </UserProvider>
     </Router>
+    </TaskProvider>
+    </ProjectProvider>
+    
   );
 }
 

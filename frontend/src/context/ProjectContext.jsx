@@ -1,9 +1,11 @@
+
 // src/context/ProjectContext.jsx
 import { createContext, useContext, useEffect, useState } from "react";
 import { UserContext } from "./UserContext";
 import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 import { server_url } from '../../config';
+
 
 export const ProjectContext = createContext();
 
@@ -80,6 +82,7 @@ export const ProjectProvider = ({ children }) => {
   };
 
   // Update an existing project
+
   const updateProject = (projectId, updatedData) => {
     fetch(`${server_url}/projects/${projectId}`, {
       method: 'PUT',
@@ -105,6 +108,7 @@ export const ProjectProvider = ({ children }) => {
   };
 
   // Delete a project
+
   const deleteProject = (projectId) => {
     fetch(`${server_url}/projects/${projectId}`, {
       method: 'DELETE',
@@ -138,14 +142,21 @@ export const ProjectProvider = ({ children }) => {
     deleteProject
   };
 
+  useEffect(() => {
+    getProjects();
+  }, []);
+
   return (
+
     <ProjectContext.Provider value={contextData}>
       {children}
     </ProjectContext.Provider>
   );
 };
 
+
 // Custom hook for using the project context
 export const useProjects = () => {
   return useContext(ProjectContext);
 };
+

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useProjects } from '../context/ProjectContext';
 import { Link } from "react-router-dom";
@@ -6,6 +7,7 @@ import Sidebar from "../components/Sidebar";
 const Projects = () => {
   const { projects, fetchProjects, deleteProject } = useProjects(); // Use context methods
   const [searchTerm, setSearchTerm] = useState("");
+
   const [deleteProjectId, setDeleteProjectId] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
@@ -27,6 +29,7 @@ const Projects = () => {
 
   // Confirm deletion of the project
   const confirmDelete = () => {
+
     deleteProject(deleteProjectId); // Use context method
     setShowDeleteConfirm(false);
     setDeleteProjectId(null);
