@@ -35,12 +35,16 @@ const Task = () => {
   const handleAddTask = () => {
     if (taskName.trim() === "") return;
 
+    const dateParts = dueDate.split("-");
+    const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+
+
     const newTask = {
       task_name: taskName,
       status: taskStatus,
       project_id: assignedProject,
       user_id: assignedTo,
-      deadline: dueDate,
+      deadline: formattedDate,
       // notes,
       // file_attachments: files,
     };
@@ -180,6 +184,7 @@ const Task = () => {
                 <tr>
                   <th className="border border-gray-300 p-2">Task Name</th>
                   <th className="border border-gray-300 p-2">Assigned User</th>
+                  {/* <th className="border border-gray-300 p-2">Assigned User Name</th> */}
                   <th className="border border-gray-300 p-2">Assigned Project</th>
                   <th className="border border-gray-300 p-2">Due Date</th>
                   {/* <th className="border border-gray-300 p-2">Notes</th> */}
@@ -192,6 +197,7 @@ const Task = () => {
                   <tr key={task.id}>
                     <td className="border border-gray-300 p-2">{task.task_name}</td>
                     <td className="border border-gray-300 p-2">{task.user_id}</td>
+                    {/* <td className="border border-gray-300 p-2">{task.user_name}</td> */}
                     <td className="border border-gray-300 p-2">{task.project_id}</td>
                     <td className="border border-gray-300 p-2">{task.deadline}</td>
                     {/* <td className="border border-gray-300 p-2">{task.notes}</td> */}
@@ -227,6 +233,7 @@ const Task = () => {
                 <tr>
                   <th className="border border-gray-300 p-2">Task Name</th>
                   <th className="border border-gray-300 p-2">Assigned User</th>
+                  {/* <th className="border border-gray-300 p-2">Assigned User Name</th> */}
                   <th className="border border-gray-300 p-2">Assigned Project</th>
                   <th className="border border-gray-300 p-2">Due Date</th>
                   {/* <th className="border border-gray-300 p-2">Notes</th> */}
@@ -239,6 +246,7 @@ const Task = () => {
                   <tr key={task.id}>
                     <td className="border border-gray-300 p-2">{task.task_name}</td>
                     <td className="border border-gray-300 p-2">{task.user_id}</td>
+                    {/* <td className="border border-gray-300 p-2">{task.user_name}</td> */}
                     <td className="border border-gray-300 p-2">{task.project_id}</td>
                     <td className="border border-gray-300 p-2">{task.deadline}</td>
                     {/* <td className="border border-gray-300 p-2">{task.notes}</td> */}
