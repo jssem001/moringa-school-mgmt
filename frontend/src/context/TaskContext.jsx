@@ -56,6 +56,23 @@ export const TaskProvider = ({ children }) => {
       .catch(error => console.error('Failed to add task:', error));
   };
 
+  // Update Task
+  const updateTask = (taskId, updatedTask) => {
+    fetch(`${server_url}/tasks/${taskId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedTask),
+    })
+      .then(response => response.json())
+      .then(data => {
+        setTasks(tasks.map(task => 
+          task.id === taskId ? { ...task, ...updatedTask } : task
+        ));
+      })
+      .catch(error => console.error('Failed to update task:', error));
+  };
 
   // Update Task Status
 
@@ -106,7 +123,7 @@ export const TaskProvider = ({ children }) => {
 
 
   return (
-    <TaskContext.Provider value={{ tasks, doneTasks, addTask, updateTaskStatus, clearDoneTasks }}>
+    <TaskContext.Provider value={{ tasks, doneTasks, addTask, updateTask, updateTaskStatus, clearDoneTasks }}>
       {children}
     </TaskContext.Provider>
   );

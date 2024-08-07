@@ -5,32 +5,15 @@ import Sidebar from "../components/Sidebar";
 
 const Task = () => {
   
-  const { tasks, doneTasks, addTask, updateTaskStatus, clearDoneTasks } = useContext(TaskContext);
+  const { tasks, doneTasks, addTask, updateTask, updateTaskStatus, clearDoneTasks } = useContext(TaskContext);
 
-  // const [tasks, setTasks] = useState([]);
-  // const [doneTasks, setDoneTasks] = useState([]);
+
   const [taskName, setTaskName] = useState("");
   const [taskStatus, setTaskStatus] = useState("to-do");
   const [assignedTo, setAssignedTo] = useState("");
   const [dueDate, setDueDate] = useState("");
-  // const [notes, setNotes] = useState("");
   const [assignedProject, setAssignedProject] = useState("");
-  // const [files, setFiles] = useState(null); //include later
-
-  // const addTask = () => {
-  //   if (taskName.trim() === "") return;
-
-  //   const newTask = {
-  //     id: Date.now(),
-  //     name: taskName,
-  //     status: taskStatus,
-  //     assignedTo,
-  //     dueDate,
-  //     notes,
-  //   };
-  // const handleFileChange = (e) => {
-  //   setFiles(e.target.files);
-  // };
+  
 
   const handleAddTask = () => {
     if (taskName.trim() === "") return;
@@ -45,26 +28,17 @@ const Task = () => {
       project_id: assignedProject,
       user_id: assignedTo,
       deadline: formattedDate,
-      // notes,
-      // file_attachments: files,
     };
 
     addTask(newTask);
 
-    // if (taskStatus === "done") {
-    //   setDoneTasks([...doneTasks, newTask]);
-    // } else {
-    //   setTasks([...tasks, newTask]);
-    // }
-
-    // Reset fields
+    
     setTaskName("");
     setTaskStatus("to-do");
     setAssignedTo("");
     setAssignedProject("");
     setDueDate("");
-    // setNotes("");
-    // setFiles(null);
+    
   };
 
   const formatDate = (dateString) => {
@@ -75,25 +49,11 @@ const Task = () => {
       const year = date.getFullYear();
       return `${day}-${month}-${year}`;
     }
+
+    
     
   };
-  // const updateTaskStatus = (taskId, newStatus) => {
-  //   // Update the status of the task
-  //   setTasks(tasks.map(task => 
-  //     task.id === taskId ? { ...task, status: newStatus } : task
-  //   ));
-
-  //   // If the new status is "done", move the task to the done list
-  //   if (newStatus === "done") {
-  //     const taskToMove = tasks.find(task => task.id === taskId);
-  //     setDoneTasks([...doneTasks, taskToMove]);
-  //     setTasks(tasks.filter(task => task.id !== taskId));
-  //   }
-  // };
-
-  // const clearDoneTasks = () => {
-  //   setDoneTasks([]);
-  // };
+  
 
   return (
     <div className="flex flex-col min-h-screen">
