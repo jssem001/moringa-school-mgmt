@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
+// Import pages
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -17,7 +18,9 @@ import Dashboard from "./pages/Dashboard";
 import SingleProject from "./pages/SingleProject";
 import EditProject from "./pages/EditProject";
 import Templates from "./pages/Templates";
-import AddTemplate from "./pages/AddTemplate"; // Import the AddTemplate component
+import AddTemplate from "./pages/AddTemplate";
+import EditTemplate from "./pages/EditTemplate";
+import SingleTemplate from "./pages/SingleTemplate"; // Import SingleTemplate
 import { UserProvider } from "./context/UserContext";
 
 function App() {
@@ -40,7 +43,9 @@ function App() {
           <Route path="/analytics" element={<AnalyticsPage />} />
           <Route path="/usermgmt" element={<UserMgmt />} />
           <Route path="/templates" element={<Templates />} />
-          <Route path="/add-template" element={<AddTemplate />} /> {/* Add this line */}
+          <Route path="/add-template" element={<AddTemplate />} />
+          <Route path="/templates/:templateId" element={<SingleTemplate />} /> {/* Route for viewing a single template */}
+          <Route path="/edit-template/:templateId" element={<EditTemplate />} />
           <Route path="*" element={<div>Page Not Found</div>} />
         </Routes>
       </UserProvider>
