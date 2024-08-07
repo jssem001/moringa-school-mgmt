@@ -21,7 +21,7 @@ import AddTemplate from "./pages/AddTemplate";
 import EditTemplate from "./pages/EditTemplate";
 import SingleTemplate from "./pages/SingleTemplate"; // Import SingleTemplate
 import { UserProvider } from "./context/UserContext";
-import { ProjectProvider } from "./context/ProjectContext";
+// import { ProjectProvider } from "./context/ProjectContext";
 import { TaskProvider } from "./context/TaskContext";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
@@ -29,7 +29,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
-    <ProjectProvider>
+    // <ProjectProvider>
     <TaskProvider>
     <Router>
       <UserProvider>
@@ -59,7 +59,7 @@ function App() {
       </UserProvider>
     </Router>
     </TaskProvider>
-    </ProjectProvider>
+    // </ProjectProvider>
     
   );
 }

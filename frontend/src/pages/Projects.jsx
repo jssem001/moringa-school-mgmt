@@ -1,10 +1,16 @@
 
 import React, { useState, useEffect } from "react";
+
+// import { useProjects } from '../context/ProjectContext';
+
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import projectData from "../data/projects"; 
 
 const Projects = () => {
+
+  // const { projects, fetchProjects, deleteProject } = useProjects(); // Use context methods
+
   const [searchTerm, setSearchTerm] = useState("");
 
   const [projects, setProjects] = useState([]); 

@@ -1,9 +1,9 @@
 #app.py
 import random
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, after_this_request
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
-from datetime import timedelta
+from datetime import datetime,timedelta
 from flask_cors import CORS, cross_origin
 
 from flask_mail import Mail, Message
@@ -19,6 +19,8 @@ bcrypt = Bcrypt()
 app = Flask(__name__)
 
 CORS(app, resources={r"/*": {"origins":"*"}})
+
+
 # app.config['CORS_HEADERS'] = 'Content-Type'
 
 
@@ -32,6 +34,14 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
 migrate = Migrate(app, db)
 
 db.init_app(app)
+
+# Ensure CORS headers in response
+@app.after_request
+def add_cors_headers(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+    return response
 
 
 #User Registration - OK
@@ -216,7 +226,49 @@ def delete_user(id):
     db.session.commit()
     return jsonify({"message": "User deleted successfully"}), 200
 
-
+#fetching all users- OK
+@app.route("/users", methods=["GET"])
+@jwt_required()
+def get_all_users():
+    try:
+        # Fetch all users from the database
+        users = User.query.all()
+        # Serialize the user data
+        user_list = [
+            {
+                "id": user.id,
+                "name": user.name,
+                "email": user.email,
+                "is_student": user.is_student,
+                "is_admin": user.is_admin,
+                "is_instructor": user.is_instructor
+            }
+            for user in users
+        ]
+        return jsonify(user_list), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+#************fetching user by id *******************
+@app.route("/users/<int:id>", methods=["GET"])
+@jwt_required()
+def get_user_by_id(id):
+    try:
+        user = User.query.get(id)
+        if user is None:
+            return jsonify({"message": "User not found"}), 404
+        user_data = {
+            "id": user.id,
+            "name": user.name,
+            "email": user.email,
+            "is_student": user.is_student,
+            "is_admin": user.is_admin,
+            "is_instructor": user.is_instructor
+        }
+        return jsonify(user_data), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+#********************
 
 #CRUD FOR PROJECTS
 
@@ -324,14 +376,19 @@ def create_task():
     title = data.get('task_name')
     project_id = data.get('project_id')
     user_id = data.get('user_id')
-    # deadline = data.get('deadline')
+    deadline_str = data.get('deadline')
     status = data.get('status', 'Pending')
+
+    try:
+        deadline = datetime.strptime(deadline_str, '%Y-%m-%d').date()  # Convert to date object
+    except ValueError:
+        return jsonify({'error': 'Invalid date format. Please use YYYY-MM-DD.'}), 400
 
     task = Task(
         task_name=title,
         project_id=project_id,
         user_id=user_id,
-        #deadline=deadline,
+        deadline=deadline,
         status=status
     )
     db.session.add(task)
