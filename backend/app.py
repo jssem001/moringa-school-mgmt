@@ -12,7 +12,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity, get_jwt
 
 
-from models import db, User, Project, Task, Template
+from models import db, User, Project, Task, Template, Comment
 
 bcrypt = Bcrypt()
 
@@ -498,6 +498,91 @@ def delete_template(id):
     db.session.delete(template)
     db.session.commit()
     return jsonify({'message': 'Template deleted successfully'}), 200
+
+##CRUD FOR COMMENTS 
+
+# Create a new comment
+@app.route('/comments', methods=['POST'])
+def create_comment():
+    data = request.get_json()
+    user_id = data.get('user_id')
+    name = data.get('name')
+    content = data.get('content')
+
+    comment = Comment(
+        user_id=user_id,
+        name=name,
+        content=content
+    )
+    db.session.add(comment)
+    db.session.commit()
+
+    return jsonify({'message': 'Comment created successfully'}), 201
+
+# Get all comments
+@app.route('/comments', methods=['GET'])
+def get_comments():
+    try:
+        comments = Comment.query.all()
+        comment_list = []
+
+        for comment in comments:
+            comment_data = {
+                'id': comment.id,
+                'user_id': comment.user_id,
+                'name': comment.name,
+                'content': comment.content
+            }
+            comment_list.append(comment_data)
+
+        return jsonify(comment_list), 200
+    except Exception as e:
+        return jsonify({'message': 'Failed to fetch comments', 'error': str(e)}), 500
+
+# Get a single comment
+@app.route('/comments/<int:id>', methods=['GET'])
+def get_comment(id):
+    try:
+        comment = Comment.query.get(id)
+        comment_data = {
+            'id': comment.id,
+            'user_id': comment.user_id,
+            'name': comment.name,
+            'content': comment.content
+        }
+        return jsonify(comment_data), 200
+    except Exception as e:
+        return jsonify({'message': 'Failed to fetch comment', 'error': str(e)}), 500
+
+# Update a comment
+@app.route('/comments/<int:id>', methods=['PATCH'])
+def update_comment(id):
+    data = request.get_json()
+    comment = Comment.query.get(id)
+
+    if not comment:
+        return jsonify({'message': 'Comment not found'}), 404
+
+    if 'name' in data:
+        comment.name = data['name']
+    if 'content' in data:
+        comment.content = data['content']
+
+    db.session.commit()
+    return jsonify({'message': 'Comment updated successfully'}), 200
+
+# Delete a comment
+@app.route('/comments/<int:id>', methods=['DELETE'])
+def delete_comment(id):
+    comment = Comment.query.get(id)
+
+    if not comment:
+        return jsonify({'message': 'Comment not found'}), 404
+
+    db.session.delete(comment)
+    db.session.commit()
+    return jsonify({'message': 'Comment deleted successfully'}), 200
+
 
 
 if __name__ == '__main__':
