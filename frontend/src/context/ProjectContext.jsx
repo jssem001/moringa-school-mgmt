@@ -1,54 +1,145 @@
-import React, { createContext, useState, useEffect } from 'react';
-import { server_url } from "../../config";
+
+// src/context/ProjectContext.jsx
+import { createContext, useContext, useEffect, useState } from "react";
+import { UserContext } from "./UserContext";
+import { toast } from 'react-toastify';
+import { useNavigate } from "react-router-dom";
+import { server_url } from '../../config';
+
 
 export const ProjectContext = createContext();
 
 export const ProjectProvider = ({ children }) => {
-  
+  const nav = useNavigate();
+  const { auth_token } = useContext(UserContext);
+
   const [projects, setProjects] = useState([]);
-  
-  // Get all projects
-  const getProjects = () => {
-    fetch(`${server_url}/project`)
+  const [project, setProject] = useState(null);
+
+  // Fetch all projects
+  useEffect(() => {
+    fetch(`${server_url}/projects`, {
+      headers: {
+        'Content-type': 'application/json',
+        "Authorization": `Bearer ${auth_token}`
+      },
+    })
       .then(response => response.json())
-      .then(data => setProjects(data))
-      .catch(err => console.error("Error fetching projects:", err));
- 
+      .then(res => {
+        setProjects(res);
+      })
+      .catch(error => {
+        toast.error("Failed to fetch projects");
+      });
+  }, [auth_token]);
+
+  // Fetch single project by ID
+  const fetchProject = (projectId) => {
+    fetch(`${server_url}/projects/${projectId}`, {
+      headers: {
+        'Content-type': 'application/json',
+        "Authorization": `Bearer ${auth_token}`
+      },
+    })
+      .then(response => response.json())
+      .then(res => {
+        setProject(res);
+      })
+      .catch(error => {
+        toast.error("Failed to fetch project");
+      });
   };
 
   // Add a new project
-  const addProject = (name, description, deadline) => {
-    fetch(`${server_url}/project`, {
+  const addProject = (title, description, startDate, dueDate, status) => {
+    fetch(`${server_url}/projects`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, description, deadline })
+      body: JSON.stringify({
+        title,
+        description,
+        startDate,
+        dueDate,
+        status
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        "Authorization": `Bearer ${auth_token}`
+      },
     })
       .then(response => response.json())
-      .then(data => setProjects([...projects, data]))
-      .catch(err => console.error(err));
+      .then(res => {
+        if (res.success) {
+          toast.success("Project added successfully!");
+          nav("/projects");
+          setProjects([...projects, res.project]);
+        } else {
+          toast.error(res.error || "An error occurred");
+        }
+      })
+      .catch(error => {
+        toast.error("Failed to add project");
+      });
   };
 
   // Update an existing project
-  const updateProject = (id, name, description, deadline) => {
-    fetch(`${server_url}/projects/${id}`, {
+
+  const updateProject = (projectId, updatedData) => {
+    fetch(`${server_url}/projects/${projectId}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, description, deadline })
+      body: JSON.stringify(updatedData),
+      headers: {
+        'Content-type': 'application/json',
+        "Authorization": `Bearer ${auth_token}`
+      },
     })
       .then(response => response.json())
-      .then(data => {
-        setProjects(projects.map(project => (project.id === id ? data : project)));
+      .then(res => {
+        if (res.success) {
+          toast.success("Project updated successfully!");
+          nav("/projects");
+          setProjects(projects.map(p => p.id === projectId ? res.project : p));
+        } else {
+          toast.error(res.error || "An error occurred");
+        }
       })
-      .catch(err => console.error(err));
+      .catch(error => {
+        toast.error("Failed to update project");
+      });
   };
 
   // Delete a project
-  const deleteProject = (id) => {
-    fetch(`${server_url}/projects/${id}`, {
-      method: 'DELETE'
+
+  const deleteProject = (projectId) => {
+    fetch(`${server_url}/projects/${projectId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-type': 'application/json',
+        "Authorization": `Bearer ${auth_token}`
+      },
     })
-      .then(() => setProjects(projects.filter(project => project.id !== id)))
-      .catch(err => console.error(err));
+      .then(response => response.json())
+      .then(res => {
+        if (res.success) {
+          toast.success("Project deleted successfully!");
+          nav("/projects");
+          setProjects(projects.filter(p => p.id !== projectId));
+        } else {
+          toast.error(res.error || "An error occurred");
+        }
+      })
+      .catch(error => {
+        toast.error("Failed to delete project");
+      });
+  };
+
+  // Provide context data
+  const contextData = {
+    projects,
+    project,
+    fetchProject,
+    addProject,
+    updateProject,
+    deleteProject
   };
 
   useEffect(() => {
@@ -56,9 +147,16 @@ export const ProjectProvider = ({ children }) => {
   }, []);
 
   return (
-    <ProjectContext.Provider value={{ projects, getProjects, addProject, updateProject, deleteProject }}>
+
+    <ProjectContext.Provider value={contextData}>
       {children}
     </ProjectContext.Provider>
   );
+};
+
+
+// Custom hook for using the project context
+export const useProjects = () => {
+  return useContext(ProjectContext);
 };
 

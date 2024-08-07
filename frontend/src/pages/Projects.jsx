@@ -1,13 +1,20 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
+import { useProjects } from '../context/ProjectContext';
 import { Link } from "react-router-dom";
-import projectData from "../data/projects";
 import Sidebar from "../components/Sidebar";
 
 const Projects = () => {
+  const { projects, fetchProjects, deleteProject } = useProjects(); // Use context methods
   const [searchTerm, setSearchTerm] = useState("");
-  const [projects, setProjects] = useState(projectData); // State for projects
-  const [deleteProjectId, setDeleteProjectId] = useState(null); // State for project to be deleted
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false); // State for showing confirmation dialog
+
+  const [deleteProjectId, setDeleteProjectId] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  // Fetch projects on component mount
+  useEffect(() => {
+    fetchProjects();
+  }, [fetchProjects]);
 
   // Filter projects based on the search term
   const filteredProjects = projects.filter((project) =>
@@ -22,7 +29,8 @@ const Projects = () => {
 
   // Confirm deletion of the project
   const confirmDelete = () => {
-    setProjects(projects.filter(project => project.id !== deleteProjectId));
+
+    deleteProject(deleteProjectId); // Use context method
     setShowDeleteConfirm(false);
     setDeleteProjectId(null);
   };
@@ -49,13 +57,19 @@ const Projects = () => {
           />
         </section>
 
-        {/* Add Project Button */}
-        <section className="mb-4">
+        {/* Buttons Section */}
+        <section className="mb-4 flex space-x-4">
           <Link
             to="/add-project"
             className="inline-block px-4 py-2 bg-orange-300 text-white rounded hover:bg-orange-400"
           >
             Add New Project
+          </Link>
+          <Link
+            to="/templates"
+            className="inline-block px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+          >
+            Templates
           </Link>
         </section>
 
