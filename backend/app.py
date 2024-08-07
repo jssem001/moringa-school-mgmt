@@ -499,11 +499,7 @@ def delete_template(id):
     db.session.commit()
     return jsonify({'message': 'Template deleted successfully'}), 200
 
-<<<<<<< HEAD
 #CRUD FOR COMMENTS
-=======
-##CRUD FOR COMMENTS 
->>>>>>> main
 
 # Create a new comment
 @app.route('/comments', methods=['POST'])
