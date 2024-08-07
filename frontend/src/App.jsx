@@ -16,11 +16,14 @@ import UserMgmt from "./pages/UserMgmt";
 import Dashboard from "./pages/Dashboard";
 import SingleProject from "./pages/SingleProject";
 import EditProject from "./pages/EditProject";
+import Templates from "./pages/Templates";
+import AddTemplate from "./pages/AddTemplate"; // Import the AddTemplate component
 import { UserProvider } from "./context/UserContext";
 import { ProjectProvider } from "./context/ProjectContext";
 import { TaskProvider } from "./context/TaskContext";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+
 
 function App() {
   return (
@@ -39,11 +42,13 @@ function App() {
           <Route path="/projects" element={<Projects />} />
           <Route path="/tasks" element={<Task />} />
           <Route path="/add-project" element={<AddProject />} />
-          <Route path="/projects/:projectId" element={<SingleProject />} /> {/* View single project */}
-          <Route path="/edit-project/:projectId" element={<EditProject />} /> {/* Edit project */}
+          <Route path="/projects/:projectId" element={<SingleProject />} />
+          <Route path="/edit-project/:projectId" element={<EditProject />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/analytics" element={<AnalyticsPage />} />
           <Route path="/usermgmt" element={<UserMgmt />} />
+          <Route path="/templates" element={<Templates />} />
+          <Route path="/add-template" element={<AddTemplate />} /> {/* Add this line */}
           <Route path="*" element={<div>Page Not Found</div>} />
         </Routes>
         <ToastContainer />
