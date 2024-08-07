@@ -175,7 +175,9 @@ const loginUser = async (email, password) => {
       setPermissions(permissionsConfig[data.is_admin ? 'admin' : (data.is_student ? 'student' : 'instructor')] || {});
       toast.success('Logged in Successfully!');
       console.log('Logged in Successfully!');
-      navigate('/dashboard');
+      
+      navigate('/analytics')
+
     } else {
       toast.error(data.error || 'Login failed');
     }
