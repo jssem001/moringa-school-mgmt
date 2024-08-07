@@ -9,19 +9,27 @@ import { UserContext } from '../context/UserContext';
 
 export default function Login() {
   const { loginUser } = useContext(UserContext);
-  // const navigate = useNavigate();
-  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("student");
+  // const [role, setRole] = useState("student");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    loginUser(email, password, role);
-    
+    loginUser(email, password);
+    // try {
+    //   // await loginUser(email, password, role);
+    //   await loginUser(email, password);
+    //   // toast.success('Login successful!');
+    //   // navigate('/dashboard'); // navigate to the dashboard or desired page
+    // } catch (error) {
+    //   //toast.error('Login failed. Please check your credentials.');
+    // } finally {
+    //   setLoading(false);
+    // }
+    setLoading(false);
   };
 
   return (
@@ -78,23 +86,9 @@ export default function Login() {
                   required 
                 />
               </div>
-              {/* <div>
-                <label htmlFor="role" className="block mb-2 text-sm font-medium text-gray-900">
-                  Role
-                </label>
-                <select 
-                  value={role} 
-                  onChange={(e) => setRole(e.target.value)} 
-                  id="role" 
-                  name="role" 
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
-                  required
-                >
-                  <option value="student">student</option>
-                  <option value="instructor">instructor</option>
-                  <option value="admin">admin</option>
-                </select>
-              </div> */}
+              <p>
+                    <Link to="/reset-password" className="text-sm font-medium text-gray-600 hover:underline">Forgot Password?</Link>
+              </p>
               <button 
                 type="submit" 
                 className={`w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
@@ -103,8 +97,9 @@ export default function Login() {
                 {loading ? 'Signing In...' : 'Sign In'}
               </button>
               <p className="text-center mt-4">
-                Don't have an account yet? <Link to="/signup" className="font-medium text-blue-600 hover:underline dark:text-blue-500">Sign up</Link>
+                Don't have an account yet? <Link to="/signup" className="font-medium text-blue-600 hover:underline dark:text-blue-500">Sign Up</Link>
               </p>
+              
             </form>
           </div>
         </div>
