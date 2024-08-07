@@ -1,4 +1,4 @@
-// src/pages/Templates.jsx
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
@@ -6,8 +6,22 @@ import Sidebar from "../components/Sidebar";
 const Templates = () => {
   // Sample templates data
   const [templates, setTemplates] = useState([
-    { id: 1, title: "Template 1", description: "Description of template 1" },
-    { id: 2, title: "Template 2", description: "Description of template 2" },
+    {
+      id: 1,
+      title: "Template 1",
+      description: "Description of template 1",
+      figmaLink: "https://www.figma.com/file/1",
+      sqlDiagram: "https://www.sqldiagram.com/1",
+      imagePreviewUrl: "https://via.placeholder.com/150"
+    },
+    {
+      id: 2,
+      title: "Template 2",
+      description: "Description of template 2",
+      figmaLink: "https://www.figma.com/file/2",
+      sqlDiagram: "https://www.sqldiagram.com/2",
+      imagePreviewUrl: "https://via.placeholder.com/150"
+    },
   ]);
   const [deleteTemplateId, setDeleteTemplateId] = useState(null); // State for template to be deleted
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false); // State for showing confirmation dialog
@@ -48,9 +62,22 @@ const Templates = () => {
           <div className="space-y-4">
             {templates.map((template) => (
               <div key={template.id} className="flex items-start p-4 border rounded shadow-lg">
+                <div className="w-32 h-32 mr-4">
+                  {template.imagePreviewUrl && (
+                    <img src={template.imagePreviewUrl} alt="Preview" className="w-full h-full object-cover rounded" />
+                  )}
+                </div>
                 <div className="flex-1">
                   <h3 className="text-xl font-semibold mb-2">{template.title}</h3>
                   <p className="mb-2">{template.description}</p>
+                  <div className="flex flex-col space-y-1">
+                    <a href={template.figmaLink} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                      View Figma Design
+                    </a>
+                    <a href={template.sqlDiagram} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                      View SQL Diagram
+                    </a>
+                  </div>
                   <div className="mt-2 flex space-x-2">
                     <Link to={`/templates/${template.id}`} className="text-blue-500 hover:underline">
                       View Details

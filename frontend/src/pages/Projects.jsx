@@ -1,20 +1,26 @@
 
 import React, { useState, useEffect } from "react";
+
 // import { useProjects } from '../context/ProjectContext';
+
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
+import projectData from "../data/projects"; 
 
 const Projects = () => {
+
   // const { projects, fetchProjects, deleteProject } = useProjects(); // Use context methods
+
   const [searchTerm, setSearchTerm] = useState("");
 
+  const [projects, setProjects] = useState([]); 
   const [deleteProjectId, setDeleteProjectId] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  // Fetch projects on component mount
+  // Use mock data to populate projects
   useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects]);
+    setProjects(projectData);
+  }, []);
 
   // Filter projects based on the search term
   const filteredProjects = projects.filter((project) =>
@@ -30,9 +36,11 @@ const Projects = () => {
   // Confirm deletion of the project
   const confirmDelete = () => {
 
-    deleteProject(deleteProjectId); // Use context method
+    setProjects(projects.filter(project => project.id !== deleteProjectId));
+
     setShowDeleteConfirm(false);
     setDeleteProjectId(null);
+    // deleteProject(deleteProjectId); // Use context method
   };
 
   // Cancel deletion of the project
