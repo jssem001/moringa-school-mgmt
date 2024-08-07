@@ -1,19 +1,18 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import abstractImage from '../images/abstract-wavy.jpeg'; // Path to the abstract image
+import projectData from '../data/projects'; // Adjust this path as necessary
 
-const AddProject = () => {
-  const [project, setProject] = useState({
-    title: '',
-    description: '',
-    githubLink: '',
-    image: '',
-    date: '',
-    duedate: '',
-    status: 'In Progress',
-  });
+const EditProject = () => {
+  const { projectId } = useParams();
+  const [project, setProject] = useState(null);
   const [attachedFiles, setAttachedFiles] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchedProject = projectData.find((p) => p.id === parseInt(projectId));
+    setProject(fetchedProject);
+  }, [projectId]);
 
   const handleChange = (e) => {
     setProject({ ...project, [e.target.name]: e.target.value });
@@ -38,20 +37,22 @@ const AddProject = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/projects', {
-        method: 'POST',
+      const response = await fetch(`http://localhost:5000/api/projects/${projectId}`, {
+        method: 'PUT',
         body: formData,
       });
 
       if (response.ok) {
         navigate('/projects');
       } else {
-        console.error('Failed to add project');
+        console.error('Failed to update project');
       }
     } catch (error) {
       console.error('Error:', error);
     }
   };
+
+  if (!project) return <div className="text-center text-xl">Loading...</div>;
 
   return (
     <div className="relative overflow-hidden p-6 max-w-3xl mx-auto">
@@ -73,7 +74,7 @@ const AddProject = () => {
       </div>
 
       <div className="relative flex flex-col items-center bg-white p-6 rounded shadow-lg z-20 mt-24">
-        <h2 className="text-3xl font-bold mb-4">Add Project</h2>
+        <h2 className="text-3xl font-bold mb-4">Edit Project</h2>
         <form onSubmit={handleSubmit} className="w-full space-y-4">
           <div>
             <label className="block mb-2 text-sm font-medium text-gray-700">Project Title</label>
@@ -178,7 +179,7 @@ const AddProject = () => {
             type="submit"
             className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300"
           >
-            Add Project
+            Update Project
           </button>
         </form>
       </div>
@@ -186,4 +187,4 @@ const AddProject = () => {
   );
 };
 
-export default AddProject;
+export default EditProject;
