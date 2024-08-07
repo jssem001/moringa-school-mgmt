@@ -1,10 +1,14 @@
 import React from "react";
 import logo from '../images/MoringaLogo.png'
 import { Link } from 'react-router-dom'
+// import { ProjectContext } from "../context/ProjectContext";
 import Sidebar from "../components/Sidebar";
 
 const Dashboard = () => {
 
+    
+    //fetch projects
+    
     
     return (
         <>
@@ -43,9 +47,7 @@ const Dashboard = () => {
                 </div>
                 <div class="grid grid-cols-3 gap-4 mb-4 border">
                     <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
-                        <p class="text-2xl text-white ">
-                        Projects
-                        </p>
+                        <p class="text-2xl text-white">Projects</p>
                     </div>
                     <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
                         <p class="text-2xl text-white ">
