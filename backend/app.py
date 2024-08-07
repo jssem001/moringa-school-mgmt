@@ -187,7 +187,6 @@ def update_profile():
 
 #Update User Role-untested 
 @app.route('/user/<int:user_id>/role', methods=['PUT'])
-@jwt_required()
 def update_user_role(user_id):
     data = request.get_json()
     
@@ -249,7 +248,7 @@ def get_all_users():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-#************fetching user by id *******************
+#************fetching user by id- OK  
 @app.route("/users/<int:id>", methods=["GET"])
 def get_user_by_id(id):
         user = User.query.get(id)
