@@ -2,6 +2,7 @@ import React , { useContext } from "react";
 import Sidebar from "../components/Sidebar";
 import { TaskContext } from "../context/TaskContext";
 import TasksPie from "../Charts/TasksPie";
+import UserBarChart from "../Charts/UserBarChart";
 
 const AnalyticsPage = () => {
 
@@ -73,10 +74,9 @@ const AnalyticsPage = () => {
                         <div class="text-2xl text-center text-black font-semibold mb-4">Tasks By Status</div>
                         <div class="mt-10 ml-10 py-5"><TasksPie data={pieData} /></div>        
                     </div>
-                    <div class="flex items-start justify-center h-[480px] mb-4 rounded bg-gray-100 border-2 border-black">
-                        <p class="text-2xl text-black font-semibold ">
-                            Tasks By Owner    
-                        </p>    
+                    <div class="items-start justify-center h-[480px] mb-4 rounded bg-gray-100 border-2 border-black">
+                        <div class="text-2xl text-center text-black font-semibold mb-4">Open Tasks By User</div>
+                        <div class="mt-10  py-3"><UserBarChart /></div>           
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4 mb-4">

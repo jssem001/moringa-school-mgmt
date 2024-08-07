@@ -5,7 +5,7 @@ import Sidebar from "../components/Sidebar";
 
 const Task = () => {
   
-  const { tasks, doneTasks, addTask, updateTask, updateTaskStatus, clearDoneTasks } = useContext(TaskContext);
+  const { tasks, doneTasks, addTask, updateTaskStatus, clearDoneTasks } = useContext(TaskContext);
 
 
   const [taskName, setTaskName] = useState("");
@@ -104,20 +104,7 @@ const Task = () => {
               onChange={(e) => setDueDate(e.target.value)}
               className="mt-2 w-full p-2 border border-gray-300 rounded"
             />
-            {/* <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Notes"
-              rows="4"
-              className="mt-2 w-full p-2 border border-gray-300 rounded"
-            /> */}
-            {/* <input
-              type="file"
-              name="files"
-              multiple
-              onChange={handleFileChange}
-              className="w-full  mt-2 p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            /> */}
+            
             <button
               onClick={handleAddTask}
               className="mt-2 px-4 py-2 bg-orange-200 text-black rounded hover:text-white hover:bg-orange-300"
@@ -166,11 +153,11 @@ const Task = () => {
                 {tasks.filter(task => task.status !== "done").map(task => (
                   <tr key={task.id}>
                     <td className="border border-gray-300 p-2">{task.task_name}</td>
-                    {/* <td className="border border-gray-300 p-2">{task.user_id}</td> */}
+                    
                     <td className="border border-gray-300 p-2">{task.user_name}</td>
                     <td className="border border-gray-300 p-2">{task.project_id}</td>
                     <td className="border border-gray-300 p-2">{formatDate(task.deadline)}</td>
-                    {/* <td className="border border-gray-300 p-2">{task.notes}</td> */}
+                    
                     <td className="border border-gray-300 p-2">
                       <select
                         value={task.status}
