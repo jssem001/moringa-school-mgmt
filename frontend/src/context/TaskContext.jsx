@@ -13,25 +13,26 @@ export const TaskProvider = ({ children }) => {
     fetchTasks();
   }, []);
 
-
- // Fetch Tasks
-
- const fetchTasks = async () => {
+  // Fetch Tasks
+  const fetchTasks = async () => {
     fetch(`${server_url}/tasks`)
       .then(response => response.json())
       .then(data => {
-        const done = data.filter(task => task.status === 'done');
-        const pending = data.filter(task => task.status !== 'done');
-        setTasks(pending);
-        setDoneTasks(done);
+        const tasksWithUserNames = data.map(task => 
+          fetchUserName(task.user_id).then(userName => ({ ...task, user_name: userName }))
+        );
+
+        Promise.all(tasksWithUserNames).then(updatedTasks => {
+          const done = updatedTasks.filter(task => task.status === 'done');
+          const pending = updatedTasks.filter(task => task.status !== 'done');
+          setTasks(pending);
+          setDoneTasks(done);
+        });
       })
       .catch(error => console.error('Failed to fetch tasks:', error));
   };
 
-
-
   // Add Task
-
   const addTask = (task) => {
     fetch(`${server_url}/tasks`, {
       method: 'POST',
@@ -42,14 +43,19 @@ export const TaskProvider = ({ children }) => {
     })
       .then(response => response.json())
       .then(data => {
-        if (data.status === 'done') {
-          setDoneTasks([...doneTasks, data]);
-        } else {
-          setTasks([...tasks, data]);
-        }
+        fetchUserName(data.user_id)
+          .then(userName => {
+            data.user_name = userName;
+            if (data.status === 'done') {
+              setDoneTasks([...doneTasks, data]);
+            } else {
+              setTasks([...tasks, data]);
+            }
+          });
       })
       .catch(error => console.error('Failed to add task:', error));
   };
+
 
   // Update Task Status
 
@@ -80,6 +86,22 @@ export const TaskProvider = ({ children }) => {
   const clearDoneTasks = () => {
     setDoneTasks([]);
     }
+
+  // Fetch User Name
+  const fetchUserName = (userId) => {
+    return fetch(`${server_url}/users/${userId}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('User not found');
+        }
+        return response.json();
+      })
+      .then(user => user.name)
+      .catch(error => {
+        console.error('Failed to fetch user name:', error);
+        return 'Unknown';
+      });
+  };  
 
 
 

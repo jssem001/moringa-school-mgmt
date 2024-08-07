@@ -71,7 +71,7 @@ const AnalyticsPage = () => {
                 <div class="grid grid-cols-2 gap-4 mb-4">
                     <div class="items-start justify-center h-[480px] mb-4 rounded bg-gray-100 border-2 border-black ">
                         <div class="text-2xl text-center text-black font-semibold mb-4">Tasks By Status</div>
-                        <div class="mt-10 ml-10"><TasksPie data={pieData} /></div>        
+                        <div class="mt-10 ml-10 py-5"><TasksPie data={pieData} /></div>        
                     </div>
                     <div class="flex items-start justify-center h-[480px] mb-4 rounded bg-gray-100 border-2 border-black">
                         <p class="text-2xl text-black font-semibold ">

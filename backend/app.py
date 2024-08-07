@@ -251,9 +251,7 @@ def get_all_users():
     
 #************fetching user by id *******************
 @app.route("/users/<int:id>", methods=["GET"])
-@jwt_required()
 def get_user_by_id(id):
-    try:
         user = User.query.get(id)
         if user is None:
             return jsonify({"message": "User not found"}), 404
@@ -266,8 +264,7 @@ def get_user_by_id(id):
             "is_instructor": user.is_instructor
         }
         return jsonify(user_data), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    
 #********************
 
 #CRUD FOR PROJECTS
