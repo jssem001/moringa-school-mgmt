@@ -80,8 +80,8 @@ def login_user():
 # RESETTING PASSWORD WHEN USER FORGETS
 app.config['MAIL_SERVER'] = 'sandbox.smtp.mailtrap.io'  # Replace with your mail server
 app.config['MAIL_PORT'] = 2525 # Replace with your mail server port
-app.config['MAIL_USERNAME'] = "47944be92d11e6"  # Replace with your email address
-app.config['MAIL_PASSWORD'] = '77eaae86c8e97e'  # Replace with your email password
+app.config['MAIL_USERNAME'] = "83cd77f3e10577"  # Replace with your email address
+app.config['MAIL_PASSWORD'] = '605ba9440905c8'  # Replace with your email password
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 
@@ -499,7 +499,11 @@ def delete_template(id):
     db.session.commit()
     return jsonify({'message': 'Template deleted successfully'}), 200
 
+<<<<<<< HEAD
 #CRUD FOR COMMENTS
+=======
+##CRUD FOR COMMENTS 
+>>>>>>> main
 
 # Create a new comment
 @app.route('/comments', methods=['POST'])
