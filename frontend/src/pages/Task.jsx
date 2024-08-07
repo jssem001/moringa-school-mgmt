@@ -105,10 +105,10 @@ const Task = () => {
               onChange={(e) => setTaskStatus(e.target.value)}
               className="mt-2 w-full p-2 border border-gray-300 rounded"
             >
-              <option value="to-do">To Do</option>
-              <option value="in-progress">In Progress</option>
-              <option value="stuck">Stuck</option>
-              <option value="done">Done</option>
+              <option value="to-do" className="text-gray-600">To Do</option>
+              <option value="in-progress" className="text-yellow-500">In Progress</option>
+              <option value="stuck" className="text-red-700">Stuck</option>
+              <option value="done" className="text-green-700">Done</option>
             </select>
             <input
               type="text"
@@ -155,20 +155,20 @@ const Task = () => {
           {/* Task Count */}
           <section className="mb-4 flex justify-around">
             <div className="flex flex-col items-center">
-              <span className="text-lg font-bold">{tasks.filter(task => task.status === "to-do").length}</span>
-              <span className="text-gray-600">To Do</span>
+              <span className="text-lg text-gray-600 font-bold">{tasks.filter(task => task.status === "to-do").length}</span>
+              <span className="text-gray-600 font-bold">To Do</span>
             </div>
             <div className="flex flex-col items-center">
-              <span className="text-lg font-bold">{tasks.filter(task => task.status === "in-progress").length}</span>
-              <span className="text-gray-600">In Progress</span>
+              <span className="text-lg text-yellow-500 font-bold">{tasks.filter(task => task.status === "in-progress").length}</span>
+              <span className="text-yellow-500 font-bold">In Progress</span>
             </div>
             <div className="flex flex-col items-center">
-              <span className="text-lg font-bold">{tasks.filter(task => task.status === "stuck").length}</span>
-              <span className="text-gray-600">Stuck</span>
+              <span className="text-lg  text-red-700 font-bold">{tasks.filter(task => task.status === "stuck").length}</span>
+              <span className="text-red-700 font-bold">Stuck</span>
             </div>
             <div className="flex flex-col items-center">
-              <span className="text-lg font-bold">{doneTasks.length}</span>
-              <span className="text-gray-600">Done</span>
+              <span className="text-lg text-green-700 font-bold">{doneTasks.length}</span>
+              <span className="text-green-700 font-bold">Done</span>
             </div>
           </section>
 
@@ -201,10 +201,10 @@ const Task = () => {
                         onChange={(e) => updateTaskStatus(task.id, e.target.value)}
                         className="p-1 border border-gray-300 rounded"
                       >
-                        <option value="to-do">To Do</option>
-                        <option value="in-progress">In Progress</option>
-                        <option value="stuck">Stuck</option>
-                        <option value="done">Done</option>
+                        <option value="to-do" className="text-gray-600">To Do</option>
+                        <option value="in-progress" className="text-yellow-500">In Progress</option>
+                        <option value="stuck" className="text-red-700">Stuck</option>
+                        <option value="done" className="text-green-700">Done</option>
                       </select>
                     </td>
                     {/* <td className="border border-gray-300 p-2">{task.file_attachments}</td> */}

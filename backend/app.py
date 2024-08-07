@@ -1,6 +1,6 @@
 #app.py
 import random
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, after_this_request
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from datetime import timedelta
@@ -19,6 +19,8 @@ bcrypt = Bcrypt()
 app = Flask(__name__)
 
 CORS(app, resources={r"/*": {"origins":"*"}})
+
+
 # app.config['CORS_HEADERS'] = 'Content-Type'
 
 
@@ -32,6 +34,14 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
 migrate = Migrate(app, db)
 
 db.init_app(app)
+
+# Ensure CORS headers in response
+@app.after_request
+def add_cors_headers(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+    return response
 
 
 #User Registration - OK
