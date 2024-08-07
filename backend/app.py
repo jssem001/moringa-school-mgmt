@@ -249,7 +249,7 @@ def get_all_users():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-#fetching user by id -
+#************fetching user by id *******************
 @app.route("/users/<int:id>", methods=["GET"])
 @jwt_required()
 def get_user_by_id(id):
@@ -268,6 +268,7 @@ def get_user_by_id(id):
         return jsonify(user_data), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+#********************
 
 #CRUD FOR PROJECTS
 
