@@ -31,6 +31,7 @@ class Project(db.Model, SerializerMixin):
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)
     deadline = db.Column(db.String, nullable=True)
+    status = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     file_attachments = db.Column(db.String, nullable=True)  
 

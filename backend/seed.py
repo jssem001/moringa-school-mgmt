@@ -27,9 +27,9 @@ def seed_data():
 
         # Seed projects
         projects = [
-            Project(name='Project Alpha', description='First project description', user_id=user_ids[0]),
-            Project(name='Project Beta', description='Second project description', user_id=user_ids[1]),
-            Project(name='Project Gamma', description='Third project description', user_id=user_ids[2]),
+            Project(name='Project Alpha', description='First project description', status='Completed', user_id=user_ids[0]),
+            Project(name='Project Beta', description='Second project description', status='In Progress', user_id=user_ids[1]),
+            Project(name='Project Gamma', description='Third project description', status='Completed', user_id=user_ids[2]),
         ]
         db.session.add_all(projects)
         db.session.commit()
