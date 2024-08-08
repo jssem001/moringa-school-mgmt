@@ -1,14 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import { useNavigate } from "react-router-dom";
 
-const AddTemplate = () => {
+const EditTemplate = () => {
+  const { id } = useParams();
+  const [template, setTemplate] = useState(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [figmaLink, setFigmaLink] = useState("");
   const [sqlDiagram, setSqlDiagram] = useState("");
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Fetch the template data by id
+    const fetchTemplate = async () => {
+      // Replace with your API call or data fetching logic
+      const fetchedTemplate = {
+        id,
+        title: "Sample Title",
+        description: "Sample Description",
+        figmaLink: "https://www.figma.com/file/sample",
+        sqlDiagram: "https://www.sqldiagram.com/sample",
+        imagePreviewUrl: "https://via.placeholder.com/150"
+      };
+      setTemplate(fetchedTemplate);
+      setTitle(fetchedTemplate.title);
+      setDescription(fetchedTemplate.description);
+      setFigmaLink(fetchedTemplate.figmaLink);
+      setSqlDiagram(fetchedTemplate.sqlDiagram);
+      setImagePreviewUrl(fetchedTemplate.imagePreviewUrl);
+    };
+    fetchTemplate();
+  }, [id]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -17,13 +41,15 @@ const AddTemplate = () => {
     navigate("/templates");
   };
 
+  if (!template) return <div>Loading...</div>;
+
   return (
     <div className="flex">
       <Sidebar />
 
       <div className="p-4 sm:ml-64 flex-1">
         <section className="mb-4">
-          <h1 className="text-2xl font-bold mb-4">Add New Template</h1>
+          <h1 className="text-2xl font-bold mb-4">Edit Template</h1>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-semibold mb-2">Title</label>
@@ -81,7 +107,7 @@ const AddTemplate = () => {
               type="submit"
               className="px-4 py-2 bg-orange-300 text-white rounded hover:bg-orange-400"
             >
-              Add Template
+              Save Changes
             </button>
           </form>
           <button
@@ -96,4 +122,4 @@ const AddTemplate = () => {
   );
 };
 
-export default AddTemplate;
+export default EditTemplate;
