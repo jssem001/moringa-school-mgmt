@@ -185,6 +185,34 @@ def update_profile():
     db.session.commit()
     return jsonify({"success": "User updated successfully"}), 200
 
+#Update User Role-untested 
+@app.route('/user/<int:user_id>/role', methods=['PUT'])
+def update_user_role(user_id):
+    data = request.get_json()
+    
+    # Ensure the user has the right to update other users
+    current_user_id = get_jwt_identity()
+    current_user = User.query.get(current_user_id)
+    if current_user is None or not current_user.is_admin:
+        return jsonify({"message": "Unauthorized"}), 403
+
+    user = User.query.get(user_id)
+    if user is None:
+        return jsonify({"message": "User not found"}), 404
+    
+    new_role = data.get('role')
+    if new_role not in ['admin', 'instructor', 'student']:
+        return jsonify({"message": "Invalid role"}), 400
+    
+    # Update the role
+    user.is_admin = (new_role == 'admin')
+    user.is_instructor = (new_role == 'instructor')
+    user.is_student = (new_role == 'student')
+    db.session.commit()
+
+    return jsonify({"success": "User role updated successfully"}), 200
+
+
 
 #Delete User - OK
 @app.route('/user/<int:id>', methods=['DELETE'])
@@ -197,11 +225,32 @@ def delete_user(id):
     db.session.commit()
     return jsonify({"message": "User deleted successfully"}), 200
 
-#************fetching user by id *******************
-@app.route("/users/<int:id>", methods=["GET"])
+#fetching all users- OK
+@app.route("/users", methods=["GET"])
 @jwt_required()
-def get_user_by_id(id):
+def get_all_users():
     try:
+        # Fetch all users from the database
+        users = User.query.all()
+        # Serialize the user data
+        user_list = [
+            {
+                "id": user.id,
+                "name": user.name,
+                "email": user.email,
+                "is_student": user.is_student,
+                "is_admin": user.is_admin,
+                "is_instructor": user.is_instructor
+            }
+            for user in users
+        ]
+        return jsonify(user_list), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+#************fetching user by id- OK  
+@app.route("/users/<int:id>", methods=["GET"])
+def get_user_by_id(id):
         user = User.query.get(id)
         if user is None:
             return jsonify({"message": "User not found"}), 404
@@ -214,9 +263,8 @@ def get_user_by_id(id):
             "is_instructor": user.is_instructor
         }
         return jsonify(user_data), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
+    
+#********************
 
 #CRUD FOR PROJECTS
 
