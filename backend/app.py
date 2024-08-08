@@ -4,7 +4,7 @@ import os
 from flask import Flask, request, jsonify
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
-from datetime import timedelta
+from datetime import datetime, timedelta
 from flask_cors import CORS, cross_origin
 
 from flask_mail import Mail, Message
@@ -372,15 +372,20 @@ def create_task():
     title = data.get('task_name')
     project_id = data.get('project_id')
     user_id = data.get('user_id')
-    # deadline = data.get('deadline')
+    deadline_str = data.get('deadline')
     status = data.get('status', 'Pending')
+
+    try:
+        deadline = datetime.strptime(deadline_str, '%Y-%m-%d').date()  # Convert to date object
+    except ValueError:
+        return jsonify({'error': 'Invalid date format. Please use YYYY-MM-DD.'}), 400
 
  
     task = Task(
         task_name=title,
         project_id=project_id,
         user_id=user_id,
-        #deadline=deadline,
+        deadline=deadline,
         status=status
     )
     db.session.add(task)
