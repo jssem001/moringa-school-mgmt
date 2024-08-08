@@ -18,11 +18,13 @@ export const TaskProvider = ({ children }) => {
     fetch(`${server_url}/tasks`)
       .then(response => response.json())
       .then(data => {
+        console.log('Fetched tasks:', data); // Add this line
         const tasksWithUserNames = data.map(task => 
           fetchUserName(task.user_id).then(userName => ({ ...task, user_name: userName }))
         );
 
         Promise.all(tasksWithUserNames).then(updatedTasks => {
+          console.log('Updated tasks with user names:', updatedTasks);
           const done = updatedTasks.filter(task => task.status === 'done');
           const pending = updatedTasks.filter(task => task.status !== 'done');
           setTasks(pending);

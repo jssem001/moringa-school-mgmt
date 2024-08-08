@@ -447,20 +447,20 @@ def create_task():
     title = data.get('task_name')
     project_id = data.get('project_id')
     user_id = data.get('user_id')
-    deadline_str = data.get('deadline')
+    # deadline_str = data.get('deadline')
     status = data.get('status', 'Pending')
 
-    try:
-        deadline = datetime.strptime(deadline_str, '%Y-%m-%d').date()  # Convert to date object
-    except ValueError:
-        return jsonify({'error': 'Invalid date format. Please use YYYY-MM-DD.'}), 400
+    # try:
+    #     deadline = datetime.strptime(deadline_str, '%Y-%m-%d').date()  # Convert to date object
+    # except ValueError:
+    #     return jsonify({'error': 'Invalid date format. Please use YYYY-MM-DD.'}), 400
 
  
     task = Task(
         task_name=title,
         project_id=project_id,
         user_id=user_id,
-        deadline=deadline,
+        # deadline=deadline,
         status=status
     )
     db.session.add(task)
@@ -488,7 +488,7 @@ def get_tasks():
                 'task_name': task.task_name,
                 'project_id': task.project_id,
                 'user_id': task.user_id,
-                'deadline': task.deadline.isoformat() if task.deadline else None,
+                # 'deadline': task.deadline.isoformat() if task.deadline else None,
                 'status': task.status
             }
             task_list.append(task_data)
@@ -509,7 +509,7 @@ def get_task(id):
         'task_name': task.task_name,
         'project_id': task.project_id,
         'user_id': task.user_id,
-        'deadline': task.deadline.isoformat() if task.deadline else None,
+        # 'deadline': task.deadline.isoformat() if task.deadline else None,
         'status': task.status
     }
     return jsonify(task_data), 200
@@ -535,8 +535,11 @@ def update_task(id):
         task.project_id = data['project_id']
     if 'user_id' in data:
         task.user_id = data['user_id']
-    if 'deadline' in data:
-        task.deadline = data['deadline']
+    # if 'deadline' in data:
+    #     try:
+    #         task.deadline = datetime.strptime(data['deadline'], '%Y-%m-%d').date()
+    #     except ValueError:
+    #         return jsonify({'error': 'Invalid date format. Please use YYYY-MM-DD.'}), 400
     if 'status' in data:
         task.status = data['status']
 
