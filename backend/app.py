@@ -521,9 +521,9 @@ def update_task(id):
     data = request.get_json()
     task = Task.query.get(id)
 
-    current_user_id = get_jwt_identity()
-    if task.user_id != current_user_id:
-        return jsonify({'message': 'You are not authorized to access this resource'}), 404
+    # current_user_id = get_jwt_identity()
+    # if task.user_id != current_user_id:
+    #     return jsonify({'message': 'You are not authorized to access this resource'}), 404
     
 
     if not task:
@@ -558,9 +558,9 @@ def update_task(id):
 def delete_task(id):
     task = Task.query.get_or_404(id)
 
-    current_user_id = get_jwt_identity()
-    if task.user_id != current_user_id:
-        return jsonify({'message': 'You are not authorized to access this resource'}), 404
+    # current_user_id = get_jwt_identity()
+    # if task.user_id != current_user_id:
+    #     return jsonify({'message': 'You are not authorized to access this resource'}), 404
     
     if not task:
         return jsonify({'message': 'Task not found'}), 404
