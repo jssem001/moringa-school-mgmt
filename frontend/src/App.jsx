@@ -19,12 +19,14 @@ import EditProject from "./pages/EditProject";
 import Templates from "./pages/Templates";
 import AddTemplate from "./pages/AddTemplate";
 import EditTemplate from "./pages/EditTemplate";
-import SingleTemplate from "./pages/SingleTemplate"; // Import SingleTemplate
+import SingleTemplate from "./pages/SingleTemplate";
 import { UserProvider } from "./context/UserContext";
-// import { ProjectProvider } from "./context/ProjectContext";
+
+import { ProjectProvider } from "./context/ProjectContext"; // Import ProjectProvider
 import { TaskProvider } from "./context/TaskContext";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+
 
 
 function App() {
@@ -33,29 +35,30 @@ function App() {
     <TaskProvider>
     <Router>
       <UserProvider>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/studentprofile" element={<StudentProfile />} />
-          <Route path="/instructorprofile" element={<InstructorProfile />} />
-          <Route path="/adminprofile" element={<AdminProfile />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/tasks" element={<Task />} />
-          <Route path="/add-project" element={<AddProject />} />
-          <Route path="/projects/:projectId" element={<SingleProject />} />
-          <Route path="/edit-project/:projectId" element={<EditProject />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/analytics" element={<AnalyticsPage />} />
-          <Route path="/usermgmt" element={<UserMgmt />} />
-          <Route path="/templates" element={<Templates />} />
-          <Route path="/add-template" element={<AddTemplate />} />
-          <Route path="/templates/:templateId" element={<SingleTemplate />} /> {/* Route for viewing a single template */}
-          <Route path="/edit-template/:templateId" element={<EditTemplate />} />
-          <Route path="*" element={<div>Page Not Found</div>} />
-        </Routes>
-        <ToastContainer />
+        <ProjectProvider> 
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/studentprofile" element={<StudentProfile />} />
+            <Route path="/instructorprofile" element={<InstructorProfile />} />
+            <Route path="/adminprofile" element={<AdminProfile />} />
+            <Route path="/projects" element={<Projects />} />
+            <Route path="/tasks" element={<Task />} />
+            <Route path="/add-project" element={<AddProject />} />
+            <Route path="/projects/:projectId" element={<SingleProject />} />
+            <Route path="/edit-project/:projectId" element={<EditProject />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/analytics" element={<AnalyticsPage />} />
+            <Route path="/usermgmt" element={<UserMgmt />} />
+            <Route path="/templates" element={<Templates />} />
+            <Route path="/add-template" element={<AddTemplate />} />
+            <Route path="/templates/:templateId" element={<SingleTemplate />} />
+            <Route path="/edit-template/:templateId" element={<EditTemplate />} />
+            <Route path="*" element={<div>Page Not Found</div>} />
+          </Routes>
+        </ProjectProvider>
+       <ToastContainer />                        
       </UserProvider>
     </Router>
     </TaskProvider>

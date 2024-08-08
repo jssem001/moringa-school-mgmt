@@ -54,8 +54,8 @@ const Sidebar = () => {
                         </div>
                     </li>
                     <li>
-                        <Link to="/dashboard"><div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
-                            <span class="flex-1 ms-3 whitespace-nowrap">Dashboard</span>
+                        <Link to="/analytics"><div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
+                            <span class="flex-1 ms-3 whitespace-nowrap">Analysis</span>
                         </div></Link>
                     </li>
                 </ul>

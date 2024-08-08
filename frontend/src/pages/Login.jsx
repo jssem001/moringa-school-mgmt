@@ -11,7 +11,6 @@ export default function Login() {
   const { loginUser } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // const [role, setRole] = useState("student");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -19,16 +18,7 @@ export default function Login() {
     setLoading(true);
 
     loginUser(email, password);
-    // try {
-    //   // await loginUser(email, password, role);
-    //   await loginUser(email, password);
-    //   // toast.success('Login successful!');
-    //   // navigate('/dashboard'); // navigate to the dashboard or desired page
-    // } catch (error) {
-    //   //toast.error('Login failed. Please check your credentials.');
-    // } finally {
-    //   setLoading(false);
-    // }
+    
     setLoading(false);
   };
 

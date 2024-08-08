@@ -7,30 +7,13 @@ const Task = () => {
   
   const { tasks, doneTasks, addTask, updateTaskStatus, clearDoneTasks } = useContext(TaskContext);
 
-  // const [tasks, setTasks] = useState([]);
-  // const [doneTasks, setDoneTasks] = useState([]);
+
   const [taskName, setTaskName] = useState("");
   const [taskStatus, setTaskStatus] = useState("to-do");
   const [assignedTo, setAssignedTo] = useState("");
   const [dueDate, setDueDate] = useState("");
-  // const [notes, setNotes] = useState("");
   const [assignedProject, setAssignedProject] = useState("");
-  // const [files, setFiles] = useState(null); //include later
-
-  // const addTask = () => {
-  //   if (taskName.trim() === "") return;
-
-  //   const newTask = {
-  //     id: Date.now(),
-  //     name: taskName,
-  //     status: taskStatus,
-  //     assignedTo,
-  //     dueDate,
-  //     notes,
-  //   };
-  // const handleFileChange = (e) => {
-  //   setFiles(e.target.files);
-  // };
+  
 
   const handleAddTask = () => {
     if (taskName.trim() === "") return;
@@ -45,45 +28,32 @@ const Task = () => {
       project_id: assignedProject,
       user_id: assignedTo,
       deadline: formattedDate,
-      // notes,
-      // file_attachments: files,
     };
 
     addTask(newTask);
 
-    // if (taskStatus === "done") {
-    //   setDoneTasks([...doneTasks, newTask]);
-    // } else {
-    //   setTasks([...tasks, newTask]);
-    // }
-
-    // Reset fields
+    
     setTaskName("");
     setTaskStatus("to-do");
     setAssignedTo("");
     setAssignedProject("");
     setDueDate("");
-    // setNotes("");
-    // setFiles(null);
+    
   };
 
-  // const updateTaskStatus = (taskId, newStatus) => {
-  //   // Update the status of the task
-  //   setTasks(tasks.map(task => 
-  //     task.id === taskId ? { ...task, status: newStatus } : task
-  //   ));
+  const formatDate = (dateString) => {
+    if (dateString !== null) {
+      const date = new Date(dateString);
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // getMonth() returns month from 0-11
+      const year = date.getFullYear();
+      return `${day}-${month}-${year}`;
+    }
 
-  //   // If the new status is "done", move the task to the done list
-  //   if (newStatus === "done") {
-  //     const taskToMove = tasks.find(task => task.id === taskId);
-  //     setDoneTasks([...doneTasks, taskToMove]);
-  //     setTasks(tasks.filter(task => task.id !== taskId));
-  //   }
-  // };
-
-  // const clearDoneTasks = () => {
-  //   setDoneTasks([]);
-  // };
+    
+    
+  };
+  
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -134,20 +104,7 @@ const Task = () => {
               onChange={(e) => setDueDate(e.target.value)}
               className="mt-2 w-full p-2 border border-gray-300 rounded"
             />
-            {/* <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Notes"
-              rows="4"
-              className="mt-2 w-full p-2 border border-gray-300 rounded"
-            /> */}
-            {/* <input
-              type="file"
-              name="files"
-              multiple
-              onChange={handleFileChange}
-              className="w-full  mt-2 p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            /> */}
+            
             <button
               onClick={handleAddTask}
               className="mt-2 px-4 py-2 bg-orange-200 text-black rounded hover:text-white hover:bg-orange-300"
@@ -183,8 +140,8 @@ const Task = () => {
               <thead>
                 <tr>
                   <th className="border border-gray-300 p-2">Task Name</th>
+                  {/* <th className="border border-gray-300 p-2">Assigned User</th> */}
                   <th className="border border-gray-300 p-2">Assigned User</th>
-                  {/* <th className="border border-gray-300 p-2">Assigned User Name</th> */}
                   <th className="border border-gray-300 p-2">Assigned Project</th>
                   <th className="border border-gray-300 p-2">Due Date</th>
                   {/* <th className="border border-gray-300 p-2">Notes</th> */}
@@ -196,11 +153,11 @@ const Task = () => {
                 {tasks.filter(task => task.status !== "done").map(task => (
                   <tr key={task.id}>
                     <td className="border border-gray-300 p-2">{task.task_name}</td>
-                    <td className="border border-gray-300 p-2">{task.user_id}</td>
-                    {/* <td className="border border-gray-300 p-2">{task.user_name}</td> */}
+                    
+                    <td className="border border-gray-300 p-2">{task.user_name}</td>
                     <td className="border border-gray-300 p-2">{task.project_id}</td>
-                    <td className="border border-gray-300 p-2">{task.deadline}</td>
-                    {/* <td className="border border-gray-300 p-2">{task.notes}</td> */}
+                    <td className="border border-gray-300 p-2">{formatDate(task.deadline)}</td>
+                    
                     <td className="border border-gray-300 p-2">
                       <select
                         value={task.status}
@@ -232,8 +189,8 @@ const Task = () => {
               <thead>
                 <tr>
                   <th className="border border-gray-300 p-2">Task Name</th>
+                  {/* <th className="border border-gray-300 p-2">Assigned User</th> */}
                   <th className="border border-gray-300 p-2">Assigned User</th>
-                  {/* <th className="border border-gray-300 p-2">Assigned User Name</th> */}
                   <th className="border border-gray-300 p-2">Assigned Project</th>
                   <th className="border border-gray-300 p-2">Due Date</th>
                   {/* <th className="border border-gray-300 p-2">Notes</th> */}
@@ -245,8 +202,8 @@ const Task = () => {
                 {doneTasks.filter(task => task.status === "done").map(task => (
                   <tr key={task.id}>
                     <td className="border border-gray-300 p-2">{task.task_name}</td>
-                    <td className="border border-gray-300 p-2">{task.user_id}</td>
-                    {/* <td className="border border-gray-300 p-2">{task.user_name}</td> */}
+                    {/* <td className="border border-gray-300 p-2">{task.user_id}</td> */}
+                    <td className="border border-gray-300 p-2">{task.user_name}</td>
                     <td className="border border-gray-300 p-2">{task.project_id}</td>
                     <td className="border border-gray-300 p-2">{task.deadline}</td>
                     {/* <td className="border border-gray-300 p-2">{task.notes}</td> */}
