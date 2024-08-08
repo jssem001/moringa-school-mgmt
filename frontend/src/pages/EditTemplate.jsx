@@ -1,19 +1,42 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import { useNavigate } from "react-router-dom";
+import { useProjects } from "../context/ProjectContext"; // Updated import
 
-const AddTemplate = () => {
+const EditTemplate = () => {
+  const { id } = useParams();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [figmaLink, setFigmaLink] = useState("");
   const [sqlDiagram, setSqlDiagram] = useState("");
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
+
+  const { fetchTemplates, updateTemplate } = useProjects(); // Updated usage
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchAndSetTemplate = async () => {
+      try {
+        await fetchTemplates(); // Ensure templates are fetched
+        const template = templates.find((template) => template.id === parseInt(id)); // Use the fetched templates
+        if (template) {
+          setTitle(template.title);
+          setDescription(template.description);
+          setFigmaLink(template.figmaLink);
+          setSqlDiagram(template.sqlDiagram);
+          setImagePreviewUrl(template.imagePreviewUrl);
+        }
+      } catch (error) {
+        console.error("Failed to fetch template:", error);
+      }
+    };
+
+    fetchAndSetTemplate();
+  }, [id, fetchTemplates, templates]); // Added dependencies
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log({ title, description, figmaLink, sqlDiagram, imagePreviewUrl });
+    updateTemplate({ id: parseInt(id), title, description, figmaLink, sqlDiagram, imagePreviewUrl });
     navigate("/templates");
   };
 
@@ -23,7 +46,7 @@ const AddTemplate = () => {
 
       <div className="p-4 sm:ml-64 flex-1">
         <section className="mb-4">
-          <h1 className="text-2xl font-bold mb-4">Add New Template</h1>
+          <h1 className="text-2xl font-bold mb-4">Edit Template</h1>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-semibold mb-2">Title</label>
@@ -79,21 +102,15 @@ const AddTemplate = () => {
 
             <button
               type="submit"
-              className="px-4 py-2 bg-orange-300 text-white rounded hover:bg-orange-400"
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             >
-              Add Template
+              Save Changes
             </button>
           </form>
-          <button
-            onClick={() => navigate("/templates")}
-            className="mt-4 px-4 py-2 bg-blue-300 text-white rounded hover:bg-blue-400"
-          >
-            Back to Templates
-          </button>
         </section>
       </div>
     </div>
   );
 };
 
-export default AddTemplate;
+export default EditTemplate;

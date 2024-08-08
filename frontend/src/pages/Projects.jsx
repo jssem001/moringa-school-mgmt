@@ -1,41 +1,85 @@
 
 import React, { useState, useEffect } from "react";
+
 // import { useProjects } from '../context/ProjectContext';
+
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 
 const Projects = () => {
-  // const { projects, fetchProjects, deleteProject } = useProjects(); // Use context methods
-  const [searchTerm, setSearchTerm] = useState("");
 
+  // const { projects, fetchProjects, deleteProject } = useProjects(); // Use context methods
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [projects, setProjects] = useState([]); 
   const [deleteProjectId, setDeleteProjectId] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Fetch projects on component mount
   useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects]);
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/projects", {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
-  // Filter projects based on the search term
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setProjects(data);
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
   const filteredProjects = projects.filter((project) =>
     project.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Show the delete confirmation dialog
   const handleDeleteClick = (projectId) => {
     setDeleteProjectId(projectId);
     setShowDeleteConfirm(true);
   };
 
-  // Confirm deletion of the project
-  const confirmDelete = () => {
 
-    deleteProject(deleteProjectId); // Use context method
-    setShowDeleteConfirm(false);
-    setDeleteProjectId(null);
+  const confirmDelete = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/projects/${deleteProjectId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      setProjects(projects.filter((project) => project.id !== deleteProjectId));
+      setShowDeleteConfirm(false);
+      setDeleteProjectId(null);
+    } catch (error) {
+      setError(error.message);
+    }
+
+//   // Confirm deletion of the project
+//   const confirmDelete = () => {
+
+//     setProjects(projects.filter(project => project.id !== deleteProjectId));
+
+//     setShowDeleteConfirm(false);
+//     setDeleteProjectId(null);
+//     // deleteProject(deleteProjectId); // Use context method
+
   };
 
-  // Cancel deletion of the project
   const cancelDelete = () => {
     setShowDeleteConfirm(false);
     setDeleteProjectId(null);
@@ -46,7 +90,8 @@ const Projects = () => {
       <Sidebar />
 
       <div className="p-4 sm:ml-64 flex-1">
-        {/* Search Section */}
+        {error && <div className="text-red-500">Error: {error}</div>}
+
         <section className="mb-4">
           <input
             type="text"
@@ -57,7 +102,6 @@ const Projects = () => {
           />
         </section>
 
-        {/* Buttons Section */}
         <section className="mb-4 flex space-x-4">
           <Link
             to="/add-project"
@@ -73,14 +117,12 @@ const Projects = () => {
           </Link>
         </section>
 
-        {/* Main content area */}
         <main className="p-4">
           <h2 className="text-2xl font-bold mb-4">Projects</h2>
 
           <div className="space-y-4">
             {filteredProjects.map((project) => (
               <div key={project.id} className="flex items-start p-4 border rounded shadow-lg">
-                {/* Project Image */}
                 <div className="w-1/4 mr-4 flex-shrink-0">
                   <img
                     src={project.image}
@@ -89,7 +131,6 @@ const Projects = () => {
                   />
                 </div>
 
-                {/* Project Details */}
                 <div className="flex-1">
                   <h3 className="text-xl font-semibold mb-2">{project.title}</h3>
                   <p className="mb-2">{project.description}</p>
@@ -97,7 +138,6 @@ const Projects = () => {
                   <p className="text-sm text-gray-600">Due Date: {project.duedate}</p>
                   <p className="text-sm text-gray-600">Status: {project.status}</p>
 
-                  {/* Attached Files Section */}
                   {project.attachedFiles && project.attachedFiles.length > 0 && (
                     <div className="mt-2">
                       <h4 className="font-semibold">Attached Files:</h4>
@@ -118,7 +158,6 @@ const Projects = () => {
                     </div>
                   )}
 
-                  {/* Action Links */}
                   <div className="mt-2 flex space-x-2">
                     <a
                       href={project.githubLink}
@@ -148,7 +187,6 @@ const Projects = () => {
         </main>
       </div>
 
-      {/* Delete Confirmation Dialog */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-lg">

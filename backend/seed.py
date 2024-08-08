@@ -1,5 +1,5 @@
 from app import app, db  # Import your Flask app instance and SQLAlchemy object
-from models import User, Project, Task, Reporting, Comment, Template
+from models import User, Project, Task, Activities, Comment, Template
 from flask_bcrypt import Bcrypt
 from datetime import datetime
 
@@ -13,11 +13,11 @@ def seed_data():
 
         # Seed users
         users = [
-            User(name='Alice', email='alice@example.com', password=bcrypt.generate_password_hash('password1').decode('utf-8')),
-            User(name='Bob', email='bob@example.com', password=bcrypt.generate_password_hash('password2').decode('utf-8')),
-            User(name='Charlie', email='charlie@example.com', password=bcrypt.generate_password_hash('password3').decode('utf-8')),
-            User(name='David', email='david@example.com', password=bcrypt.generate_password_hash('password4').decode('utf-8')),
-            User(name='Eve', email='eve@example.com', password=bcrypt.generate_password_hash('password5').decode('utf-8'))
+            User(name='Alice', email='alice@example.com', password=bcrypt.generate_password_hash('password1').decode('utf-8'), is_admin=False, is_instructor=False, is_student=True),
+            User(name='Bob', email='bob@example.com', password=bcrypt.generate_password_hash('password2').decode('utf-8'), is_admin=True, is_instructor=False, is_student=False),
+            User(name='Charlie', email='charlie@example.com', password=bcrypt.generate_password_hash('password3').decode('utf-8'), is_admin=False, is_instructor=True, is_student=False),
+            User(name='David', email='david@example.com', password=bcrypt.generate_password_hash('password4').decode('utf-8'), is_admin=False, is_instructor=False, is_student=True),
+            User(name='Eve', email='eve@example.com', password=bcrypt.generate_password_hash('password5').decode('utf-8'), is_admin=False, is_instructor=False, is_student=True)
         ]
         db.session.add_all(users)
         db.session.commit()
@@ -49,12 +49,12 @@ def seed_data():
         # Get task IDs after commits
         task_ids = [task.id for task in tasks]
 
-        # Seed reporting
-        reportings = [
-            Reporting(user_id=user_ids[0], project_id=project_ids[0], task_id=task_ids[0], task_amount=5),
-            Reporting(user_id=user_ids[1], project_id=project_ids[1], task_id=task_ids[1], task_amount=3),
+        # Seed activities
+        activities = [
+            Activities(user_id=user_ids[0], project_id=project_ids[0], task_id=task_ids[0], activity="Added 5 tasks", timestamp=datetime.utcnow()),
+            Activities(user_id=user_ids[1], project_id=project_ids[1], task_id=task_ids[1], activity="Added a new task", timestamp=datetime.utcnow()),
         ]
-        db.session.add_all(reportings)
+        db.session.add_all(activities)
         db.session.commit()
 
         # Seed comments
