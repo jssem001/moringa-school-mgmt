@@ -6,6 +6,8 @@ import { server_url } from "../../config";
 // Create a UserContext
 const UserContext = createContext();
 
+
+
 // Define permissions based on user roles
 const permissionsConfig = {
   admin: {
@@ -42,6 +44,25 @@ const permissionsConfig = {
   },
 };
 
+
+// Fetch data with retry logic
+// const fetchWithRetry = async (url, options, retries = 3, delay = 1000) => {
+//   try {
+//     const response = await fetch(url, { ...options });
+//     if (!response.ok) {
+//       const error = await response.json();
+//       throw new Error(error.message || 'An error occurred');
+//     }
+//     return await response.json();
+//   } catch (error) {
+//     if (retries > 0) {
+//       return fetchWithRetry(url, options, retries - 1,delay);
+//     }
+//     throw error;
+//   }
+// };
+
+
 // Define the UserProvider component
 const UserProvider = ({ children }) => {
   const navigate = useNavigate();
@@ -50,6 +71,9 @@ const UserProvider = ({ children }) => {
   const [permissions, setPermissions] = useState({});
   const [loading, setLoading] = useState(false);
   const [allUsers, setAllUsers] = useState([]);
+
+  // const [userRole, setUserRole] = useState('');
+  
 
   // Fetch current user data and handle authentication
   useEffect(() => {
@@ -65,7 +89,7 @@ const UserProvider = ({ children }) => {
         .then((data) => {
           if (data.email) {
             setCurrentUser(data);
-            setPermissions(permissionsConfig[data.role] || {});
+            //setPermissions(permissionsConfig[data.role] || {});
           } else {
             handleLogout();
           }
@@ -78,39 +102,80 @@ const UserProvider = ({ children }) => {
     }
   }, [authToken]);
 
+
   // Fetch all users
-  const fetchUsers = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(`${server_url}/users`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`,
-        },
-      });
-      if (!response.ok) throw new Error('Failed to fetch users');
-      const data = await response.json();
-      setAllUsers(data);
-    } catch (error) {
+//   const fetchUsers = async () => {
+//     setLoading(true);
+//     try {
+//       const response = await fetch(`${server_url}/users`, {
+//         method: 'GET',
+//         headers: {
+//           'Content-Type': 'application/json',
+//           'Authorization': `Bearer ${authToken}`,
+//         },
+//       });
+//       if (!response.ok) throw new Error('Failed to fetch users');
+//       const data = await response.json();
+//       setAllUsers(data);
+//     } catch (error) {
+//       toast.error(`Failed to fetch users: ${error.message}`);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   // Register a new user
+//   const registerUser = async (name, email, phoneNumber, role, is_student, is_instructor, is_admin, password) => {
+//     setLoading(true);
+//     try {
+//       const response = await fetch(`${server_url}/user`, {
+//         method: 'POST',
+//         body: JSON.stringify({ name, email, password, phoneNumber, role, is_student, is_instructor, is_admin }),
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//       });
+//       const data = await response.json();
+
+
+  //All Users
+  const fetchUsers= async () => {
+    setLoading(false);
+    fetch(`${server_url}/users`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`,
+      },
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      setAllUsers(data);  // fetched users
+    })
+    .catch((error) => {
       toast.error(`Failed to fetch users: ${error.message}`);
-    } finally {
-      setLoading(false);
-    }
+    })
+    .finally(() => setLoading(false));
   };
 
+
   // Register a new user
-  const registerUser = async (name, email, phoneNumber, role, is_student, is_instructor, is_admin, password) => {
+  const register_user =  (name, email, phoneNumber, role, is_student, is_instructor, is_admin, password) => {
     setLoading(true);
-    try {
-      const response = await fetch(`${server_url}/user`, {
-        method: 'POST',
-        body: JSON.stringify({ name, email, password, phoneNumber, role, is_student, is_instructor, is_admin }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      const data = await response.json();
+    console.log(name,email,password,phoneNumber,role)
+    fetch(`${server_url}/user`, {
+      method: 'POST',
+      body: JSON.stringify({ name, email, password, phoneNumber, role, is_student, is_instructor, is_admin }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("test")
+      console.log(data)
+
       if (data.success) {
         toast.success("Registered successfully!");
         navigate("/login");
@@ -122,61 +187,124 @@ const UserProvider = ({ children }) => {
       toast.error(`Failed to register user: ${error.message}`);
     } finally {
       setLoading(false);
-    }
+
+//     }
+//   };
+
+//   // Log in a user
+//   const loginUser = async (email, password) => {
+//     setLoading(true);
+//     try {
+//       const response = await fetch(`${server_url}/login`, {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({ email, password }),
+//       });
+//       const data = await response.json();
+//       if (data.access_token) {
+//         setAuthToken(data.access_token);
+//         localStorage.setItem('access_token', data.access_token);
+//         setCurrentUser(data.user);
+//         setPermissions(permissionsConfig[data.is_admin ? 'admin' : (data.is_student ? 'student' : 'instructor')] || {});
+//         toast.success('Logged in Successfully!');
+//         navigate('/dashboard');
+//       } else {
+//         toast.error(data.error || 'Login failed');
+//       }
+//     } catch (error) {
+//       toast.error(`Failed to log in: ${error.message}`);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   // Reset password
+//   const resetPassword = async (email, newPassword) => {
+//     setLoading(true);
+//     try {
+//       const response = await fetch(`${server_url}/forgot_password`, {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({ email, new_password: newPassword }),
+//       });
+//       const data = await response.json();
+//       if (data.success) {
+//         toast.success('Password reset email sent!');
+//       } else {
+//         throw new Error(data.error || 'Failed to send password reset email');
+//       }
+//     } catch (error) {
+//       toast.error(`Failed to send password reset email. Please try again. ${error.message}`);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+    })
+ 
   };
 
-  // Log in a user
-  const loginUser = async (email, password) => {
-    setLoading(true);
-    try {
-      const response = await fetch(`${server_url}/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await response.json();
-      if (data.access_token) {
-        setAuthToken(data.access_token);
-        localStorage.setItem('access_token', data.access_token);
-        setCurrentUser(data.user);
-        setPermissions(permissionsConfig[data.is_admin ? 'admin' : (data.is_student ? 'student' : 'instructor')] || {});
-        toast.success('Logged in Successfully!');
-        navigate('/dashboard');
-      } else {
-        toast.error(data.error || 'Login failed');
-      }
-    } catch (error) {
-      toast.error(`Failed to log in: ${error.message}`);
-    } finally {
-      setLoading(false);
+ 
+//login User
+const loginUser = async (email, password) => {
+  setLoading(true);
+  fetch(`${server_url}/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email, password }),
+  })
+  .then((response) => response.json())
+  .then((data) => {
+    if (data.access_token) {
+      setAuthToken(data.access_token);
+      localStorage.setItem('access_token', data.access_token);
+      setCurrentUser(data.user);
+      setPermissions(permissionsConfig[data.is_admin ? 'admin' : (data.is_student ? 'student' : 'instructor')] || {});
+      toast.success('Logged in Successfully!');
+      console.log('Logged in Successfully!');
+      navigate('/dashboard');
+    } else {
+      toast.error(data.error || 'Login failed');
     }
-  };
+  })
 
-  // Reset password
-  const resetPassword = async (email, newPassword) => {
+
+};
+
+  //Reset Password
+  const resetPassword = (email, newPassword) => {
     setLoading(true);
-    try {
-      const response = await fetch(`${server_url}/forgot_password`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, new_password: newPassword }),
+    fetch(`${server_url}/forgot_password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, new_password: newPassword }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          console.log('Password reset email sent!');
+          toast.success('Password reset email sent!');
+        } else {
+          console.error(data.error || 'Failed to send password reset email');
+          toast.error(data.error || 'Failed to send password reset email');
+        }
+      })
+      .catch((error) => {
+        toast.error('Failed to send password reset email. Please try again.');
+      })
+      .finally(() => {
+        setLoading(false);
       });
-      const data = await response.json();
-      if (data.success) {
-        toast.success('Password reset email sent!');
-      } else {
-        throw new Error(data.error || 'Failed to send password reset email');
-      }
-    } catch (error) {
-      toast.error(`Failed to send password reset email. Please try again. ${error.message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }
+
+
 
   // Log out a user
   const handleLogout = async () => {
@@ -233,25 +361,85 @@ const UserProvider = ({ children }) => {
   };
 
   // Update user role
-  const updateRole = async (userId, newRole) => {
-    try {
-      const response = await fetch(`${server_url}/user/${userId}/role`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`,
-        },
-        body: JSON.stringify({ role: newRole }),
+
+//   const updateRole = async (userId, newRole) => {
+//     try {
+//       const response = await fetch(`${server_url}/user/${userId}/role`, {
+//         method: 'PUT',
+//         headers: {
+//           'Content-Type': 'application/json',
+//           'Authorization': `Bearer ${authToken}`,
+//         },
+//         body: JSON.stringify({ role: newRole }),
+//       });
+//       if (!response.ok) throw new Error('Failed to update user role');
+//       const updatedUser = await response.json();
+//       setAllUsers((prevUsers) =>
+//         prevUsers.map((user) => (user.id === userId ? { ...user, role: newRole } : user))
+//       );
+//     } catch (error) {
+//       toast.error(`Error updating user role: ${error.message}`);
+//     }
+//   };
+
+  const updateRole = (userId, newRole) => {
+    setLoading(true);
+    fetch(`${server_url}/user/${userId}/role`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`, // Include the auth token if needed
+      },
+      body: JSON.stringify({ role: newRole }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          toast.success(data.success);
+          setAllUsers((prevUsers) =>
+            prevUsers.map((user) => (user.id === userId ? { ...user, role: newRole } : user))
+          );
+        } else {
+          toast.error(data.error || "Update failed");
+        }
+      })
+      .catch((error) => {
+        toast.error(`Failed to update user role: ${error.message}`);
+      })
+      .finally(() => {
+        setLoading(false);
       });
-      if (!response.ok) throw new Error('Failed to update user role');
-      const updatedUser = await response.json();
-      setAllUsers((prevUsers) =>
-        prevUsers.map((user) => (user.id === userId ? { ...user, role: newRole } : user))
-      );
-    } catch (error) {
-      toast.error(`Error updating user role: ${error.message}`);
-    }
   };
+
+
+
+  // const updateRole = async (userId, newRole) => {
+  //   try {
+  //     const response = await fetch(`${server_url}/user/${userId}/role`, {
+  //       method: 'PUT',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': `Bearer ${authToken}`, // Include the auth token if needed
+  //       },
+  //       body: JSON.stringify({ role: newRole }),
+  //     });
+  
+  //     if (!response.ok) {
+  //       throw new Error('Failed to update user role');
+  //     }
+  
+  //     const updatedUser = await response.json();
+  //     setAllUsers((prevUsers) =>
+  //       prevUsers.map((user) => (user.id === userId ? { ...user, role: newRole } : user))
+  //     );
+  //   } catch (error) {
+  //     console.error("Error updating user role:", error);
+  //   }
+  // };
+
+
+
+
 
   // Delete a user
   const deleteUser = async () => {
@@ -287,8 +475,15 @@ const UserProvider = ({ children }) => {
     permissions,
     loading,
     allUsers,
+
+//     fetchUsers,
+//     registerUser,
+
+    //userRole,
+    updateRole,
+    resetPassword,
     fetchUsers,
-    registerUser,
+    register_user,
     loginUser,
     resetPassword,
     handleLogout,

@@ -1,15 +1,19 @@
 #app.py
 import random
+import os
 from flask import Flask, request, jsonify
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from datetime import timedelta
 from flask_cors import CORS, cross_origin
 
+from flask_mail import Mail, Message
+from werkzeug.security import generate_password_hash, check_password_hash
+
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity, get_jwt
 
 
-from models import db, User
+from models import db, User, Project, Task, Activities, Template, Comment
 
 bcrypt = Bcrypt()
 
@@ -30,6 +34,13 @@ migrate = Migrate(app, db)
 
 db.init_app(app)
 
+# Ensure CORS headers in response
+@app.after_request
+def add_cors_headers(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+    return response
 
 #User Registration - OK
 @app.route('/user', methods=['POST'])
@@ -58,6 +69,8 @@ def create_user():
 #User Login - OK
 @app.route("/login", methods=["POST"])
 def login_user():
+    # data = request.get_json()
+
     email = request.json.get("email", None)
     password = request.json.get("password", None)
 
@@ -69,6 +82,48 @@ def login_user():
 
     else:
         return jsonify({"error": "Wrong Details Entered"}), 401
+    
+
+
+# RESETTING PASSWORD WHEN USER FORGETS
+app.config['MAIL_SERVER'] = 'sandbox.smtp.mailtrap.io'  # Replace with your mail server
+app.config['MAIL_PORT'] = 2525 # Replace with your mail server port
+app.config['MAIL_USERNAME'] = "47944be92d11e6"  # Replace with your email address
+app.config['MAIL_PASSWORD'] = '77eaae86c8e97e'  # Replace with your email password
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+
+mail = Mail(app)
+
+
+@app.route('/forgot_password', methods=['POST'])
+def forgot_password():
+    data = request.get_json()
+
+    your_email = data.get('email')
+    new_password = data.get('new_password')
+
+    print(f"Received email: {your_email}")
+
+    user = User.query.filter_by(email=your_email).first()
+
+    if user:
+        # Generate new password hash
+        hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
+        user.password = hashed_password
+        db.session.commit()
+
+        mail_message = Message(
+         subject='Password Reset Confirmation',  # Subject of the email
+            sender='nimrodnjau@student.moringaschool.com',
+            recipients=[your_email],
+            body="\n frontend/MoringaLogo.png" f'\n Hello {user.name},\n \nYour new password is: {new_password}\n  \nBest regards,\nMoringa School')
+        mail.send(mail_message)
+
+
+        return jsonify({"success": "Password changed successfully and email sent"}), 200
+    else:
+        return jsonify({"error": "User not found"}), 404
 
 
 # Current User - OK
@@ -87,6 +142,8 @@ def current_user():
         "is_instructor": user.is_instructor
     }
     return jsonify(user_data), 200
+
+
 
 
 #User Logout - OK
@@ -139,3 +196,540 @@ def delete_user(id):
     db.session.delete(user)
     db.session.commit()
     return jsonify({"message": "User deleted successfully"}), 200
+
+#************fetching user by id *******************
+@app.route("/users/<int:id>", methods=["GET"])
+@jwt_required()
+def get_user_by_id(id):
+    try:
+        user = User.query.get(id)
+        if user is None:
+            return jsonify({"message": "User not found"}), 404
+        user_data = {
+            "id": user.id,
+            "name": user.name,
+            "email": user.email,
+            "is_student": user.is_student,
+            "is_admin": user.is_admin,
+            "is_instructor": user.is_instructor
+        }
+        return jsonify(user_data), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+#CRUD FOR PROJECTS
+
+#1. ADDING A PROJECT
+@app.route('/project', methods=['POST'])
+@jwt_required()
+def create_event():
+    current_user_id = get_jwt_identity()
+
+    current_user = User.query.get(current_user_id)
+
+    if current_user:
+       data = request.get_json()
+       new_event = Project(
+          name=data['name'],
+          description=data['description'],
+          deadline=data['deadline'],
+          file_attachments=data['file_attachments'],
+          user_id=current_user_id
+    )
+    db.session.add(new_event)
+
+    activity = Activities(user_id=current_user_id, project_id=new_event.id, activity="Added a new project")
+    db.session.add(activity)
+    
+    db.session.commit()
+    return jsonify({"success": "Project created successfully"}), 201
+
+
+#2. GETTING ALL PROJECTS BY THE USER
+@app.route('/project', methods=['GET'])
+@jwt_required()
+def get_projects():
+    current_user_id = get_jwt_identity()
+
+    user = User.query.get(current_user_id)
+
+    if user is None:
+        return jsonify({"message": "You are not authorized to access this resource"}), 404
+    
+    projects = Project.query.filter_by(user_id=current_user_id).all()
+    project_data = []
+    for project in projects:
+        project_data.append({
+            "id": project.id,
+            "name": project.name,
+            "description": project.description,
+            "deadline": project.deadline,
+            "file_attachments": project.file_attachments
+        })
+    return jsonify(project_data), 200
+
+# GETTING ONGOING PROJECTS - THIS SHOULD BE DEPENDENT ON THE STATUS OF THE PROJECT('IN PROGRESS' OR 'COMPLETED')
+@app.route('/project', methods=['GET'])
+@jwt_required()
+def get_ongoing_projects():
+    current_user_id = get_jwt_identity()
+
+    user = User.query.get(current_user_id)
+
+    if user is None:
+        return jsonify({"message": "You are not authorized to access this resource"}), 404
+    
+    projects = Project.query.filter_by(user_id=current_user_id, status='IN PROGRESS').all()
+    project_data = []
+    for project in projects:
+        project_data.append({
+            "id": project.id,
+            "name": project.name,
+            "description": project.description,
+            "deadline": project.deadline,
+            "file_attachments": project.file_attachments
+        })
+    return jsonify(project_data), 200
+
+
+#3. VIEWING PROJECT DETAILS
+@app.route('/project/<int:id>', methods=['GET'])
+def get_project(id):
+    project = Project.query.get(id)
+    if project is None:
+        return jsonify({"message": "Project not found"}), 404
+    project_data = {
+        "id": project.id,
+        "name": project.name,
+        "description": project.description,
+        "deadline": project.deadline,
+        "file_attachments": project.file_attachments
+    }
+    return jsonify(project_data), 200
+
+#4. EDITING DETAILS OF A PROJECT
+@app.route('/project/<int:id>', methods=['PUT'])
+@jwt_required()
+def update_project(id):
+    data = request.get_json()
+
+    project = Project.query.get(id)
+
+    if project is None:
+        return jsonify({"message": "Project not found"}), 404
+
+    current_user_id = get_jwt_identity()
+    if project.user_id != current_user_id:
+        return jsonify({"message": "You are not authorized to access this resource"}), 404
+    
+    project.name = data.get('name', project.name)
+    project.description = data.get('description', project.description)
+    project.deadline = data.get('deadline', project.deadline)
+    project.file_attachments = data.get('file_attachments', project.file_attachments)
+
+    activity = Activities(user_id=current_user_id, project_id=project.id, activity="Updated project details")
+    db.session.add(activity)
+
+    db.session.commit()
+    return jsonify({"success": "Project updated successfully"}), 200
+
+#5. DELETING A PROJECT
+@app.route('/project/<int:id>', methods=['DELETE'])
+@jwt_required()
+def delete_project(id):
+    project = Project.query.get(id)
+    if project is None:
+        return jsonify({"message": "Project not found"}), 404
+    
+    current_user_id = get_jwt_identity()
+    if project.user_id != current_user_id:
+        if current_user_id is None:
+          return jsonify({"message": "User not authenticated"}), 401
+
+    # Log the activity
+    activity = Activities(user_id=current_user_id, project_id=project.id, activity="Deleted a project")
+    db.session.add(activity)
+
+    db.session.delete(project)
+    db.session.commit()
+    return jsonify({"message": "Project deleted successfully"}), 200
+
+
+
+
+
+#CRUD FOR TASK
+# Create a new task
+@app.route('/tasks', methods=['POST'])
+@jwt_required()
+def create_task():
+    data = request.get_json()
+
+    current_user_id = get_jwt_identity()
+    user_id = current_user_id
+
+    title = data.get('task_name')
+    project_id = data.get('project_id')
+    user_id = data.get('user_id')
+    # deadline = data.get('deadline')
+    status = data.get('status', 'Pending')
+
+ 
+    task = Task(
+        task_name=title,
+        project_id=project_id,
+        user_id=user_id,
+        #deadline=deadline,
+        status=status
+    )
+    db.session.add(task)
+
+    # Log the activity
+    current_user_id = get_jwt_identity()
+    activity = Activities(user_id=current_user_id, task_id=task.id, activity="Created a new task")
+    db.session.add(activity)
+
+
+    db.session.commit()
+
+    return jsonify({'message': 'Task created successfully'}), 201
+
+# Get all tasks
+@app.route('/tasks', methods=['GET'])
+def get_tasks():
+    try:
+        tasks = Task.query.all()
+        task_list = []
+
+        for task in tasks:
+            task_data = {
+                'id': task.id,
+                'task_name': task.task_name,
+                'project_id': task.project_id,
+                'user_id': task.user_id,
+                'deadline': task.deadline.isoformat() if task.deadline else None,
+                'status': task.status
+            }
+            task_list.append(task_data)
+
+        return jsonify(task_list), 200
+    except Exception as e:
+        return jsonify({'message': 'Failed to fetch tasks', 'error': str(e)}), 500
+
+# Get single task
+@app.route('/tasks/<int:id>', methods=['GET'])
+def get_task(id):
+    task = Task.query.get_or_404(id)
+    if not task:
+        return jsonify({'message': 'Task not found'}), 404
+    
+    task_data = {
+        'id': task.id,
+        'task_name': task.task_name,
+        'project_id': task.project_id,
+        'user_id': task.user_id,
+        'deadline': task.deadline.isoformat() if task.deadline else None,
+        'status': task.status
+    }
+    return jsonify(task_data), 200
+
+# Update task
+@app.route('/tasks/<int:id>', methods=['PATCH'])
+@jwt_required()
+def update_task(id):
+    data = request.get_json()
+    task = Task.query.get(id)
+
+    current_user_id = get_jwt_identity()
+    if task.user_id != current_user_id:
+        return jsonify({'message': 'You are not authorized to access this resource'}), 404
+    
+
+    if not task:
+        return jsonify({'message': 'Task not found'}), 404
+
+    if 'task_name' in data:
+        task.task_name = data['task_name']
+    if 'project_id' in data:
+        task.project_id = data['project_id']
+    if 'user_id' in data:
+        task.user_id = data['user_id']
+    if 'deadline' in data:
+        task.deadline = data['deadline']
+    if 'status' in data:
+        task.status = data['status']
+
+    # Log the activity
+    current_user_id = get_jwt_identity()
+    activity = Activities(user_id=current_user_id, project_id=task.project_id, activity="Updated a task")
+    db.session.add(activity)
+
+
+    db.session.commit()
+    return jsonify({'message': 'Task updated successfully'}), 200
+
+# Delete task
+@app.route('/tasks/<int:id>', methods=['DELETE'])
+@jwt_required()
+def delete_task(id):
+    task = Task.query.get_or_404(id)
+
+    current_user_id = get_jwt_identity()
+    if task.user_id != current_user_id:
+        return jsonify({'message': 'You are not authorized to access this resource'}), 404
+    
+    if not task:
+        return jsonify({'message': 'Task not found'}), 404
+
+
+    # Log the activity
+    current_user_id = get_jwt_identity()
+    activity = Activities(user_id=current_user_id, project_id=task.id, activity="Deleted a task")
+    db.session.add(activity)
+
+    db.session.delete(task)
+    db.session.commit()
+    return jsonify({'message': 'Task deleted successfully'}), 200
+
+
+
+##CRUD FOR TEMPLATES 
+
+# Create a new template
+@app.route('/templates', methods=['POST'])
+@jwt_required()
+def create_template():
+    data = request.get_json()
+
+    current_user_id = get_jwt_identity()
+    user_id = current_user_id
+
+    name = data.get('name')
+    link = data.get('link')
+    
+
+    template = Template(
+        name=name,
+        link=link,
+        user_id=user_id
+    )
+    db.session.add(template)
+
+    # Log the activity
+    current_user_id = get_jwt_identity()
+    activity = Activities(user_id=current_user_id, activity="New Template Created")
+    db.session.add(activity)
+
+    db.session.commit()
+
+    return jsonify({'message': 'Template created successfully'}), 201
+
+# Get all templates
+@app.route('/templates', methods=['GET'])
+def get_templates():
+    try:
+        templates = Template.query.all()
+        template_list = []
+
+        for template in templates:
+            template_data = {
+                'id': template.id,
+                'name': template.name,
+                'link': template.link,
+                'user_id': template.user_id
+            }
+            template_list.append(template_data)
+
+        return jsonify(template_list), 200
+    except Exception as e:
+        return jsonify({'message': 'Failed to fetch templates', 'error': str(e)}), 500
+
+# Get a single template
+@app.route('/templates/<int:id>', methods=['GET'])
+def get_template(id):
+    try:
+        template = Template.query.get(id)
+        template_data = {
+            'id': template.id,
+            'name': template.name,
+            'link': template.link,
+            'user_id': template.user_id
+        }
+        return jsonify(template_data), 200
+    except Exception as e:
+        return jsonify({'message': 'Failed to fetch template', 'error': str(e)}), 500
+
+# Update a template
+@app.route('/templates/<int:id>', methods=['PATCH'])
+@jwt_required()
+def update_template(id):
+    data = request.get_json()
+    template = Template.query.get(id)
+
+    current_user_id = get_jwt_identity()
+    if template.user_id != current_user_id:
+        return jsonify({'message': 'You are not authorized to access this resource'}), 404
+
+    if not template:
+        return jsonify({'message': 'Template not found'}), 404
+
+    if 'name' in data:
+        template.name = data['name']
+    if 'link' in data:
+        template.link = data['link']
+    
+
+    # Log the activity
+    current_user_id = get_jwt_identity()
+    activity = Activities(user_id=current_user_id, activity=" Updated A Template")
+    db.session.add(activity)
+
+    db.session.commit()
+    return jsonify({'message': 'Template updated successfully'}), 200
+
+# Delete a template
+@app.route('/templates/<int:id>', methods=['DELETE'])
+@jwt_required()
+def delete_template(id):
+     
+    current_user_id = get_jwt_identity()
+    if template.user_id != current_user_id:
+        return jsonify({'message': 'You are not authorized to access this resource'}), 404
+
+    template = Template.query.get(id)
+
+    if not template:
+        return jsonify({'message': 'Template not found'}), 404
+
+    db.session.delete(template)
+
+    # Log the activity
+    current_user_id = get_jwt_identity()
+    activity = Activities(user_id=current_user_id, activity="Deleted A Template")
+    db.session.add(activity)
+
+    db.session.commit()
+    return jsonify({'message': 'Template deleted successfully'}), 200
+
+#CRUD FOR COMMENTS
+
+# Create a new comment
+@app.route('/comments', methods=['POST'])
+@jwt_required()
+def create_comment():
+    data = request.get_json()
+
+    current_user_id = get_jwt_identity()
+    user_id = current_user_id
+
+    name = data.get('name')
+    content = data.get('content')
+
+    comment = Comment(
+        user_id=user_id,
+        name=name,
+        content=content
+    )
+    db.session.add(comment)
+
+    # Log the activity
+    current_user_id = get_jwt_identity()
+    activity = Activities(user_id=current_user_id, activity="Added a Comment")
+    db.session.add(activity)
+
+    db.session.commit()
+
+    return jsonify({'message': 'Comment created successfully'}), 201
+
+# Get all comments
+@app.route('/comments', methods=['GET'])
+def get_comments():
+    try:
+        comments = Comment.query.all()
+        comment_list = []
+
+        for comment in comments:
+            comment_data = {
+                'id': comment.id,
+                'user_id': comment.user_id,
+                'name': comment.name,
+                'content': comment.content
+            }
+            comment_list.append(comment_data)
+
+        return jsonify(comment_list), 200
+    except Exception as e:
+        return jsonify({'message': 'Failed to fetch comments', 'error': str(e)}), 500
+
+# Get a single comment
+@app.route('/comments/<int:id>', methods=['GET'])
+def get_comment(id):
+    try:
+        comment = Comment.query.get(id)
+        comment_data = {
+            'id': comment.id,
+            'user_id': comment.user_id,
+            'name': comment.name,
+            'content': comment.content
+        }
+        return jsonify(comment_data), 200
+    except Exception as e:
+        return jsonify({'message': 'Failed to fetch comment', 'error': str(e)}), 500
+
+# Update a comment
+@app.route('/comments/<int:id>', methods=['PATCH'])
+@jwt_required()
+def update_comment(id):
+    data = request.get_json()
+    comment = Comment.query.get(id)
+
+    current_user_id = get_jwt_identity()
+    if comment.user_id != current_user_id:
+        return jsonify({'message': 'You are not authorized to access this resource'}), 404
+
+    if not comment:
+        return jsonify({'message': 'Comment not found'}), 404
+
+    if 'name' in data:
+        comment.name = data['name']
+    if 'content' in data:
+        comment.content = data['content']
+    
+     # Log the activity
+    current_user_id = get_jwt_identity()
+    activity = Activities(user_id=current_user_id, activity="Updated a Comment")
+    db.session.add(activity)
+
+    db.session.commit()
+    return jsonify({'message': 'Comment updated successfully'}), 200
+
+# Delete a comment
+@app.route('/comments/<int:id>', methods=['DELETE'])
+@jwt_required()
+def delete_comment(id):
+    comment = Comment.query.get(id)
+
+    if not comment:
+        return jsonify({'message': 'Comment not found'}), 404
+
+    current_user_id = get_jwt_identity()
+    if comment.user_id != current_user_id:
+        return jsonify({'message': 'You are not authorized to access this resource'}), 404
+    
+    if not comment:
+        return jsonify({'message': 'Comment not found'}), 404
+
+    db.session.delete(comment)
+
+    # Log the activity
+    current_user_id = get_jwt_identity()
+    activity = Activities(user_id=current_user_id, activity="Deleted a Comment")
+    db.session.add(activity)
+
+    db.session.commit()
+    return jsonify({'message': 'Comment deleted successfully'}), 200
+
+
+if __name__ == '__main__':
+    app.run(debug=True) 

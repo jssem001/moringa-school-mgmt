@@ -15,7 +15,6 @@ class User(db.Model, SerializerMixin):
     is_instructor = db.Column(db.Boolean, default=False) 
     is_admin = db.Column(db.Boolean, default=False)
 
-    reportings = db.relationship('Reporting', back_populates='user', lazy=True)
     tasks = db.relationship('Task', back_populates='user', lazy=True)
     templates = db.relationship('Template', back_populates='user', lazy=True)
     projects = db.relationship('Project', back_populates='user', lazy=True)
@@ -31,14 +30,13 @@ class Project(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)
-    deadline = db.Column(db.DateTime, nullable=True)
+    deadline = db.Column(db.String, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     file_attachments = db.Column(db.String, nullable=True)  
 
     # Relationships
     user = db.relationship("User", back_populates="projects")
     tasks = db.relationship("Task", back_populates="project")
-    reportings = db.relationship("Reporting", back_populates="project")
 
 class Task(db.Model, SerializerMixin):
     __tablename__ = 'task'
@@ -46,32 +44,14 @@ class Task(db.Model, SerializerMixin):
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     task_name = db.Column(db.String, nullable=False)
-    deadline = db.Column(db.DateTime, nullable=True)
+    deadline = db.Column(db.String, nullable=True)
     status = db.Column(db.String, nullable=False)
     file_attachments = db.Column(db.String, nullable=True)
 
     # Relationships
     user = db.relationship("User", back_populates='tasks')
     project = db.relationship("Project", back_populates='tasks')
-    reportings = db.relationship('Reporting', back_populates='task')
 
-class Reporting(db.Model, SerializerMixin):
-    __tablename__ = 'reporting'
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
-    project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=True)
-    task_id = db.Column(db.Integer, db.ForeignKey('task.id'), nullable=True)
-    task_amount = db.Column(db.Integer, nullable=False)
-    ongoing_projects = db.Column(db.Integer, default=0)
-    completed_tasks = db.Column(db.Integer, default=0) 
-    ongoing_tasks = db.Column(db.Integer, default=0)
-    task_by_user = db.Column(db.Integer, default=0)
-    deadline = db.Column(db.DateTime, nullable=True)
-
-    # Relationships
-    user = db.relationship("User", back_populates="reportings")
-    project = db.relationship("Project", back_populates="reportings")
-    task = db.relationship("Task", back_populates="reportings")
 
 class Comment(db.Model, SerializerMixin):
     __tablename__ = 'comment'
@@ -92,3 +72,17 @@ class Template(db.Model, SerializerMixin):
 
     # Relationships
     user = db.relationship('User', back_populates='templates')
+
+
+class Activities(db.Model):
+    __tablename__ = 'activities'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=True)
+    task_id = db.Column(db.Integer, db.ForeignKey('task.id'), nullable=True)
+    activity = db.Column(db.String(255), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship("User", backref="activities")
+    project = db.relationship("Project", backref="activities")
+    task = db.relationship("Task", backref="activities")

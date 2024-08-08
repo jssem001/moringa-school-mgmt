@@ -1,10 +1,17 @@
+
 import React, { useState, useEffect } from "react";
+
+// import { useProjects } from '../context/ProjectContext';
+
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 
 const Projects = () => {
+
+  // const { projects, fetchProjects, deleteProject } = useProjects(); // Use context methods
+
   const [searchTerm, setSearchTerm] = useState("");
-  const [projects, setProjects] = useState([]);
+  const [projects, setProjects] = useState([]); 
   const [deleteProjectId, setDeleteProjectId] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [error, setError] = useState(null);
@@ -41,6 +48,7 @@ const Projects = () => {
     setShowDeleteConfirm(true);
   };
 
+
   const confirmDelete = async () => {
     try {
       const response = await fetch(`http://localhost:5000/api/projects/${deleteProjectId}`, {
@@ -60,6 +68,16 @@ const Projects = () => {
     } catch (error) {
       setError(error.message);
     }
+
+//   // Confirm deletion of the project
+//   const confirmDelete = () => {
+
+//     setProjects(projects.filter(project => project.id !== deleteProjectId));
+
+//     setShowDeleteConfirm(false);
+//     setDeleteProjectId(null);
+//     // deleteProject(deleteProjectId); // Use context method
+
   };
 
   const cancelDelete = () => {
