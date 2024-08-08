@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import abstractImage from '../images/abstract-wavy.jpeg'; // Path to the abstract image
 
 const AddProject = () => {
@@ -75,6 +75,7 @@ const AddProject = () => {
       <div className="relative flex flex-col items-center bg-white p-6 rounded shadow-lg z-20 mt-24">
         <h2 className="text-3xl font-bold mb-4">Add Project</h2>
         <form onSubmit={handleSubmit} className="w-full space-y-4">
+          {/* Form fields */}
           <div>
             <label className="block mb-2 text-sm font-medium text-gray-700">Project Title</label>
             <input
@@ -174,6 +175,16 @@ const AddProject = () => {
             />
           </div>
 
+          <div>
+            <label className="block mb-2 text-sm font-medium text-gray-700">Select Template (Optional)</label>
+            <Link
+              to="/templates"
+              className="text-blue-600 hover:underline"
+            >
+              Choose a template
+            </Link>
+          </div>
+
           <button
             type="submit"
             className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300"
@@ -186,4 +197,8 @@ const AddProject = () => {
   );
 };
 
+
+
 export default AddProject;
+
+

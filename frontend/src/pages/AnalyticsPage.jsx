@@ -1,11 +1,27 @@
-import React from "react";
+import React , { useContext } from "react";
 import logo from '../images/MoringaLogo.png'
 import { Link } from 'react-router-dom'
 import Sidebar from "../components/Sidebar";
+import { TaskContext } from "../context/TaskContext";
+import TasksPie from "../Charts/TasksPie";
 
 const AnalyticsPage = () => {
 
+    const { tasks, doneTasks } = useContext(TaskContext);
     
+    // Prepare data for the pie chart
+    const statusCounts = tasks.reduce((acc, task) => {
+     acc[task.status] = (acc[task.status] || 0) + 1;
+     return acc;
+    }, {});
+
+    const pieData = [
+        { name: 'To Do', value: statusCounts['to-do'] || 0 },
+        { name: 'In Progress', value: statusCounts['in-progress'] || 0 },
+        { name: 'Stuck', value: statusCounts['stuck'] || 0 },
+        { name: 'Done', value: statusCounts['done'] || 0 }
+    ];
+
     return (
         <>
             <Sidebar />
@@ -44,22 +60,22 @@ const AnalyticsPage = () => {
                 <div class="grid grid-cols-4 gap-4 mb-4 border">
                     <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
                         <p class="text-2xl text-white ">
-                        All Tasks
+                        Total Tasks: <span>{tasks.length}</span>
                         </p>
                     </div>
                     <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
                         <p class="text-2xl text-white ">
-                        In Progress
+                        In Progress: <span>{tasks.filter(task => task.status === "in-progress").length}</span>
                         </p>
                     </div>
                     <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
                         <p class="text-2xl text-white ">
-                        Stuck
+                        Stuck: <span>{tasks.filter(task => task.status === "stuck").length}</span>
                         </p>
                     </div>
                     <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
                         <p class="text-2xl text-white ">
-                        Done
+                        Done: <span>{doneTasks.length}</span>
                         </p>
                     </div>
                     {/* <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
@@ -68,28 +84,11 @@ const AnalyticsPage = () => {
                         </p>
                     </div> */}
                 </div>
-                {/* <div class="grid grid-cols-3 gap-4 mb-4 border">
-                    <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
-                        <p class="text-2xl text-white ">
-                        Tasks By Status
-                        </p>
-                    </div>
-                    <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
-                        <p class="text-2xl text-white ">
-                        Tasks By Owner
-                        </p>
-                    </div>
-                    <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
-                        <p class="text-2xl text-white ">
-                        Recent Activity
-                        </p>
-                    </div>
-                </div> */}
+                
                 <div class="grid grid-cols-2 gap-4 mb-4">
-                    <div class="flex items-start justify-center h-48 mb-4 rounded bg-gray-400 ">
-                        <p class="text-2xl text-white ">
-                            Tasks By Status    
-                        </p>    
+                    <div class="flex items-start justify-center h-[480px] mb-4 rounded bg-gray-400 ">
+                        <div class="text-2xl text-white mb-4">Tasks By Status</div>
+                        <TasksPie data={pieData} />        
                     </div>
                     <div class="flex items-start justify-center h-48 mb-4 rounded bg-gray-400 ">
                         <p class="text-2xl text-white ">

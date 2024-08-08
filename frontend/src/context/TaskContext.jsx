@@ -1,9 +1,11 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { server_url } from "../../config";
 
+
 export const TaskContext = createContext();
 
 export const TaskProvider = ({ children }) => {
+
   const [tasks, setTasks] = useState([]);
   const [doneTasks, setDoneTasks] = useState([]);
 
@@ -11,9 +13,10 @@ export const TaskProvider = ({ children }) => {
     fetchTasks();
   }, []);
 
-  // Fetch Tasks
 
-  const fetchTasks = async () => {
+ // Fetch Tasks
+
+ const fetchTasks = async () => {
     fetch(`${server_url}/tasks`)
       .then(response => response.json())
       .then(data => {
@@ -77,7 +80,6 @@ export const TaskProvider = ({ children }) => {
   const clearDoneTasks = () => {
     setDoneTasks([]);
     }
-
 
 
 

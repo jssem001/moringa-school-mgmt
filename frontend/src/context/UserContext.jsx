@@ -266,52 +266,60 @@ const loginUser = async (email, password) => {
   };
 
   // Update user role
+  const updateRole = (userId, newRole) => {
+    setLoading(true);
+    fetch(`${server_url}/user/${userId}/role`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`, // Include the auth token if needed
+      },
+      body: JSON.stringify({ role: newRole }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          toast.success(data.success);
+          setAllUsers((prevUsers) =>
+            prevUsers.map((user) => (user.id === userId ? { ...user, role: newRole } : user))
+          );
+        } else {
+          toast.error(data.error || "Update failed");
+        }
+      })
+      .catch((error) => {
+        toast.error(`Failed to update user role: ${error.message}`);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+
+
   // const updateRole = async (userId, newRole) => {
-  //   setLoading(true);
   //   try {
-  //     const response = await fetchWithRetry(`${server_url}/users/${userId}/role`, {
+  //     const response = await fetch(`${server_url}/user/${userId}/role`, {
   //       method: 'PUT',
-  //       body: JSON.stringify({ role: newRole }),
   //       headers: {
   //         'Content-Type': 'application/json',
-  //         'Authorization': `Bearer ${authToken}`,
+  //         'Authorization': `Bearer ${authToken}`, // Include the auth token if needed
   //       },
+  //       body: JSON.stringify({ role: newRole }),
   //     });
-  //     const updatedUser = response.data;
+  
+  //     if (!response.ok) {
+  //       throw new Error('Failed to update user role');
+  //     }
+  
+  //     const updatedUser = await response.json();
   //     setAllUsers((prevUsers) =>
-  //       prevUsers.map((user) => (user.id === userId ? updatedUser : user))
+  //       prevUsers.map((user) => (user.id === userId ? { ...user, role: newRole } : user))
   //     );
-  //     toast.success("User role updated successfully!");
   //   } catch (error) {
-  //     toast.error(`Error updating user role: ${error.message}`);
-  //   } finally {
-  //     setLoading(false);
+  //     console.error("Error updating user role:", error);
   //   }
   // };
-
-  const updateRole = async (userId, newRole) => {
-    try {
-      const response = await fetch(`${server_url}/user/${userId}/role`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`, // Include the auth token if needed
-        },
-        body: JSON.stringify({ role: newRole }),
-      });
-  
-      if (!response.ok) {
-        throw new Error('Failed to update user role');
-      }
-  
-      const updatedUser = await response.json();
-      setAllUsers((prevUsers) =>
-        prevUsers.map((user) => (user.id === userId ? { ...user, role: newRole } : user))
-      );
-    } catch (error) {
-      console.error("Error updating user role:", error);
-    }
-  };
 
 
 
