@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import abstractImage from '../images/abstract-wavy.jpeg'; // Path to the abstract image
+import abstractImage from '../images/abstract-wavy.jpeg'; 
+import { server_url } from '../../config';
+import { UserContext } from '../context/UserContext';
 
+const AddProject = () => {
+const { auth_token } = useContext(UserContext);
 const AddProject = () => {
   const [project, setProject] = useState({
     title: '',
     description: '',
-    githubLink: '',
-    image: '',
-    date: '',
-    duedate: '',
+    deadline: '',
     status: 'In Progress',
   });
   const [attachedFiles, setAttachedFiles] = useState([]);
@@ -26,32 +27,22 @@ const AddProject = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append('title', project.title);
-    formData.append('description', project.description);
-    formData.append('githubLink', project.githubLink);
-    formData.append('image', project.image);
-    formData.append('date', project.date);
-    formData.append('duedate', project.duedate);
-    formData.append('status', project.status);
-    for (let i = 0; i < attachedFiles.length; i++) {
-      formData.append('files', attachedFiles[i]);
-    }
+    Object.keys(project).forEach(key => formData.append(key, project[key]));
+    for (let i = 0; i < attachedFiles.length; i++) formData.append('files', attachedFiles[i]);
 
     try {
-      const response = await fetch('http://localhost:5000/api/projects', {
+      const response = await  fetch(`${server_url}/project`, {
         method: 'POST',
         body: formData,
       });
-
-      if (response.ok) {
-        navigate('/projects');
-      } else {
-        console.error('Failed to add project');
-      }
+      if (response.ok) navigate('/projects');
+      else console.error('Failed to add project');
     } catch (error) {
       console.error('Error:', error);
     }
   };
+    
+
 
   return (
     <div className="relative overflow-hidden p-6 max-w-3xl mx-auto">
@@ -75,7 +66,6 @@ const AddProject = () => {
       <div className="relative flex flex-col items-center bg-white p-6 rounded shadow-lg z-20 mt-24">
         <h2 className="text-3xl font-bold mb-4">Add Project</h2>
         <form onSubmit={handleSubmit} className="w-full space-y-4">
-          {/* Form fields */}
           <div>
             <label className="block mb-2 text-sm font-medium text-gray-700">Project Title</label>
             <input
@@ -101,48 +91,14 @@ const AddProject = () => {
             />
           </div>
 
-          <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">GitHub Link</label>
-            <input
-              type="url"
-              name="githubLink"
-              placeholder="GitHub Link"
-              value={project.githubLink}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">Image URL</label>
-            <input
-              type="url"
-              name="image"
-              placeholder="Image URL"
-              value={project.image}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">Project Date</label>
-            <input
-              type="date"
-              name="date"
-              value={project.date}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
+         
 
           <div>
             <label className="block mb-2 text-sm font-medium text-gray-700">Due Date</label>
             <input
               type="date"
-              name="duedate"
-              value={project.duedate}
+              name="deadline"
+              value={project.deadline}
               onChange={handleChange}
               className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
@@ -196,9 +152,5 @@ const AddProject = () => {
     </div>
   );
 };
-
-
-
+}
 export default AddProject;
-
-

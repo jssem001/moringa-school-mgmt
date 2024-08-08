@@ -11,7 +11,7 @@ flask-migrate = "*"
 sqlalchemy-serializer = "*"
 datetime = "*"
 flask-cors = "*"
-flask-mail = "*""
+flask-mail = "*"
 
 [dev-packages]
 
