@@ -185,7 +185,7 @@ def update_profile():
     db.session.commit()
     return jsonify({"success": "User updated successfully"}), 200
 
-#Update User Role-untested 
+#Update User Role-untested--------- 
 @app.route('/user/<int:user_id>/role', methods=['PUT'])
 def update_user_role(user_id):
     data = request.get_json()
