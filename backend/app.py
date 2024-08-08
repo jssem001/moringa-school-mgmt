@@ -466,9 +466,9 @@ def create_task():
     db.session.add(task)
 
     # Log the activity
-    current_user_id = get_jwt_identity()
-    activity = Activities(user_id=current_user_id, task_id=task.id, activity="Created a new task")
-    db.session.add(activity)
+    # current_user_id = get_jwt_identity()
+    # activity = Activities(user_id=current_user_id, task_id=task.id, activity="Created a new task")
+    # db.session.add(activity)
 
 
     db.session.commit()
@@ -516,7 +516,7 @@ def get_task(id):
 
 # Update task
 @app.route('/tasks/<int:id>', methods=['PATCH'])
-@jwt_required()
+# @jwt_required()
 def update_task(id):
     data = request.get_json()
     task = Task.query.get(id)
@@ -544,9 +544,9 @@ def update_task(id):
         task.status = data['status']
 
     # Log the activity
-    current_user_id = get_jwt_identity()
-    activity = Activities(user_id=current_user_id, project_id=task.project_id, activity="Updated a task")
-    db.session.add(activity)
+    # current_user_id = get_jwt_identity()
+    # activity = Activities(user_id=current_user_id, project_id=task.project_id, activity="Updated a task")
+    # db.session.add(activity)
 
 
     db.session.commit()
@@ -554,7 +554,7 @@ def update_task(id):
 
 # Delete task
 @app.route('/tasks/<int:id>', methods=['DELETE'])
-@jwt_required()
+# @jwt_required()
 def delete_task(id):
     task = Task.query.get_or_404(id)
 
@@ -567,9 +567,9 @@ def delete_task(id):
 
 
     # Log the activity
-    current_user_id = get_jwt_identity()
-    activity = Activities(user_id=current_user_id, project_id=task.id, activity="Deleted a task")
-    db.session.add(activity)
+    # current_user_id = get_jwt_identity()
+    # activity = Activities(user_id=current_user_id, project_id=task.id, activity="Deleted a task")
+    # db.session.add(activity)
 
     db.session.delete(task)
     db.session.commit()

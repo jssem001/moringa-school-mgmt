@@ -88,6 +88,7 @@ export const TaskProvider = ({ children }) => {
     })
       .then(response => response.json())
       .then(data => {
+        console.log('Updated task status:', data);
         setTasks(tasks.map(task => 
           task.id === taskId ? { ...task, status: newStatus } : task
         ));
