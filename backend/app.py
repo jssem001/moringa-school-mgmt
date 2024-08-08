@@ -264,7 +264,7 @@ def get_user_by_id(id):
         }
         return jsonify(user_data), 200
     
-#********************
+
 
 #CRUD FOR PROJECTS
 
@@ -282,9 +282,10 @@ def create_event():
           name=data['name'],
           description=data['description'],
           deadline=data['deadline'],
+          status=data['status'],
           file_attachments=data['file_attachments'],
           user_id=current_user_id
-    )
+        )
     db.session.add(new_event)
 
     activity = Activities(user_id=current_user_id, project_id=new_event.id, activity="Added a new project")
@@ -313,12 +314,13 @@ def get_projects():
             "name": project.name,
             "description": project.description,
             "deadline": project.deadline,
+            "status": project.status,
             "file_attachments": project.file_attachments
         })
     return jsonify(project_data), 200
 
 # GETTING ONGOING PROJECTS - THIS SHOULD BE DEPENDENT ON THE STATUS OF THE PROJECT('IN PROGRESS' OR 'COMPLETED')
-@app.route('/project', methods=['GET'])
+@app.route('/ongoing', methods=['GET'])
 @jwt_required()
 def get_ongoing_projects():
     current_user_id = get_jwt_identity()
@@ -328,7 +330,30 @@ def get_ongoing_projects():
     if user is None:
         return jsonify({"message": "You are not authorized to access this resource"}), 404
     
-    projects = Project.query.filter_by(user_id=current_user_id, status='IN PROGRESS').all()
+    projects = Project.query.filter_by(user_id=current_user_id, status='In Progress').all()
+    project_data = []
+    for project in projects:
+        project_data.append({
+            "id": project.id,
+            "name": project.name,
+            "description": project.description,
+            "deadline": project.deadline,
+            "file_attachments": project.file_attachments
+        })
+    return jsonify(project_data), 200
+
+# COMPLETED PROJECTS - THIS SHOULD BE DEPENDENT ON THE STATUS OF THE PROJECT('IN PROGRESS' OR 'COMPLETED')
+@app.route('/completed', methods=['GET'])
+@jwt_required()
+def get_completed_projects():
+    current_user_id = get_jwt_identity()
+
+    user = User.query.get(current_user_id)
+
+    if user is None:
+        return jsonify({"message": "You are not authorized to access this resource"}), 404
+    
+    projects = Project.query.filter_by(user_id=current_user_id, status='Completed').all()
     project_data = []
     for project in projects:
         project_data.append({
@@ -352,6 +377,7 @@ def get_project(id):
         "name": project.name,
         "description": project.description,
         "deadline": project.deadline,
+        "status": project.status,
         "file_attachments": project.file_attachments
     }
     return jsonify(project_data), 200
@@ -374,6 +400,7 @@ def update_project(id):
     project.name = data.get('name', project.name)
     project.description = data.get('description', project.description)
     project.deadline = data.get('deadline', project.deadline)
+    project.status = data.get('status', project.status)
     project.file_attachments = data.get('file_attachments', project.file_attachments)
 
     activity = Activities(user_id=current_user_id, project_id=project.id, activity="Updated project details")
@@ -420,20 +447,20 @@ def create_task():
     title = data.get('task_name')
     project_id = data.get('project_id')
     user_id = data.get('user_id')
-    deadline_str = data.get('deadline')
+    # deadline_str = data.get('deadline')
     status = data.get('status', 'Pending')
 
-    try:
-        deadline = datetime.strptime(deadline_str, '%Y-%m-%d').date()  # Convert to date object
-    except ValueError:
-        return jsonify({'error': 'Invalid date format. Please use YYYY-MM-DD.'}), 400
+    # try:
+    #     deadline = datetime.strptime(deadline_str, '%Y-%m-%d').date()  # Convert to date object
+    # except ValueError:
+    #     return jsonify({'error': 'Invalid date format. Please use YYYY-MM-DD.'}), 400
 
  
     task = Task(
         task_name=title,
         project_id=project_id,
         user_id=user_id,
-        deadline=deadline,
+        # deadline=deadline,
         status=status
     )
     db.session.add(task)
@@ -461,7 +488,7 @@ def get_tasks():
                 'task_name': task.task_name,
                 'project_id': task.project_id,
                 'user_id': task.user_id,
-                'deadline': task.deadline.isoformat() if task.deadline else None,
+                # 'deadline': task.deadline.isoformat() if task.deadline else None,
                 'status': task.status
             }
             task_list.append(task_data)
@@ -482,7 +509,7 @@ def get_task(id):
         'task_name': task.task_name,
         'project_id': task.project_id,
         'user_id': task.user_id,
-        'deadline': task.deadline.isoformat() if task.deadline else None,
+        # 'deadline': task.deadline.isoformat() if task.deadline else None,
         'status': task.status
     }
     return jsonify(task_data), 200
@@ -508,8 +535,11 @@ def update_task(id):
         task.project_id = data['project_id']
     if 'user_id' in data:
         task.user_id = data['user_id']
-    if 'deadline' in data:
-        task.deadline = data['deadline']
+    # if 'deadline' in data:
+    #     try:
+    #         task.deadline = datetime.strptime(data['deadline'], '%Y-%m-%d').date()
+    #     except ValueError:
+    #         return jsonify({'error': 'Invalid date format. Please use YYYY-MM-DD.'}), 400
     if 'status' in data:
         task.status = data['status']
 
