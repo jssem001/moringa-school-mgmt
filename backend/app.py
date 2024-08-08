@@ -437,12 +437,12 @@ def delete_project(id):
 #CRUD FOR TASK
 # Create a new task
 @app.route('/tasks', methods=['POST'])
-@jwt_required()
+# @jwt_required()
 def create_task():
     data = request.get_json()
 
-    current_user_id = get_jwt_identity()
-    user_id = current_user_id
+    # current_user_id = get_jwt_identity()
+    # user_id = current_user_id
 
     title = data.get('task_name')
     project_id = data.get('project_id')
