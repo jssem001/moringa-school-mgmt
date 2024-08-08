@@ -1,47 +1,44 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
+import { useProjects } from "../context/ProjectContext"; // Updated import
 
 const EditTemplate = () => {
   const { id } = useParams();
-  const [template, setTemplate] = useState(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [figmaLink, setFigmaLink] = useState("");
   const [sqlDiagram, setSqlDiagram] = useState("");
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
+
+  const { fetchTemplates, updateTemplate } = useProjects(); // Updated usage
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch the template data by id
-    const fetchTemplate = async () => {
-      // Replace with your API call or data fetching logic
-      const fetchedTemplate = {
-        id,
-        title: "Sample Title",
-        description: "Sample Description",
-        figmaLink: "https://www.figma.com/file/sample",
-        sqlDiagram: "https://www.sqldiagram.com/sample",
-        imagePreviewUrl: "https://via.placeholder.com/150"
-      };
-      setTemplate(fetchedTemplate);
-      setTitle(fetchedTemplate.title);
-      setDescription(fetchedTemplate.description);
-      setFigmaLink(fetchedTemplate.figmaLink);
-      setSqlDiagram(fetchedTemplate.sqlDiagram);
-      setImagePreviewUrl(fetchedTemplate.imagePreviewUrl);
+    const fetchAndSetTemplate = async () => {
+      try {
+        await fetchTemplates(); // Ensure templates are fetched
+        const template = templates.find((template) => template.id === parseInt(id)); // Use the fetched templates
+        if (template) {
+          setTitle(template.title);
+          setDescription(template.description);
+          setFigmaLink(template.figmaLink);
+          setSqlDiagram(template.sqlDiagram);
+          setImagePreviewUrl(template.imagePreviewUrl);
+        }
+      } catch (error) {
+        console.error("Failed to fetch template:", error);
+      }
     };
-    fetchTemplate();
-  }, [id]);
+
+    fetchAndSetTemplate();
+  }, [id, fetchTemplates, templates]); // Added dependencies
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log({ title, description, figmaLink, sqlDiagram, imagePreviewUrl });
+    updateTemplate({ id: parseInt(id), title, description, figmaLink, sqlDiagram, imagePreviewUrl });
     navigate("/templates");
   };
-
-  if (!template) return <div>Loading...</div>;
 
   return (
     <div className="flex">
@@ -105,17 +102,11 @@ const EditTemplate = () => {
 
             <button
               type="submit"
-              className="px-4 py-2 bg-orange-300 text-white rounded hover:bg-orange-400"
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             >
               Save Changes
             </button>
           </form>
-          <button
-            onClick={() => navigate("/templates")}
-            className="mt-4 px-4 py-2 bg-blue-300 text-white rounded hover:bg-blue-400"
-          >
-            Back to Templates
-          </button>
         </section>
       </div>
     </div>

@@ -7,6 +7,7 @@ import { server_url } from "../../config";
 const UserContext = createContext();
 
 
+
 // Define permissions based on user roles
 const permissionsConfig = {
   admin: {
@@ -43,22 +44,24 @@ const permissionsConfig = {
   },
 };
 
+
 // Fetch data with retry logic
-const fetchWithRetry = async (url, options, retries = 3, delay = 1000) => {
-  try {
-    const response = await fetch(url, { ...options });
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'An error occurred');
-    }
-    return await response.json();
-  } catch (error) {
-    if (retries > 0) {
-      return fetchWithRetry(url, options, retries - 1,delay);
-    }
-    throw error;
-  }
-};
+// const fetchWithRetry = async (url, options, retries = 3, delay = 1000) => {
+//   try {
+//     const response = await fetch(url, { ...options });
+//     if (!response.ok) {
+//       const error = await response.json();
+//       throw new Error(error.message || 'An error occurred');
+//     }
+//     return await response.json();
+//   } catch (error) {
+//     if (retries > 0) {
+//       return fetchWithRetry(url, options, retries - 1,delay);
+//     }
+//     throw error;
+//   }
+// };
+
 
 // Define the UserProvider component
 const UserProvider = ({ children }) => {
@@ -68,18 +71,21 @@ const UserProvider = ({ children }) => {
   const [permissions, setPermissions] = useState({});
   const [loading, setLoading] = useState(false);
   const [allUsers, setAllUsers] = useState([]);
+
   // const [userRole, setUserRole] = useState('');
   
+
   // Fetch current user data and handle authentication
   useEffect(() => {
     if (authToken) {
       setLoading(true);
-      fetchWithRetry(`${server_url}/current_user`, {
+      fetch(`${server_url}/current_user`, {
         headers: {
           'Content-type': 'application/json',
           'Authorization': `Bearer ${authToken}`,
         },
       })
+        .then((response) => response.json())
         .then((data) => {
           if (data.email) {
             setCurrentUser(data);
@@ -95,6 +101,41 @@ const UserProvider = ({ children }) => {
         .finally(() => setLoading(false));
     }
   }, [authToken]);
+
+
+  // Fetch all users
+//   const fetchUsers = async () => {
+//     setLoading(true);
+//     try {
+//       const response = await fetch(`${server_url}/users`, {
+//         method: 'GET',
+//         headers: {
+//           'Content-Type': 'application/json',
+//           'Authorization': `Bearer ${authToken}`,
+//         },
+//       });
+//       if (!response.ok) throw new Error('Failed to fetch users');
+//       const data = await response.json();
+//       setAllUsers(data);
+//     } catch (error) {
+//       toast.error(`Failed to fetch users: ${error.message}`);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   // Register a new user
+//   const registerUser = async (name, email, phoneNumber, role, is_student, is_instructor, is_admin, password) => {
+//     setLoading(true);
+//     try {
+//       const response = await fetch(`${server_url}/user`, {
+//         method: 'POST',
+//         body: JSON.stringify({ name, email, password, phoneNumber, role, is_student, is_instructor, is_admin }),
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//       });
+//       const data = await response.json();
 
 
   //All Users
@@ -134,23 +175,74 @@ const UserProvider = ({ children }) => {
     .then((data) => {
       console.log("test")
       console.log(data)
+
       if (data.success) {
         toast.success("Registered successfully!");
-        console.log("Registered successfully!");
-        navigate("/login"); // Navigate after successful registration
-        // console.log("User registered successfully");
-        return data
+        navigate("/login");
+        return data;
       } else {
-        console.error(data.error || "Registration failed");
         throw new Error(data.error || "Registration failed");
       }
-    })
-    .catch((error) => {
-      console.error(`Failed to register user: ${error.message}`);
-      throw error;
-    })
-    .finally(() => {
+    } catch (error) {
+      toast.error(`Failed to register user: ${error.message}`);
+    } finally {
       setLoading(false);
+
+//     }
+//   };
+
+//   // Log in a user
+//   const loginUser = async (email, password) => {
+//     setLoading(true);
+//     try {
+//       const response = await fetch(`${server_url}/login`, {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({ email, password }),
+//       });
+//       const data = await response.json();
+//       if (data.access_token) {
+//         setAuthToken(data.access_token);
+//         localStorage.setItem('access_token', data.access_token);
+//         setCurrentUser(data.user);
+//         setPermissions(permissionsConfig[data.is_admin ? 'admin' : (data.is_student ? 'student' : 'instructor')] || {});
+//         toast.success('Logged in Successfully!');
+//         navigate('/dashboard');
+//       } else {
+//         toast.error(data.error || 'Login failed');
+//       }
+//     } catch (error) {
+//       toast.error(`Failed to log in: ${error.message}`);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   // Reset password
+//   const resetPassword = async (email, newPassword) => {
+//     setLoading(true);
+//     try {
+//       const response = await fetch(`${server_url}/forgot_password`, {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({ email, new_password: newPassword }),
+//       });
+//       const data = await response.json();
+//       if (data.success) {
+//         toast.success('Password reset email sent!');
+//       } else {
+//         throw new Error(data.error || 'Failed to send password reset email');
+//       }
+//     } catch (error) {
+//       toast.error(`Failed to send password reset email. Please try again. ${error.message}`);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
     })
  
   };
@@ -213,17 +305,19 @@ const loginUser = async (email, password) => {
   }
 
 
+
   // Log out a user
   const handleLogout = async () => {
     setLoading(true);
     try {
-      const result = await fetchWithRetry(`${server_url}/logout`, {
+      const response = await fetch(`${server_url}/logout`, {
         method: 'DELETE',
         headers: {
           'Content-type': 'application/json',
           'Authorization': `Bearer ${authToken}`,
         },
       });
+      const result = await response.json();
       if (result.success) {
         localStorage.removeItem("access_token");
         setCurrentUser(null);
@@ -244,7 +338,7 @@ const loginUser = async (email, password) => {
   const updateUser = async (name, phoneNumber, profileImage, password) => {
     setLoading(true);
     try {
-      const result = await fetchWithRetry(`${server_url}/user`, {
+      const response = await fetch(`${server_url}/user`, {
         method: 'PUT',
         body: JSON.stringify({ name, phoneNumber, profileImage, password }),
         headers: {
@@ -252,11 +346,12 @@ const loginUser = async (email, password) => {
           'Authorization': `Bearer ${authToken}`,
         },
       });
+      const result = await response.json();
       if (result.success) {
         toast.success(result.success);
         setCurrentUser({ ...currentUser, name, phoneNumber, profileImage });
       } else {
-        toast.error(result.error || "Update failed");
+        throw new Error(result.error || "Update failed");
       }
     } catch (error) {
       toast.error(`Failed to update user: ${error.message}`);
@@ -266,6 +361,27 @@ const loginUser = async (email, password) => {
   };
 
   // Update user role
+
+//   const updateRole = async (userId, newRole) => {
+//     try {
+//       const response = await fetch(`${server_url}/user/${userId}/role`, {
+//         method: 'PUT',
+//         headers: {
+//           'Content-Type': 'application/json',
+//           'Authorization': `Bearer ${authToken}`,
+//         },
+//         body: JSON.stringify({ role: newRole }),
+//       });
+//       if (!response.ok) throw new Error('Failed to update user role');
+//       const updatedUser = await response.json();
+//       setAllUsers((prevUsers) =>
+//         prevUsers.map((user) => (user.id === userId ? { ...user, role: newRole } : user))
+//       );
+//     } catch (error) {
+//       toast.error(`Error updating user role: ${error.message}`);
+//     }
+//   };
+
   const updateRole = (userId, newRole) => {
     setLoading(true);
     fetch(`${server_url}/user/${userId}/role`, {
@@ -324,23 +440,24 @@ const loginUser = async (email, password) => {
 
 
 
+
   // Delete a user
   const deleteUser = async () => {
     setLoading(true);
     try {
-      const result = await fetchWithRetry(`${server_url}/user/${currentUser.id}`, {
+      const response = await fetch(`${server_url}/user/${currentUser.id}`, {
         method: 'DELETE',
         headers: {
           'Content-type': 'application/json',
           'Authorization': `Bearer ${authToken}`,
         },
       });
+      const result = await response.json();
       if (result.success) {
         localStorage.removeItem("access_token");
         setCurrentUser(null);
         setAuthToken(null);
         toast.success(result.success);
-        // navigate("/login");
       } else {
         toast.error(result.error || "Deletion failed");
       }
@@ -358,22 +475,24 @@ const loginUser = async (email, password) => {
     permissions,
     loading,
     allUsers,
-    // userRole,
+
+//     fetchUsers,
+//     registerUser,
+
+    //userRole,
     updateRole,
     resetPassword,
     fetchUsers,
     register_user,
     loginUser,
+    resetPassword,
+    handleLogout,
     updateUser,
-    logout: handleLogout,
-    deleteUser
+    updateRole,
+    deleteUser,
   };
 
-  return (
-    <UserContext.Provider value={contextData}>
-      {children}
-    </UserContext.Provider>
-  );
+  return <UserContext.Provider value={contextData}>{children}</UserContext.Provider>;
 };
 
-export { UserProvider, UserContext };
+export { UserContext, UserProvider };

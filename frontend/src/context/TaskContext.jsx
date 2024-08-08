@@ -14,9 +14,10 @@ export const TaskProvider = ({ children }) => {
   }, []);
 
 
- // Fetch Tasks
+  // Fetch Tasks
 
- const fetchTasks = async () => {
+  const fetchTasks = async () => {
+
     fetch(`${server_url}/tasks`)
       .then(response => response.json())
       .then(data => {
@@ -83,9 +84,14 @@ export const TaskProvider = ({ children }) => {
 
 
 
+
+
+
   return (
     <TaskContext.Provider value={{ tasks, doneTasks, addTask, updateTaskStatus, clearDoneTasks }}>
       {children}
     </TaskContext.Provider>
   );
+
 };
+
