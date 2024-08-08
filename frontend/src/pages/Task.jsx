@@ -11,15 +11,15 @@ const Task = () => {
   const [taskName, setTaskName] = useState("");
   const [taskStatus, setTaskStatus] = useState("to-do");
   const [assignedTo, setAssignedTo] = useState("");
-  const [dueDate, setDueDate] = useState("");
+  // const [dueDate, setDueDate] = useState("");
   const [assignedProject, setAssignedProject] = useState("");
   
 
   const handleAddTask = () => {
     if (taskName.trim() === "") return;
 
-    const dateParts = dueDate.split("-");
-    const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+    // const dateParts = dueDate.split("-");
+    // const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
 
 
     const newTask = {
@@ -27,7 +27,7 @@ const Task = () => {
       status: taskStatus,
       project_id: assignedProject,
       user_id: assignedTo,
-      deadline: formattedDate,
+      // deadline: formattedDate,
     };
 
     addTask(newTask);
@@ -37,22 +37,19 @@ const Task = () => {
     setTaskStatus("to-do");
     setAssignedTo("");
     setAssignedProject("");
-    setDueDate("");
+    // setDueDate("");
     
   };
 
-  const formatDate = (dateString) => {
-    if (dateString !== null) {
-      const date = new Date(dateString);
-      const day = String(date.getDate()).padStart(2, '0');
-      const month = String(date.getMonth() + 1).padStart(2, '0'); // getMonth() returns month from 0-11
-      const year = date.getFullYear();
-      return `${day}-${month}-${year}`;
-    }
-
-    
-    
-  };
+  // const formatDate = (dateString) => {
+  //   if (dateString !== null) {
+  //     const date = new Date(dateString);
+  //     const day = String(date.getDate()).padStart(2, '0');
+  //     const month = String(date.getMonth() + 1).padStart(2, '0'); // getMonth() returns month from 0-11
+  //     const year = date.getFullYear();
+  //     return `${day}-${month}-${year}`;
+  //   }
+  // };
   
 
   return (
@@ -98,12 +95,12 @@ const Task = () => {
               placeholder="Assigned Project id"
               className="mt-2 w-full p-2 border border-gray-300 rounded"
             />
-            <input
+            {/* <input
               type="date"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
               className="mt-2 w-full p-2 border border-gray-300 rounded"
-            />
+            /> */}
             
             <button
               onClick={handleAddTask}
@@ -143,7 +140,7 @@ const Task = () => {
                   {/* <th className="border border-gray-300 p-2">Assigned User</th> */}
                   <th className="border border-gray-300 p-2">Assigned User</th>
                   <th className="border border-gray-300 p-2">Assigned Project</th>
-                  <th className="border border-gray-300 p-2">Due Date</th>
+                  {/* <th className="border border-gray-300 p-2">Due Date</th> */}
                   {/* <th className="border border-gray-300 p-2">Notes</th> */}
                   <th className="border border-gray-300 p-2">Status</th>
                   {/* <th className="border border-gray-300 p-2">Files</th> */}
@@ -156,7 +153,8 @@ const Task = () => {
                     
                     <td className="border border-gray-300 p-2">{task.user_name}</td>
                     <td className="border border-gray-300 p-2">{task.project_id}</td>
-                    <td className="border border-gray-300 p-2">{formatDate(task.deadline)}</td>
+                    {/* <td className="border border-gray-300 p-2">{formatDate(task.deadline)}</td> */}
+                    {/* <td className="border border-gray-300 p-2">{task.deadline}</td> */}
                     
                     <td className="border border-gray-300 p-2">
                       <select
@@ -192,7 +190,7 @@ const Task = () => {
                   {/* <th className="border border-gray-300 p-2">Assigned User</th> */}
                   <th className="border border-gray-300 p-2">Assigned User</th>
                   <th className="border border-gray-300 p-2">Assigned Project</th>
-                  <th className="border border-gray-300 p-2">Due Date</th>
+                  {/* <th className="border border-gray-300 p-2">Due Date</th> */}
                   {/* <th className="border border-gray-300 p-2">Notes</th> */}
                   <th className="border border-gray-300 p-2">Status</th>
                   {/* <th className="border border-gray-300 p-2">Files</th> */}
@@ -205,7 +203,7 @@ const Task = () => {
                     {/* <td className="border border-gray-300 p-2">{task.user_id}</td> */}
                     <td className="border border-gray-300 p-2">{task.user_name}</td>
                     <td className="border border-gray-300 p-2">{task.project_id}</td>
-                    <td className="border border-gray-300 p-2">{task.deadline}</td>
+                    {/* <td className="border border-gray-300 p-2">{task.deadline}</td> */}
                     {/* <td className="border border-gray-300 p-2">{task.notes}</td> */}
                     <td className="border border-gray-300 p-2">
                       <select
