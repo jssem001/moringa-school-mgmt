@@ -21,7 +21,11 @@ import AddTemplate from "./pages/AddTemplate";
 import EditTemplate from "./pages/EditTemplate";
 import SingleTemplate from "./pages/SingleTemplate";
 import { UserProvider } from "./context/UserContext";
+<<<<<<< HEAD
 // import { ProjectProvider } from "./context/ProjectContext"; // Import ProjectProvider
+=======
+// import { ProjectProvider } from "./context/ProjectContext";
+>>>>>>> ae26bf6d7cc7b3c0a407f07ff1c18c5bed300002
 import { TaskProvider } from "./context/TaskContext";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
