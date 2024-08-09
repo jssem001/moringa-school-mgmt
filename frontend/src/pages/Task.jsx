@@ -109,7 +109,7 @@ const Task = () => {
               />
               <button
                 onClick={handleAddTask}
-                className="mt-2 px-4 py-2 bg-orange-200 text-black rounded hover:text-white hover:bg-orange-300"
+                className="mt-2 px-4 py-2 bg-orange-200 text-black font-semibold rounded hover:text-white hover:bg-orange-300"
               >
                 Add Task
               </button>
@@ -236,7 +236,7 @@ const Task = () => {
                         ) : (
                           <button
                             onClick={() => handleEditClick(task)}
-                            className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                            className="px-2 py-1 bg-orange-200 text-black text-black rounded hover:bg-orange-300 hover:text-white"
                           >
                             Edit
                           </button>
