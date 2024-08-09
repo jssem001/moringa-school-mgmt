@@ -28,8 +28,8 @@ const Sidebar = () => {
                 </div>
                 <ul class="space-y-2 font-semibold">
                     <li>
-                        <Link to='/'><div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
-                            <span class="ms-3">Home</span>
+                        <Link to='/landing'><div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
+                            <span class="ms-3">Moringa Extra</span>
                         </div></Link>
                     </li>
                     <li>
