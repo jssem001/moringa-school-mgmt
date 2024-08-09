@@ -1,43 +1,36 @@
-
-import React, { useState, useEffect } from "react";
-
-// import { useProjects } from '../context/ProjectContext';
-
-import { Link } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { server_url } from '../../config';
+import Sidebar from '../components/Sidebar';
 
 const Projects = () => {
-
-  // const { projects, fetchProjects, deleteProject } = useProjects(); // Use context methods
-
+  const [projects, setProjects] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [projects, setProjects] = useState([]); 
   const [deleteProjectId, setDeleteProjectId] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const auth_token = localStorage.getItem('auth_token'); // Assuming auth_token is stored in localStorage
 
+  // Fetch projects on component mount
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/projects", {
+        const response = await fetch(`${server_url}/project`, {
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
+            "Authorization": `Bearer ${auth_token}`
           },
         });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
         const data = await response.json();
         setProjects(data);
       } catch (error) {
-        setError(error.message);
+        toast.error("Failed to fetch projects");
       }
     };
 
     fetchProjects();
-  }, []);
+  }, [auth_token]);
 
   const filteredProjects = projects.filter((project) =>
     project.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -48,36 +41,28 @@ const Projects = () => {
     setShowDeleteConfirm(true);
   };
 
-
+  // Confirm deletion of the project
   const confirmDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/projects/${deleteProjectId}`, {
-        method: "DELETE",
+      const response = await fetch(`${server_url}/project/${deleteProjectId}`, {
+        method: 'DELETE',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
+          "Authorization": `Bearer ${auth_token}`
         },
       });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      const result = await response.json();
+      if (result.success) {
+        toast.success("Project deleted successfully!");
+        setProjects(projects.filter(p => p.id !== deleteProjectId));
+        setShowDeleteConfirm(false);
+        setDeleteProjectId(null);
+      } else {
+        toast.error(result.error || "An error occurred");
       }
-
-      setProjects(projects.filter((project) => project.id !== deleteProjectId));
-      setShowDeleteConfirm(false);
-      setDeleteProjectId(null);
     } catch (error) {
-      setError(error.message);
+      toast.error("Failed to delete project");
     }
-
-//   // Confirm deletion of the project
-//   const confirmDelete = () => {
-
-//     setProjects(projects.filter(project => project.id !== deleteProjectId));
-
-//     setShowDeleteConfirm(false);
-//     setDeleteProjectId(null);
-//     // deleteProject(deleteProjectId); // Use context method
-
   };
 
   const cancelDelete = () => {

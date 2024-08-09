@@ -1,5 +1,4 @@
-import React, { useContext, useState } from "react";
-import { TaskContext } from "../context/TaskContext";
+import React, { useState } from "react";
 import Sidebar from "../components/Sidebar";
 
 const Task = () => {

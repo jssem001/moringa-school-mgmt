@@ -1,137 +1,138 @@
-import React, { useState,useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import abstractImage from '../images/abstract-wavy.jpeg'; 
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { server_url } from '../../config';
-import { UserContext } from '../context/UserContext';
+import Sidebar from '../components/Sidebar';
 
 const AddProject = () => {
-const { auth_token } = useContext(UserContext);
-const AddProject = () => {
-  const [project, setProject] = useState({
-    title: '',
+  const [formData, setFormData] = useState({
+    name: '',
     description: '',
     deadline: '',
-    status: 'In Progress',
-    template: '' // Add template state
+    file: null
   });
-  const [attachedFiles, setAttachedFiles] = useState([]);
-  const [templates, setTemplates] = useState([]); // State for templates
   const navigate = useNavigate();
+  const auth_token = localStorage.getItem('auth_token');
 
-  useEffect(() => {
-    // Fetch available templates from the API
-    const fetchTemplates = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/api/templates');
-        const data = await response.json();
-        setTemplates(data.templates); // Adjust based on API response structure
-      } catch (error) {
-        console.error('Error fetching templates:', error);
-      }
-    };
-    fetchTemplates();
-  }, []);
+  // Handle input changes
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    setFormData({
+      ...formData,
+      [name]: files ? files[0] : value
+    });
+  };
 
-  const handleChange = (e) => setProject({ ...project, [e.target.name]: e.target.value });
-  const handleFileChange = (e) => setAttachedFiles(e.target.files);
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    Object.keys(project).forEach(key => formData.append(key, project[key]));
-    for (let i = 0; i < attachedFiles.length; i++) formData.append('files', attachedFiles[i]);
+
+    const formDataToSend = new FormData();
+    for (const key in formData) {
+      formDataToSend.append(key, formData[key]);
+    }
 
     try {
-      const response = await  fetch(`${server_url}/project`, {
+      const response = await fetch(`${server_url}/project`, {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Authorization': `Bearer ${auth_token}`,
+          // The 'Content-Type' should not be set when sending FormData,
+          // it automatically sets the correct headers.
+        },
+        body: formDataToSend,
+        
       });
-      if (response.ok) navigate('/projects');
-      else console.error('Failed to add project');
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error("Unauthorized - please check your token");
+        }
+        throw new Error("Failed to submit project");
+      }
+
+      const result = await response.json();
+      toast.success("Project added successfully!");
+      navigate('/projects'); // Redirect to projects page
     } catch (error) {
-      console.error('Error:', error);
+      toast.error(error.message || "Failed to add project");
     }
   };
-    
-
 
   return (
-    <div className="relative overflow-hidden p-6 max-w-3xl mx-auto">
-      <button onClick={() => navigate('/projects')} className="absolute top-6 left-6 px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 z-20">
-        Back to Projects
-      </button>
-      <div className="absolute inset-0 z-10">
-        <img src={abstractImage} alt="Abstract" className="w-full h-full object-cover blur-lg" style={{ position: 'absolute', top: 0, left: 0 }} />
-        <div className="absolute inset-0 bg-black opacity-40"></div>
-      </div>
-      <div className="relative flex flex-col items-center bg-white p-6 rounded shadow-lg z-20 mt-24">
-        <h2 className="text-3xl font-bold mb-4">Add Project</h2>
-        <form onSubmit={handleSubmit} className="w-full space-y-4">
+    <div className="flex">
+      <Sidebar />
+      <div className="p-4 sm:ml-64 flex-1">
+        <h2 className="text-2xl font-bold mb-4">Add New Project</h2>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Name */}
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">Project Title</label>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
             <input
               type="text"
-              name="title"
-              placeholder="Project Title"
-              value={project.title}
+              id="name"
+              name="name"
+              value={formData.name}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 block w-full p-2 border border-gray-300 rounded"
               required
             />
           </div>
 
+          {/* Description */}
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">Project Description</label>
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
             <textarea
+              id="description"
               name="description"
-              placeholder="Project Description"
-              value={project.description}
+              value={formData.description}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 block w-full p-2 border border-gray-300 rounded"
+              rows="4"
               required
             />
           </div>
 
-         
-
+          {/* Deadline */}
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">Due Date</label>
+            <label htmlFor="deadline" className="block text-sm font-medium text-gray-700">Deadline</label>
             <input
               type="date"
+              id="deadline"
               name="deadline"
-              value={project.deadline}
+              value={formData.deadline}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 block w-full p-2 border border-gray-300 rounded"
               required
             />
           </div>
 
+          {/* File Attachment */}
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">Project Status</label>
-            <select name="status" value={project.status} onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-              <option value="In Progress">In Progress</option>
-              <option value="Completed">Completed</option>
-              <option value="On Hold">On Hold</option>
-            </select>
+            <label htmlFor="file" className="block text-sm font-medium text-gray-700">Attachment</label>
+            <input
+              type="file"
+              id="file"
+              name="file"
+              onChange={handleChange}
+              className="mt-1 block w-full p-2 border border-gray-300 rounded"
+            />
           </div>
+
+          {/* Submit Button */}
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">Attach Files</label>
-            <input type="file" name="files" multiple onChange={handleFileChange} className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Add Project
+            </button>
           </div>
-          {/* Optional template selection */}
-          <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">Choose Template (Optional)</label>
-            <select name="template" value={project.template} onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="">None</option>
-              {templates.map(template => (
-                <option key={template.value} value={template.value}>{template.label}</option>
-              ))}
-            </select>
-          </div>
-          <button type="submit" className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">Add Project</button>
         </form>
       </div>
     </div>
   );
 };
-}
+
 export default AddProject;
