@@ -1,26 +1,143 @@
+// import React , { useContext } from "react";
+// import Sidebar from "../components/Sidebar";
+// import { TaskContext } from "../context/TaskContext";
+// import TasksPie from "../Charts/TasksPie";
+// import UserBarChart from "../Charts/UserBarChart";
+
+// const AnalyticsPage = () => {
+
+//     const { tasks, doneTasks } = useContext(TaskContext);
+
+//     // Calculate the total number of tasks
+//     const totalTasks = tasks.length+doneTasks.length;
+
+//     // Calculate the percentage for each status
+//     const toDoCount = tasks.filter(task => task.status === "to-do").length;
+//     const inProgressCount = tasks.filter(task => task.status === "in-progress").length;
+//     const stuckCount = tasks.filter(task => task.status === "stuck").length;
+//     const doneCount = doneTasks.length;
+
+//     const pieData = [
+//         { name: 'To Do(%)', value: parseFloat(((toDoCount / totalTasks) * 100).toFixed(1)) },
+//         { name: 'In Progress(%)', value: parseFloat(((inProgressCount / totalTasks) * 100).toFixed(1)) },
+//         { name: 'Stuck(%)', value: parseFloat(((stuckCount / totalTasks) * 100).toFixed(1)) },
+//         { name: 'Done(%)', value: parseFloat(((doneCount / totalTasks) * 100).toFixed(1)) }
+//       ];
+
+//     return (
+//         <>
+//             <Sidebar />
+
+//             <div class="p-4 sm:ml-64">
+//             <div class="p-4 rounded-lg">
+//                 <h1 class="text-3xl mb-4 font-semibold text-center">Reports & Analytics</h1>
+                
+//                 <div class="grid grid-cols-2 gap-4 mb-4 border">
+//                     <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
+//                         <p class="text-xl text-white ">
+//                         Connected Projects
+//                         </p>
+//                     </div>
+//                     <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
+//                         <p class="text-2xl text-white ">
+//                         Search
+//                         </p>
+//                     </div>
+                    
+//                 </div>
+//                 <div class="grid grid-cols-4 gap-4 mb-4 border">
+//                     <div class="flex items-center justify-center h-24 rounded border-2 border-black bg-gray-100 ">
+//                         <p class="text-2xl text-black font-semibold">
+//                         Total Tasks: <span>{totalTasks}</span>
+//                         </p>
+//                     </div>
+//                     <div class="flex items-center justify-center h-24 rounded border-2 border-black bg-gray-100 ">
+//                         <p class="text-2xl text-black font-semibold">
+//                         In Progress: <span>{tasks.filter(task => task.status === "in-progress").length}</span>
+//                         </p>
+//                     </div>
+//                     <div class="flex items-center justify-center h-24 rounded border-2 border-black bg-gray-100 ">
+//                         <p class="text-2xl text-black font-semibold">
+//                         Stuck: <span>{tasks.filter(task => task.status === "stuck").length}</span>
+//                         </p>
+//                     </div>
+//                     <div class="flex items-center justify-center h-24 rounded border-2 border-black bg-gray-100 ">
+//                         <p class="text-2xl text-black font-semibold">
+//                         Done: <span>{doneTasks.length}</span>
+//                         </p>
+//                     </div>
+                    
+//                 </div>
+                
+//                 <div class="grid grid-cols-2 gap-4 mb-4">
+//                     <div class="items-start justify-center h-[480px] mb-4 rounded bg-gray-100 border-2 border-black ">
+//                         <div class="text-2xl text-center text-black font-semibold mb-4">Tasks By Status</div>
+//                         <div class="mt-10 ml-10 py-5"><TasksPie data={pieData} /></div>        
+//                     </div>
+//                     <div class="items-start justify-center h-[480px] mb-4 rounded bg-gray-100 border-2 border-black">
+//                         <div class="text-2xl text-center text-black font-semibold mb-4">Open Tasks By User</div>
+//                         <div class="mt-10  py-3"><UserBarChart /></div>           
+//                     </div>
+//                 </div>
+//                 <div class="grid grid-cols-2 gap-4 mb-4">
+//                     <div class="flex items-center justify-center rounded bg-gray-400 h-28 ">
+//                         <p class="text-2xl text-white ">
+//                         Deadlines
+//                         </p>
+//                     </div>
+//                     <div class="flex items-center justify-center rounded bg-gray-400 h-28 ">
+//                         <p class="text-2xl text-white ">
+//                         +
+//                         </p>
+//                     </div>
+//                     <div class="flex items-center justify-center rounded bg-gray-400 h-28 ">
+//                         <p class="text-2xl text-white ">
+//                         +
+//                         </p>
+//                     </div>
+//                     <div class="flex items-center justify-center rounded bg-gray-400 h-28 ">
+//                         <p class="text-2xl text-white ">
+//                         +
+//                         </p>
+//                     </div>
+//                 </div>
+                
+//                 <div class="grid grid-cols-2 gap-4">
+//                     {/* Add more widgets if needed */}
+//                 </div>
+//             </div>
+//             </div>
+
+//         </>
+//     );
+// };
+
+// export default AnalyticsPage;
 import React , { useContext } from "react";
-import logo from '../images/MoringaLogo.png'
-import { Link } from 'react-router-dom'
 import Sidebar from "../components/Sidebar";
 import { TaskContext } from "../context/TaskContext";
 import TasksPie from "../Charts/TasksPie";
+import UserBarChart from "../Charts/UserBarChart";
 
 const AnalyticsPage = () => {
 
     const { tasks, doneTasks } = useContext(TaskContext);
-    
-    // Prepare data for the pie chart
-    const statusCounts = tasks.reduce((acc, task) => {
-     acc[task.status] = (acc[task.status] || 0) + 1;
-     return acc;
-    }, {});
+
+    // Calculate the total number of tasks
+    const totalTasks = tasks.length+doneTasks.length;
+
+    // Calculate the percentage for each status
+    const toDoCount = tasks.filter(task => task.status === "to-do").length;
+    const inProgressCount = tasks.filter(task => task.status === "in-progress").length;
+    const stuckCount = tasks.filter(task => task.status === "stuck").length;
+    const doneCount = doneTasks.length;
 
     const pieData = [
-        { name: 'To Do', value: statusCounts['to-do'] || 0 },
-        { name: 'In Progress', value: statusCounts['in-progress'] || 0 },
-        { name: 'Stuck', value: statusCounts['stuck'] || 0 },
-        { name: 'Done', value: statusCounts['done'] || 0 }
-    ];
+        { name: 'To Do(%)', value: parseFloat(((toDoCount / totalTasks) * 100).toFixed(1)) },
+        { name: 'In Progress(%)', value: parseFloat(((inProgressCount / totalTasks) * 100).toFixed(1)) },
+        { name: 'Stuck(%)', value: parseFloat(((stuckCount / totalTasks) * 100).toFixed(1)) },
+        { name: 'Done(%)', value: parseFloat(((doneCount / totalTasks) * 100).toFixed(1)) }
+      ];
 
     return (
         <>
@@ -28,22 +145,12 @@ const AnalyticsPage = () => {
 
             <div class="p-4 sm:ml-64">
             <div class="p-4 rounded-lg">
-                <h1 class="text-3xl mb-4 font-semibold text-center">Analytics</h1>
+                <h1 class="text-3xl mb-4 font-semibold text-center">Reports & Analytics</h1>
                 
-                <div class="grid grid-cols-5 gap-4 mb-4 border">
+                <div class="grid grid-cols-2 gap-4 mb-4 border">
                     <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
                         <p class="text-xl text-white ">
-                        Connected Boards
-                        </p>
-                    </div>
-                    <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
-                        <p class="text-2xl text-white ">
-                        People
-                        </p>
-                    </div>
-                    <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
-                        <p class="text-2xl text-white ">
-                        Filter
+                        Connected Projects
                         </p>
                     </div>
                     <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
@@ -51,49 +158,40 @@ const AnalyticsPage = () => {
                         Search
                         </p>
                     </div>
-                    <div class="flex items-center justify-center h-24 rounded bg-orange-200 ">
-                        <p class="text-2xl font-semibold text-black ">
-                        Add Widget
-                        </p>
-                    </div>
+                    
                 </div>
                 <div class="grid grid-cols-4 gap-4 mb-4 border">
-                    <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
-                        <p class="text-2xl text-white ">
-                        Total Tasks: <span>{tasks.length}</span>
+                    <div class="flex items-center justify-center h-24 rounded border-2 border-black bg-gray-100 ">
+                        <p class="text-2xl text-black font-semibold">
+                        Total Tasks: <span>{totalTasks}</span>
                         </p>
                     </div>
-                    <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
-                        <p class="text-2xl text-white ">
+                    <div class="flex items-center justify-center h-24 rounded border-2 border-black bg-gray-100 ">
+                        <p class="text-2xl text-black font-semibold">
                         In Progress: <span>{tasks.filter(task => task.status === "in-progress").length}</span>
                         </p>
                     </div>
-                    <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
-                        <p class="text-2xl text-white ">
+                    <div class="flex items-center justify-center h-24 rounded border-2 border-black bg-gray-100 ">
+                        <p class="text-2xl text-black font-semibold">
                         Stuck: <span>{tasks.filter(task => task.status === "stuck").length}</span>
                         </p>
                     </div>
-                    <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
-                        <p class="text-2xl text-white ">
+                    <div class="flex items-center justify-center h-24 rounded border-2 border-black bg-gray-100 ">
+                        <p class="text-2xl text-black font-semibold">
                         Done: <span>{doneTasks.length}</span>
                         </p>
                     </div>
-                    {/* <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
-                        <p class="text-2xl text-white ">
-                        Add Widget
-                        </p>
-                    </div> */}
+                    
                 </div>
                 
                 <div class="grid grid-cols-2 gap-4 mb-4">
-                    <div class="flex items-start justify-center h-[480px] mb-4 rounded bg-gray-400 ">
-                        <div class="text-2xl text-white mb-4">Tasks By Status</div>
-                        <TasksPie data={pieData} />        
+                    <div class="items-start justify-center h-[480px] mb-4 rounded bg-gray-100 border-2 border-black ">
+                        <div class="text-2xl text-center text-black font-semibold mb-4">Tasks By Status</div>
+                        <div class="mt-10 ml-10 py-5"><TasksPie data={pieData} /></div>        
                     </div>
-                    <div class="flex items-start justify-center h-48 mb-4 rounded bg-gray-400 ">
-                        <p class="text-2xl text-white ">
-                            Tasks By Owner    
-                        </p>    
+                    <div class="items-start justify-center h-[480px] mb-4 rounded bg-gray-100 border-2 border-black">
+                        <div class="text-2xl text-center text-black font-semibold mb-4">Open Tasks By User</div>
+                        <div class="mt-10  py-3"><UserBarChart /></div>           
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4 mb-4">

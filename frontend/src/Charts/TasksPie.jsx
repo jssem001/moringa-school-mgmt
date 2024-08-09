@@ -4,7 +4,7 @@ import { PieChart, Pie, Cell, Legend, Tooltip } from 'recharts';
 
 const TasksPie = ({ data }) => {
   // Define colors for the pie slices
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+  const COLORS = ['#4b5563', '#FF8042', '#b91c1c', '#00C49F'];
 
   return (
     <PieChart width={400} height={300}>

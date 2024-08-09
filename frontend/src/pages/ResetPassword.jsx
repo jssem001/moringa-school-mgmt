@@ -93,7 +93,7 @@ export default function ResetPassword() {
                   {loading ? 'Sending Email...' : 'Send Reset Email'}
                 </button>
                 <p className="text-center mt-4">
-                  Remembered your password? <Link to="/login" className="font-medium text-blue-600 hover:underline dark:text-blue-500">Sign in</Link>
+                  Remembered your password? <Link to="/" className="font-medium text-blue-600 hover:underline dark:text-blue-500">Sign in</Link>
                 </p>
               </form>
             </div>

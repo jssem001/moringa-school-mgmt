@@ -6,8 +6,10 @@
 // import { useNavigate } from "react-router-dom";
 // import { server_url } from '../../config';
 
+// // Create a context for projects and templates
+// const ProjectContext = createContext();
 
-// export const ProjectContext = createContext();
+// // export const ProjectContext = createContext();
 
 // export const ProjectProvider = ({ children }) => {
 //   const nav = useNavigate();
@@ -18,7 +20,7 @@
 
 //   // Fetch all projects
 //   useEffect(() => {
-//     fetch(`${server_url}/projects`, {
+//     fetch(`${server_url}/project`, {
 //       headers: {
 //         'Content-type': 'application/json',
 //         "Authorization": `Bearer ${auth_token}`
@@ -35,7 +37,7 @@
 
 //   // Fetch single project by ID
 //   const fetchProject = (projectId) => {
-//     fetch(`${server_url}/projects/${projectId}`, {
+//     fetch(`${server_url}/project/${projectId}`, {
 //       headers: {
 //         'Content-type': 'application/json',
 //         "Authorization": `Bearer ${auth_token}`
@@ -52,13 +54,12 @@
 
 //   // Add a new project
 //   const addProject = (title, description, startDate, dueDate, status) => {
-//     fetch(`${server_url}/projects`, {
+//     fetch(`${server_url}/project`, {
 //       method: 'POST',
 //       body: JSON.stringify({
 //         title,
 //         description,
-//         startDate,
-//         dueDate,
+//         deadline,
 //         status
 //       }),
 //       headers: {
@@ -84,7 +85,7 @@
 //   // Update an existing project
 
 //   const updateProject = (projectId, updatedData) => {
-//     fetch(`${server_url}/projects/${projectId}`, {
+//     fetch(`${server_url}/project/${projectId}`, {
 //       method: 'PUT',
 //       body: JSON.stringify(updatedData),
 //       headers: {
@@ -110,7 +111,7 @@
 //   // Delete a project
 
 //   const deleteProject = (projectId) => {
-//     fetch(`${server_url}/projects/${projectId}`, {
+//     fetch(`${server_url}/project/${projectId}`, {
 //       method: 'DELETE',
 //       headers: {
 //         'Content-type': 'application/json',
