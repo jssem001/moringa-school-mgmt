@@ -88,12 +88,19 @@ def login_user():
 # RESETTING PASSWORD WHEN USER FORGETS
 app.config['MAIL_SERVER'] = 'sandbox.smtp.mailtrap.io'  # Replace with your mail server
 app.config['MAIL_PORT'] = 2525 # Replace with your mail server port
-app.config['MAIL_USERNAME'] = "47944be92d11e6"  # Replace with your email address
-app.config['MAIL_PASSWORD'] = '77eaae86c8e97e'  # Replace with your email password
+app.config['MAIL_USERNAME'] = "83cd77f3e10577"  # Replace with your email address
+app.config['MAIL_PASSWORD'] = '605ba9440905c8'  # Replace with your email password
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 
 mail = Mail(app)
+
+def send_email(to, subject, template):
+    msg = Message(subject,
+                  recipients=[to],
+                  html=template,
+                  sender=app.config['MAIL_USERNAME'])
+    mail.send(msg)
 
 
 @app.route('/forgot_password', methods=['POST'])
@@ -456,6 +463,14 @@ def delete_project(id):
 
 
 #CRUD FOR TASK
+
+
+def send_email(to, subject, template,):
+    msg = Message(subject,
+                  recipients=[to],
+                  html=template,
+                  sender=app.config['MAIL_USERNAME'])
+    mail.send(msg)
 # Create a new task
 @app.route('/tasks', methods=['POST'])
 # @jwt_required()
@@ -493,6 +508,16 @@ def create_task():
 
 
     db.session.commit()
+
+    # Send email notification
+    user = User.query.get(user_id)
+    if user and user.email:
+        send_email(
+            user.email,
+            'New Task Assigned',
+            f"<p>Hello {user.name},</p><p>You have been assigned a new task: {title}.</p><p>Thank you,</p><p>Moringa School Management</p>"
+        )
+
 
     return jsonify({'message': 'Task created successfully'}), 201
 
