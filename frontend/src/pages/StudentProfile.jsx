@@ -1,13 +1,14 @@
 import React, { useContext } from "react";
-import logo from '../images/MoringaLogo.png'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Sidebar from "../components/Sidebar";
 import { UserContext } from "../context/UserContext";
 
 const StudentProfile = () => {
-  //Fetch current user
+  // Fetch current user
   const { currentUser, loading } = useContext(UserContext);
-  console.log('Current User:', currentUser)
+  const navigate = useNavigate(); // Initialize navigate
+
+  console.log('Current User:', currentUser);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -16,12 +17,15 @@ const StudentProfile = () => {
   if (!currentUser) {
     return <div>No user data available.</div>;
   }
-  
+
   const role = currentUser.is_admin ? "Admin" : currentUser.is_instructor ? "Instructor" : "Student";
-  
+
+  const handleUpdateProfileClick = () => {
+    navigate("/update-profile"); // Navigate to UpdateProfile page
+  };
+
   return (
     <>
-   
       <Sidebar />
       
       <div className="p-4 sm:ml-64">
@@ -51,7 +55,6 @@ const StudentProfile = () => {
             </div>
           </div>
 
-
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div className="flex items-center justify-center rounded bg-red-900 h-28 ">
               <p className="text-2xl text-white">
@@ -68,7 +71,10 @@ const StudentProfile = () => {
                 Settings
               </p>
             </div>
-            <div className="flex items-center justify-center rounded bg-red-900 h-28 ">
+            <div 
+              className="flex items-center justify-center rounded bg-red-900 h-28 cursor-pointer"
+              onClick={handleUpdateProfileClick} // Add click handler
+            >
               <p className="text-2xl text-white">
                 Update Profile
               </p>
