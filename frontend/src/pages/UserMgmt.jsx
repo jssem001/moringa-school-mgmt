@@ -1,4 +1,4 @@
-import React, { useContext,useState, useEffect } from "react";
+import React, { useContext,useState, useEffect, useCallback } from "react";
 import { Link } from 'react-router-dom'
 import Sidebar from "../components/Sidebar";
 import { UserContext } from "../context/UserContext";
@@ -8,24 +8,41 @@ const UserMgmt = () => {
     const [selectedUser, setSelectedUser] = useState(null);
     const [newRole, setNewRole] = useState("");
 
-    //Fetch all users
+    const fetchUsersCallback = useCallback(fetchUsers, [fetchUsers]);
+
     useEffect(() => {
-       fetchUsers();  
-    }, [fetchUsers]);
+        fetchUsersCallback();  
+    }, [fetchUsersCallback]);
+
+    // //Fetch all users
+    // useEffect(() => {
+    //    fetchUsers();  
+    // }, [fetchUsers]);
 
     const getUserRole = (user) => {
-        if (user.is_admin) return "Admin";
-        if (user.is_instructor) return "Instructor";
-        if (user.is_student) return "Student";
+        if (user.is_admin) return "admin";
+        if (user.is_instructor) return "instructor";
+        if (user.is_student) return "student";
         return "Unknown";
     }; 
 
-    //Update user role
+    // Update user role
     const handleRoleChange = (userId) => {
         updateRole(userId, newRole);
         setSelectedUser(null);
         setNewRole("");
     };
+    // const handleRoleChange = (userId) => {
+    //     if (['admin', 'instructor', 'student'].includes(newRole)) {
+    //         updateRole(userId, newRole);
+    //         setSelectedUser(null);
+    //         setNewRole("");
+    //     } else {
+    //         toast.error("Invalid role selected");
+    //     }
+    // };
+
+
 
 
     return (
@@ -73,9 +90,9 @@ const UserMgmt = () => {
                                                     className="ml-2"
                                                 >
                                                     <option value="">Select Role</option>
-                                                    <option value="Admin">Admin</option>
-                                                    <option value="Instructor">Instructor</option>
-                                                    <option value="Student">Student</option>
+                                                    <option value="admin">admin</option>
+                                                    <option value="instructor">instructor</option>
+                                                    <option value="student">student</option>
                                                 </select>
                                         )}
                                     </td>

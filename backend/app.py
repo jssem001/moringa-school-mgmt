@@ -19,7 +19,7 @@ bcrypt = Bcrypt()
 
 app = Flask(__name__)
 
-CORS(app, resources={r"/*": {"origins":"*"}})
+CORS(app, resources={r"/*": {"origins":"*"}}, supports_credentials=True)
 # app.config['CORS_HEADERS'] = 'Content-Type'
 
 
@@ -88,12 +88,19 @@ def login_user():
 # RESETTING PASSWORD WHEN USER FORGETS
 app.config['MAIL_SERVER'] = 'sandbox.smtp.mailtrap.io'  # Replace with your mail server
 app.config['MAIL_PORT'] = 2525 # Replace with your mail server port
-app.config['MAIL_USERNAME'] = "47944be92d11e6"  # Replace with your email address
-app.config['MAIL_PASSWORD'] = '77eaae86c8e97e'  # Replace with your email password
+app.config['MAIL_USERNAME'] = "83cd77f3e10577"  # Replace with your email address
+app.config['MAIL_PASSWORD'] = '605ba9440905c8'  # Replace with your email password
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 
 mail = Mail(app)
+
+def send_email(to, subject, template):
+    msg = Message(subject,
+                  recipients=[to],
+                  html=template,
+                  sender=app.config['MAIL_USERNAME'])
+    mail.send(msg)
 
 
 @app.route('/forgot_password', methods=['POST'])
@@ -185,16 +192,36 @@ def update_profile():
     db.session.commit()
     return jsonify({"success": "User updated successfully"}), 200
 
-#Update User Role-untested 
+#Update User Role-untested--------- 
+# @app.route('/user/<int:user_id>/role', methods=['PUT'])
+# def update_user_role(user_id):
+#     data = request.get_json()
+    
+#     # Ensure the user has the right to update other users
+#     current_user_id = get_jwt_identity()
+#     current_user = User.query.get(current_user_id)
+#     if current_user is None or not current_user.is_admin:
+#         return jsonify({"message": "Unauthorized"}), 403
+
+#     user = User.query.get(user_id)
+#     if user is None:
+#         return jsonify({"message": "User not found"}), 404
+    
+#     new_role = data.get('role')
+#     if new_role not in ['admin', 'instructor', 'student']:
+#         return jsonify({"message": "Invalid role"}), 400
+    
+#     # Update the role
+#     user.is_admin = (new_role == 'admin')
+#     user.is_instructor = (new_role == 'instructor')
+#     user.is_student = (new_role == 'student')
+#     db.session.commit()
+
+#     return jsonify({"success": "User role updated successfully"}), 200
+
 @app.route('/user/<int:user_id>/role', methods=['PUT'])
 def update_user_role(user_id):
     data = request.get_json()
-    
-    # Ensure the user has the right to update other users
-    current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
-    if current_user is None or not current_user.is_admin:
-        return jsonify({"message": "Unauthorized"}), 403
 
     user = User.query.get(user_id)
     if user is None:
@@ -263,7 +290,28 @@ def get_user_by_id(id):
             "is_instructor": user.is_instructor
         }
         return jsonify(user_data), 200
+
+#*****fetch user by name***********
+@app.route("/users", methods=["GET"])
+def get_user_by_name():
+    name = request.args.get('name')
+    if not name:
+        return jsonify({"message": "Name parameter is required"}), 400
     
+    user = User.query.filter_by(name=name).first()
+    if user is None:
+        return jsonify({"message": "User not found"}), 404
+    
+    user_data = {
+        "id": user.id,
+        "name": user.name,
+        "email": user.email,
+        "is_student": user.is_student,
+        "is_admin": user.is_admin,
+        "is_instructor": user.is_instructor
+    }
+    return jsonify([user_data]), 200
+#**********************    
 
 
 #CRUD FOR PROJECTS
@@ -435,6 +483,14 @@ def delete_project(id):
 
 
 #CRUD FOR TASK
+
+
+def send_email(to, subject, template,):
+    msg = Message(subject,
+                  recipients=[to],
+                  html=template,
+                  sender=app.config['MAIL_USERNAME'])
+    mail.send(msg)
 # Create a new task
 @app.route('/tasks', methods=['POST'])
 # @jwt_required()
@@ -472,6 +528,16 @@ def create_task():
 
 
     db.session.commit()
+
+    # Send email notification
+    user = User.query.get(user_id)
+    if user and user.email:
+        send_email(
+            user.email,
+            'New Task Assigned',
+            f"<p>Hello {user.name},</p><p>You have been assigned a new task: {title}.</p><p>Thank you,</p><p>Moringa School Management</p>"
+        )
+
 
     return jsonify({'message': 'Task created successfully'}), 201
 
