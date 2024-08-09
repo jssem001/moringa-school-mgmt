@@ -21,7 +21,7 @@ import AddTemplate from "./pages/AddTemplate";
 import EditTemplate from "./pages/EditTemplate";
 import SingleTemplate from "./pages/SingleTemplate";
 import { UserProvider } from "./context/UserContext";
-import { ProjectProvider } from "./context/ProjectContext";
+// import { ProjectProvider } from "./context/ProjectContext";
 import { TaskProvider } from "./context/TaskContext";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
@@ -34,7 +34,7 @@ function App() {
     <TaskProvider>
     <Router>
       <UserProvider>
-        <ProjectProvider> 
+        {/* <ProjectProvider>  */}
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<Login />} />
@@ -56,7 +56,7 @@ function App() {
             <Route path="/edit-template/:templateId" element={<EditTemplate />} />
             <Route path="*" element={<div>Page Not Found</div>} />
           </Routes>
-        </ProjectProvider>
+        {/* </ProjectProvider> */}
        <ToastContainer />                        
       </UserProvider>
     </Router>
