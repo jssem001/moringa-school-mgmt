@@ -144,7 +144,7 @@ const UserProvider = ({ children }) => {
       if (data.success) {
         toast.success("Registered successfully!");
         console.log("Registered successfully!");
-        navigate("/login"); // Navigate after successful registration
+        navigate("/"); // Navigate after successful registration
         // console.log("User registered successfully");
         return data
       } else {
