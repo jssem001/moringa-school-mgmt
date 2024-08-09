@@ -21,7 +21,7 @@ import AddTemplate from "./pages/AddTemplate";
 import EditTemplate from "./pages/EditTemplate";
 import SingleTemplate from "./pages/SingleTemplate";
 import { UserProvider } from "./context/UserContext";
-import { ProjectProvider } from "./context/ProjectContext";
+import { ProjectProvider } from "./context/ProjectContext"; // Import ProjectProvider
 import { TaskProvider } from "./context/TaskContext";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
@@ -36,9 +36,10 @@ function App() {
       <UserProvider>
         <ProjectProvider> 
           <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/landing" element={<LandingPage />} />
+            <Route path="/" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/studentprofile" element={<StudentProfile />} />
             <Route path="/instructorprofile" element={<InstructorProfile />} />
             <Route path="/adminprofile" element={<AdminProfile />} />
