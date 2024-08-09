@@ -4,7 +4,6 @@ import ResetPassword from "./pages/ResetPassword";
 // import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import ResetPassword from "./pages/ResetPassword";
 import LandingPage from "./pages/LandingPage";
 import StudentProfile from "./pages/StudentProfile";
 import InstructorProfile from "./pages/InstructorProfile";
@@ -40,6 +39,7 @@ function App() {
             <Route path="/landing" element={<LandingPage />} />
             <Route path="/" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/studentprofile" element={<StudentProfile />} />
             <Route path="/instructorprofile" element={<InstructorProfile />} />
             <Route path="/adminprofile" element={<AdminProfile />} />
