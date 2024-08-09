@@ -192,33 +192,7 @@ def update_profile():
     db.session.commit()
     return jsonify({"success": "User updated successfully"}), 200
 
-#Update User Role-untested--------- 
-# @app.route('/user/<int:user_id>/role', methods=['PUT'])
-# def update_user_role(user_id):
-#     data = request.get_json()
-    
-#     # Ensure the user has the right to update other users
-#     current_user_id = get_jwt_identity()
-#     current_user = User.query.get(current_user_id)
-#     if current_user is None or not current_user.is_admin:
-#         return jsonify({"message": "Unauthorized"}), 403
-
-#     user = User.query.get(user_id)
-#     if user is None:
-#         return jsonify({"message": "User not found"}), 404
-    
-#     new_role = data.get('role')
-#     if new_role not in ['admin', 'instructor', 'student']:
-#         return jsonify({"message": "Invalid role"}), 400
-    
-#     # Update the role
-#     user.is_admin = (new_role == 'admin')
-#     user.is_instructor = (new_role == 'instructor')
-#     user.is_student = (new_role == 'student')
-#     db.session.commit()
-
-#     return jsonify({"success": "User role updated successfully"}), 200
-
+#Update User Role-untested- OK 
 @app.route('/user/<int:user_id>/role', methods=['PUT'])
 def update_user_role(user_id):
     data = request.get_json()
