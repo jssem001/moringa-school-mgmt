@@ -33,6 +33,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
+    <TaskProvider>
     <Router>
       <UserProvider>
         <Routes>
@@ -64,6 +65,7 @@ function App() {
         <ToastContainer />
       </UserProvider>
     </Router>
+    </TaskProvider>
   );
 }
 

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import { useProjects } from "../context/ProjectContext"; // Updated import
+// import { useProjects } from "../context/ProjectContext"; // Updated import
 
 const EditTemplate = () => {
   const { id } = useParams();

@@ -42,15 +42,15 @@ const Sidebar = () => {
                         </div></Link>
                     </li>
                     <li>
-                        <div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
+                        <Link to="/calendar"><div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
                             <span class="flex-1 ms-3 whitespace-nowrap">Calendar</span>
-                        </div>
+                        </div></Link>
                     </li>
                     
                     <li>
-                        <div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
+                        <Link to="/teams"><div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
                             <span class="flex-1 ms-3 whitespace-nowrap">Teams</span>
-                        </div>
+                        </div></Link>
                     </li>
                     <li>
                         <Link to="/analytics"><div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">

@@ -36,9 +36,9 @@ const AdminProfile = () => {
                     </div>
                     
                     <div className="grid grid-cols-2 gap-4 mb-4">
-                        <div className="flex items-center justify-center rounded bg-gray-700 h-28 ">
-                            <p className="text-2xl text-white">My Company Account</p>
-                        </div>
+                        <Link to="/usermgmt"><div className="flex items-center justify-center rounded bg-gray-700 h-28 ">
+                            <p className="text-2xl text-white">Assign Roles</p>
+                        </div></Link>
                         <div className="flex items-center justify-center rounded bg-gray-700 h-28 ">
                             <p className="text-2xl text-white">Settings</p>
                         </div>
