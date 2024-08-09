@@ -98,24 +98,31 @@ const UserProvider = ({ children }) => {
 
 
   //All Users
-  const fetchUsers= async () => {
-    setLoading(false);
+  const fetchUsers = () => {
+    // setLoading(true);
     fetch(`${server_url}/users`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${authToken}`,
-      },
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`,
+        },
     })
-    .then((response) => response.json())
-    .then((data) => {
-      setAllUsers(data);  // fetched users
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
     })
-    .catch((error) => {
-      toast.error(`Failed to fetch users: ${error.message}`);
+    .then(data => {
+        setAllUsers(data);
     })
-    .finally(() => setLoading(false));
-  };
+    .catch(error => {
+        toast.error(`Failed to fetch users: ${error.message}`);
+    })
+    .finally(() => {
+        // setLoading(false);
+    });
+};
 
 
   // Register a new user
@@ -231,7 +238,7 @@ const loginUser = async (email, password) => {
         setCurrentUser(null);
         setAuthToken(null);
         toast.success(result.success);
-        navigate("/login");
+        navigate("/");
       } else {
         toast.error(result.error || "Logout failed");
       }
