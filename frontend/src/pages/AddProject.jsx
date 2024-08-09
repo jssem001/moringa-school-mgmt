@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState,useContext } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import abstractImage from '../images/abstract-wavy.jpeg'; 
+import { server_url } from '../../config';
+import { UserContext } from '../context/UserContext';
 
+const AddProject = () => {
+const { auth_token } = useContext(UserContext);
 const AddProject = () => {
   const [project, setProject] = useState({
     title: '',
     description: '',
-    githubLink: '',
-    image: '',
-    date: '',
-    duedate: '',
+    deadline: '',
     status: 'In Progress',
     template: '' // Add template state
   });
@@ -40,7 +41,7 @@ const AddProject = () => {
     for (let i = 0; i < attachedFiles.length; i++) formData.append('files', attachedFiles[i]);
 
     try {
-      const response = await fetch('http://localhost:5000/api/projects', {
+      const response = await  fetch(`${server_url}/project`, {
         method: 'POST',
         body: formData,
       });
@@ -50,6 +51,8 @@ const AddProject = () => {
       console.error('Error:', error);
     }
   };
+    
+
 
   return (
     <div className="relative overflow-hidden p-6 max-w-3xl mx-auto">
@@ -63,21 +66,45 @@ const AddProject = () => {
       <div className="relative flex flex-col items-center bg-white p-6 rounded shadow-lg z-20 mt-24">
         <h2 className="text-3xl font-bold mb-4">Add Project</h2>
         <form onSubmit={handleSubmit} className="w-full space-y-4">
-          {/* Form fields */}
-          {['title', 'description', 'githubLink', 'image', 'date', 'duedate'].map((field) => (
-            <div key={field}>
-              <label className="block mb-2 text-sm font-medium text-gray-700">{field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</label>
-              <input
-                type={field.includes('date') ? 'date' : 'text'}
-                name={field}
-                placeholder={field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
-                value={project[field]}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required={field !== 'githubLink' && field !== 'image'}
-              />
-            </div>
-          ))}
+          <div>
+            <label className="block mb-2 text-sm font-medium text-gray-700">Project Title</label>
+            <input
+              type="text"
+              name="title"
+              placeholder="Project Title"
+              value={project.title}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block mb-2 text-sm font-medium text-gray-700">Project Description</label>
+            <textarea
+              name="description"
+              placeholder="Project Description"
+              value={project.description}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+         
+
+          <div>
+            <label className="block mb-2 text-sm font-medium text-gray-700">Due Date</label>
+            <input
+              type="date"
+              name="deadline"
+              value={project.deadline}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
           <div>
             <label className="block mb-2 text-sm font-medium text-gray-700">Project Status</label>
             <select name="status" value={project.status} onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required>
@@ -106,9 +133,5 @@ const AddProject = () => {
     </div>
   );
 };
-
-
-
+}
 export default AddProject;
-
-
