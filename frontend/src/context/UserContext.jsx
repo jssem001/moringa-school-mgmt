@@ -98,24 +98,6 @@ const UserProvider = ({ children }) => {
 
 
   //All Users
-  // const fetchUsers= async () => {
-  //   setLoading(true);
-  //   fetch(`${server_url}/users`, {
-  //     method: 'GET',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'Authorization': `Bearer ${authToken}`,
-  //     },
-  //   })
-  //   .then((response) => response.json())
-  //   .then((data) => {
-  //     setAllUsers(data);  // fetched users
-  //   })
-  //   .catch((error) => {
-  //     toast.error(`Failed to fetch users: ${error.message}`);
-  //   })
-  //   .finally(() => setLoading(false));
-  // };
   const fetchUsers = () => {
     // setLoading(true);
     fetch(`${server_url}/users`, {
@@ -256,7 +238,7 @@ const loginUser = async (email, password) => {
         setCurrentUser(null);
         setAuthToken(null);
         toast.success(result.success);
-        navigate("/login");
+        navigate("/");
       } else {
         toast.error(result.error || "Logout failed");
       }

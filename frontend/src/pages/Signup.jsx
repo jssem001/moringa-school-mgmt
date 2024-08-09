@@ -116,7 +116,7 @@ export default function Signup() {
                   required 
                 />
               </div>
-              <div className="mb-4">
+              {/* <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">Phone Number</label>
                 <input 
                   type="tel" 
@@ -126,7 +126,7 @@ export default function Signup() {
                   placeholder="+1234567890" 
                   required 
                 />
-              </div>
+              </div> */}
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">Role</label>
                 <select 
@@ -153,7 +153,7 @@ export default function Signup() {
             </form>
             <p className="mt-6 text-center text-sm text-gray-600">
               Already have an account?{' '}
-              <Link to="/login" className="text-blue-600 font-medium  hover:underline hover:text-blue-600">
+              <Link to="/" className="text-blue-600 font-medium  hover:underline hover:text-blue-600">
                 Log In
               </Link>
             </p>

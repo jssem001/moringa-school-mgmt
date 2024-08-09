@@ -36,8 +36,8 @@ function App() {
       <UserProvider>
         <ProjectProvider> 
           <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/landing" element={<LandingPage />} />
+            <Route path="/" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/studentprofile" element={<StudentProfile />} />

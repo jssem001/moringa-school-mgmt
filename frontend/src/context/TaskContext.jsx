@@ -121,8 +121,7 @@ export const TaskProvider = ({ children }) => {
       .catch(error => console.error('Failed to update task status:', error));
   };
 
-  // Clear Done Tasks
-
+  //Clear Done Tasks
   const clearDoneTasks = () => {
     setDoneTasks([]);
     }
