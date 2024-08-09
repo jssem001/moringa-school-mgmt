@@ -44,49 +44,6 @@ const Task = () => {
       })
       .catch(error => console.error('Failed to fetch user by name:', error));
   };
-  
-  
-  
-  
-  
-  
-  
-  // const handleAddTask = () => {
-  //   if (taskName.trim() === "") return;
-
-  //   // const dateParts = dueDate.split("-");
-  //   // const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
-
-
-  //   const newTask = {
-  //     task_name: taskName,
-  //     status: taskStatus,
-  //     project_id: assignedProject,
-  //     user_id: assignedTo,
-  //     // deadline: formattedDate,
-  //   };
-
-  //   addTask(newTask);
-
-    
-  //   setTaskName("");
-  //   setTaskStatus("to-do");
-  //   setAssignedTo("");
-  //   setAssignedProject("");
-  //   // setDueDate("");
-    
-  // };
-
-  // const formatDate = (dateString) => {
-  //   if (dateString !== null) {
-  //     const date = new Date(dateString);
-  //     const day = String(date.getDate()).padStart(2, '0');
-  //     const month = String(date.getMonth() + 1).padStart(2, '0'); // getMonth() returns month from 0-11
-  //     const year = date.getFullYear();
-  //     return `${day}-${month}-${year}`;
-  //   }
-  // };
-  
 
   return (
     <div className="flex flex-col min-h-screen">

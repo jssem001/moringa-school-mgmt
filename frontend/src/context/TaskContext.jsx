@@ -14,9 +14,6 @@ export const TaskProvider = ({ children }) => {
     fetchTasks();
   }, []);
 
-  
-
-
   // Fetch Tasks
   const fetchTasks = () => {
     fetch(`${server_url}/tasks`, {
@@ -52,28 +49,6 @@ export const TaskProvider = ({ children }) => {
   };
 
 
-
-
-  // const fetchTasks = async () => {
-  //   fetch(`${server_url}/tasks`)
-  //     .then(response => response.json())
-  //     .then(data => {
-  //       console.log('Fetched tasks:', data); 
-  //       const tasksWithUserNames = data.map(task => 
-  //         fetchUserName(task.user_id).then(userName => ({ ...task, user_name: userName }))
-  //       );
-
-  //       Promise.all(tasksWithUserNames).then(updatedTasks => {
-  //         console.log('Updated tasks with user names:', updatedTasks);
-  //         const done = updatedTasks.filter(task => task.status === 'done');
-  //         const pending = updatedTasks.filter(task => task.status !== 'done');
-  //         setTasks(pending);
-  //         setDoneTasks(done);
-  //       });
-  //     })
-  //     .catch(error => console.error('Failed to fetch tasks:', error));
-  // };
-
   // Add Task
   const addTask = (task) => {
     fetch(`${server_url}/tasks`, {
@@ -100,35 +75,6 @@ export const TaskProvider = ({ children }) => {
       .catch(error => console.error('Failed to add task:', error));
   };
 
-
-
-
-
-
-
-
-  // const addTask = (task) => {
-  //   fetch(`${server_url}/tasks`, {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify(task),
-  //   })
-  //     .then(response => response.json())
-  //     .then(data => {
-  //       fetchUserName(data.user_id)
-  //         .then(userName => {
-  //           data.user_name = userName;
-  //           if (data.status === 'done') {
-  //             setDoneTasks([...doneTasks, data]);
-  //           } else {
-  //             setTasks([...tasks, data]);
-  //           }
-  //         });
-  //     })
-  //     .catch(error => console.error('Failed to add task:', error));
-  // };
 
   // Update Task
   const updateTask = (taskId, updatedTask) => {
@@ -246,7 +192,7 @@ export const TaskProvider = ({ children }) => {
 
 
   return (
-    <TaskContext.Provider value={{ tasks, doneTasks, addTask, updateTask, updateTaskStatus, clearDoneTasks, fetchUserByName }}>
+    <TaskContext.Provider value={{ tasks, doneTasks, addTask, updateTask, updateTaskStatus, clearDoneTasks, fetchUserByName, fetchUserById }}>
       {children}
     </TaskContext.Provider>
   );
