@@ -5,7 +5,7 @@ import Sidebar from "../components/Sidebar";
 
 const Task = () => {
   
-  const { tasks, doneTasks, addTask, updateTaskStatus, clearDoneTasks } = useContext(TaskContext);
+  const { tasks, doneTasks, addTask, updateTaskStatus, clearDoneTasks, fetchUserByName } = useContext(TaskContext);
 
 
   const [taskName, setTaskName] = useState("");
@@ -14,32 +14,68 @@ const Task = () => {
   // const [dueDate, setDueDate] = useState("");
   const [assignedProject, setAssignedProject] = useState("");
   
-
   const handleAddTask = () => {
     if (taskName.trim() === "") return;
-
-    // const dateParts = dueDate.split("-");
-    // const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
-
-
-    const newTask = {
-      task_name: taskName,
-      status: taskStatus,
-      project_id: assignedProject,
-      user_id: assignedTo,
-      // deadline: formattedDate,
-    };
-
-    addTask(newTask);
-
-    
-    setTaskName("");
-    setTaskStatus("to-do");
-    setAssignedTo("");
-    setAssignedProject("");
-    // setDueDate("");
-    
+  
+    // Fetch the user ID based on the assigned user's name
+    fetchUserByName(assignedTo)
+      .then(user => {
+        if (user) {
+          const newTask = {
+            task_name: taskName,
+            status: taskStatus,
+            project_id: assignedProject,
+            user_id: user.id,
+            // deadline: formattedDate,
+          };
+  
+          // Call addTask with the new task
+          addTask(newTask);
+  
+          // Reset the form fields
+          setTaskName("");
+          setTaskStatus("to-do");
+          setAssignedTo("");
+          setAssignedProject("");
+          // setDueDate("");
+        } else {
+          console.error('User not found for the assigned name');
+        }
+      })
+      .catch(error => console.error('Failed to fetch user by name:', error));
   };
+  
+  
+  
+  
+  
+  
+  
+  // const handleAddTask = () => {
+  //   if (taskName.trim() === "") return;
+
+  //   // const dateParts = dueDate.split("-");
+  //   // const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+
+
+  //   const newTask = {
+  //     task_name: taskName,
+  //     status: taskStatus,
+  //     project_id: assignedProject,
+  //     user_id: assignedTo,
+  //     // deadline: formattedDate,
+  //   };
+
+  //   addTask(newTask);
+
+    
+  //   setTaskName("");
+  //   setTaskStatus("to-do");
+  //   setAssignedTo("");
+  //   setAssignedProject("");
+  //   // setDueDate("");
+    
+  // };
 
   // const formatDate = (dateString) => {
   //   if (dateString !== null) {
@@ -85,7 +121,7 @@ const Task = () => {
               type="text"
               value={assignedTo}
               onChange={(e) => setAssignedTo(e.target.value)}
-              placeholder="Assigned User id"
+              placeholder="Assigned User"
               className="mt-2 w-full p-2 border border-gray-300 rounded"
             />
             <input

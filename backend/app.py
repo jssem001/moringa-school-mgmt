@@ -19,7 +19,7 @@ bcrypt = Bcrypt()
 
 app = Flask(__name__)
 
-CORS(app, resources={r"/*": {"origins":"*"}})
+CORS(app, resources={r"/*": {"origins":"*"}}, supports_credentials=True)
 # app.config['CORS_HEADERS'] = 'Content-Type'
 
 
@@ -263,7 +263,28 @@ def get_user_by_id(id):
             "is_instructor": user.is_instructor
         }
         return jsonify(user_data), 200
+
+#*****fetch user by name***********
+@app.route("/users", methods=["GET"])
+def get_user_by_name():
+    name = request.args.get('name')
+    if not name:
+        return jsonify({"message": "Name parameter is required"}), 400
     
+    user = User.query.filter_by(name=name).first()
+    if user is None:
+        return jsonify({"message": "User not found"}), 404
+    
+    user_data = {
+        "id": user.id,
+        "name": user.name,
+        "email": user.email,
+        "is_student": user.is_student,
+        "is_admin": user.is_admin,
+        "is_instructor": user.is_instructor
+    }
+    return jsonify([user_data]), 200
+#**********************    
 
 
 #CRUD FOR PROJECTS
