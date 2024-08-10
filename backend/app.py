@@ -179,9 +179,10 @@ def update_profile():
         return jsonify({"message": "User not found"}), 404
     
 
-    email_exists = User.query.filter_by(email=data['email']).first()
-    if email_exists:
-        return jsonify({"error": "Email already exists"}), 400
+    if 'email' in data and data['email'] != user.email:
+        email_exists = User.query.filter_by(email=data['email']).first()
+        if email_exists:
+            return jsonify({"error": "Email already exists"}), 400
 
     user.name = data.get('name', user.name)
     user.email = user.email
