@@ -48,8 +48,8 @@ function App() {
           <Route path="/projects" element={<Projects />} />
           <Route path="/tasks" element={<Task />} />
           <Route path="/add-project" element={<AddProject />} />
-          <Route path="/projects/:projectId" element={<SingleProject />} />
-          <Route path="/edit-project/:projectId" element={<EditProject />} />
+          <Route path="/projects/:id" element={<SingleProject />} />
+          <Route path="/edit-project/:id" element={<EditProject />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/analytics" element={<AnalyticsPage />} />
           <Route path="/usermgmt" element={<UserMgmt />} />

@@ -331,18 +331,6 @@ def create_event():
             user_id=user_id
         )
 
-
-        # data = request.get_json()
-
-        # file_attachments = data.get('file_attachments', None) 
-
-        # new_event = Project(
-        #   name=data['name'],
-        #   description=data['description'],
-        #   deadline=data['deadline'],
-        #   file_attachments=file_attachments,
-        #   user_id=current_user_id
-        # )
         db.session.add(new_event)
 
         activity = Activities(user_id=current_user_id, project_id=new_event.id, activity="Added a new project")
