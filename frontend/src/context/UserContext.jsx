@@ -250,29 +250,49 @@ const loginUser = async (email, password) => {
   };
 
   // Update user profile
-  const updateUser = async (name, phoneNumber, profileImage, password) => {
+  // const updateUser = (name, email) => {
+  //   setLoading(true);
+  //   try {
+  //     const result = await fetchWithRetry(`${server_url}/user`, {
+  //       method: 'PUT',
+  //       body: JSON.stringify({ name, email }),
+  //       headers: {
+  //         'Content-type': 'application/json',
+  //         'Authorization': `Bearer ${authToken}`,
+  //       },
+  //     });
+  //     if (result.success) {
+  //       toast.success(result.success);
+  //       setCurrentUser({ ...currentUser, name, email });
+  //     } else {
+  //       toast.error(result.error || "Update failed");
+  //     }
+  //   } catch (error) {
+  //     toast.error(`Failed to update user: ${error.message}`);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  const updateUser = (name, email) => {
     setLoading(true);
-    try {
-      const result = await fetchWithRetry(`${server_url}/user`, {
-        method: 'PUT',
-        body: JSON.stringify({ name, phoneNumber, profileImage, password }),
-        headers: {
-          'Content-type': 'application/json',
-          'Authorization': `Bearer ${authToken}`,
-        },
-      });
-      if (result.success) {
-        toast.success(result.success);
-        setCurrentUser({ ...currentUser, name, phoneNumber, profileImage });
+    fetch(`${server_url}/user`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`, 
+      },
+      body: JSON.stringify({ name, email }),
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        toast.success(data.success);
+        setCurrentUser({ ...currentUser, name, email });
       } else {
-        toast.error(result.error || "Update failed");
+        toast.error(data.error || "Update failed");
       }
-    } catch (error) {
-      toast.error(`Failed to update user: ${error.message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
+    })
+  }
 
   // Update user role
   const updateRole = (userId, newRole) => {
