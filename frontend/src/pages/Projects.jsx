@@ -50,24 +50,18 @@ const Projects = () => {
 
           {loading ? (
             <p>Loading projects...</p>
+          ) : filteredProjects.length === 0 ? (
+            <p>No projects yet. Add your first project above...</p>
           ) : (
             <div className="space-y-4">
               {filteredProjects.map((project) => (
                 <div key={project.id} className="flex items-start p-4 border rounded shadow-lg">
-                  {/* <div className="w-1/4 mr-4 flex-shrink-0">
-                    <img
-                      src={project.image}
-                      alt={project.name}
-                      className="w-full h-32 object-cover mb-2 rounded"
-                    />
-                  </div> */}
-
                   <div className="flex-1">
                     <h3 className="text-xl font-semibold mb-2">{project.name}</h3>
                     <p className="mb-2">{project.description}</p>
-                    {/* <p className="text-sm text-gray-600">Start Date: {project.startDate}</p>
-                    <p className="text-sm text-gray-600">Due Date: {project.dueDate}</p>
-                    <p className="text-sm text-gray-600">Status: {project.status}</p> */}
+                    
+                    <p className="text-sm text-gray-600">Due Date: {project.deadline}</p>
+                    
 
                     {project.attachedFiles && project.attachedFiles.length > 0 && (
                       <div className="mt-2">

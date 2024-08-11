@@ -1,16 +1,20 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import { server_url } from "../../config";
+// import { useNavigate } from 'react-router-dom';
 
 export const ProjectContext = createContext();
 
 export const ProjectProvider = ({ children }) => {
+//   const navigate = useNavigate();  
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
   const [authToken, setAuthToken] = useState(() => localStorage.getItem("access_token") || null);
 
+//   Fetch Projects
   const fetchProjects = () => {
     setLoading(true);
-    fetch('/project', {
+    fetch(`${server_url}/project`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -39,8 +43,36 @@ export const ProjectProvider = ({ children }) => {
     fetchProjects();
   }, []);
 
+//   Add A Project
+  const addProject = (project) => {
+    fetch(`${server_url}/project`, {
+      method: 'POST',
+      headers: {
+        // 'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`, // Include the JWT token here
+      },
+      body: project,
+    })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Failed to add project');
+      }
+      return response.json();
+    })
+    .then((data) => {
+      setProjects([...projects, data]);
+      toast.success('Project added successfully!');
+    //   navigate('/projects');
+    })
+    .catch((error) => {
+      console.error('Error adding project:', error);
+      toast.error('Error adding project');
+    });
+  };
+
+
   return (
-    <ProjectContext.Provider value={{ projects, fetchProjects, loading }}>
+    <ProjectContext.Provider value={{ projects, loading, addProject, fetchProjects  }}>
       {children}
     </ProjectContext.Provider>
   );
