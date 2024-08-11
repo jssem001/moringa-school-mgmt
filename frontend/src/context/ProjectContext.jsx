@@ -1,10 +1,12 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { server_url } from "../../config";
+// import { useNavigate } from 'react-router-dom';
 
 export const ProjectContext = createContext();
 
 export const ProjectProvider = ({ children }) => {
+//   const navigate = useNavigate();  
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
   const [authToken, setAuthToken] = useState(() => localStorage.getItem("access_token") || null);
@@ -46,10 +48,10 @@ export const ProjectProvider = ({ children }) => {
     fetch(`${server_url}/project`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        // 'Content-Type': 'application/json',
         'Authorization': `Bearer ${authToken}`, // Include the JWT token here
       },
-      body: JSON.stringify(project),
+      body: project,
     })
     .then((response) => {
       if (!response.ok) {
@@ -60,6 +62,7 @@ export const ProjectProvider = ({ children }) => {
     .then((data) => {
       setProjects([...projects, data]);
       toast.success('Project added successfully!');
+    //   navigate('/projects');
     })
     .catch((error) => {
       console.error('Error adding project:', error);
