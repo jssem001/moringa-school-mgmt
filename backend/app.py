@@ -304,7 +304,7 @@ def create_event():
           name=data['name'],
           description=data['description'],
           deadline=data['deadline'],
-          status=data['status'],
+        
           file_attachments=data['file_attachments'],
           user_id=current_user_id
         )
@@ -338,7 +338,7 @@ def get_projects():
             "name": project.name,
             "description": project.description,
             "deadline": project.deadline,
-            "status": project.status,
+            
             "file_attachments": project.file_attachments
         })
     return jsonify(project_data), 200
@@ -354,7 +354,7 @@ def get_all_projects():
             "name": project.name,
             "description": project.description,
             "deadline": project.deadline,
-            "status": project.status,
+            
             "file_attachments": project.file_attachments
         })
     return jsonify(project_data), 200
@@ -419,7 +419,7 @@ def get_project(id):
         "name": project.name,
         "description": project.description,
         "deadline": project.deadline,
-        "status": project.status,
+        
         "file_attachments": project.file_attachments
     }
     return jsonify(project_data), 200
@@ -442,7 +442,7 @@ def update_project(id):
     project.name = data.get('name', project.name)
     project.description = data.get('description', project.description)
     project.deadline = data.get('deadline', project.deadline)
-    project.status = data.get('status', project.status)
+    # project.status = data.get('status', project.status)
     project.file_attachments = data.get('file_attachments', project.file_attachments)
 
     activity = Activities(user_id=current_user_id, project_id=project.id, activity="Updated project details")
