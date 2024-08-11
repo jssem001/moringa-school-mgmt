@@ -304,7 +304,6 @@ def create_event():
           name=data['name'],
           description=data['description'],
           deadline=data['deadline'],
-          status=data['status'],
           file_attachments=data['file_attachments'],
           user_id=current_user_id
         )
@@ -336,7 +335,6 @@ def get_projects():
             "name": project.name,
             "description": project.description,
             "deadline": project.deadline,
-            "status": project.status,
             "file_attachments": project.file_attachments
         })
     return jsonify(project_data), 200
@@ -399,7 +397,6 @@ def get_project(id):
         "name": project.name,
         "description": project.description,
         "deadline": project.deadline,
-        "status": project.status,
         "file_attachments": project.file_attachments
     }
     return jsonify(project_data), 200
