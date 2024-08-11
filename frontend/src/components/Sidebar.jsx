@@ -1,18 +1,17 @@
-import React, {useContext} from "react";
-import logo from '../images/MoringaLogo.png'
-import { Link } from 'react-router-dom'
+import React, { useContext } from "react";
+import { Link } from 'react-router-dom';
 import { UserContext } from "../context/UserContext";
+import logo from '../images/MoringaLogo.png';
 
 const Sidebar = () => {
-    //User profile link on sidebar should navigate to a different page depending on user type
-    const {currentUser, logout} = useContext(UserContext);
+    const { currentUser, logout } = useContext(UserContext);
 
     let profileLink = "/studentprofile";
     if (currentUser) {
         if (currentUser.is_admin) {
-        profileLink = "/adminprofile";
+            profileLink = "/adminprofile";
         } else if (currentUser.is_instructor) {
-        profileLink = "/instructorprofile";
+            profileLink = "/instructorprofile";
         }
     }
 
@@ -43,15 +42,15 @@ const Sidebar = () => {
                         </div></Link>
                     </li>
                     <li>
-                        <div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
+                        <Link to="/calendar"><div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
                             <span class="flex-1 ms-3 whitespace-nowrap">Calendar</span>
-                        </div>
+                        </div></Link>
                     </li>
                     
                     <li>
-                        <div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
+                        <Link to="/teams"><div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
                             <span class="flex-1 ms-3 whitespace-nowrap">Teams</span>
-                        </div>
+                        </div></Link>
                     </li>
                     <li>
                         <Link to="/analytics"><div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
@@ -71,9 +70,8 @@ const Sidebar = () => {
                 </ul>
             </div>
             </aside>
-        
         </>
-    )
-}
+    );
+};
 
-export default Sidebar
+export default Sidebar;
