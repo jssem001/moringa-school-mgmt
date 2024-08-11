@@ -1,62 +1,46 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { server_url } from '../../config';
+import React, { useState, useContext } from 'react';
+// import { toast } from 'react-toastify';
 import Sidebar from '../components/Sidebar';
+import { ProjectContext } from '../context/ProjectContext';
 
 const AddProject = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    deadline: '',
-    file: null
-  });
-  const navigate = useNavigate();
-  const auth_token = localStorage.getItem('auth_token');
+  const { addProject } = useContext(ProjectContext);
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [deadline, setDeadline] = useState('');
+  const [file, setFile] = useState(null);
 
-  // Handle input changes
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    setFormData({
-      ...formData,
-      [name]: files ? files[0] : value
-    });
+  // Get current user id
+  // const user = JSON.parse(localStorage.getItem('user'));
+
+  // Handle file input change
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
   };
 
   // Handle form submission
-  const handleSubmit = async (e) => {
+  const handleAddProject = (e) => {
     e.preventDefault();
 
-    const formDataToSend = new FormData();
-    for (const key in formData) {
-      formDataToSend.append(key, formData[key]);
+    // if (!user) {
+    //   console.error("User not found in localStorage. Please log in.");
+    //   // Optionally, redirect to login page or show a message
+    //   return;
+    // }
+
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('description', description);
+    formData.append('deadline', deadline);
+    // formData.append('user_id', user.id);
+    if (file) {
+      formData.append('file', file);
     }
-
-    try {
-      const response = await fetch(`${server_url}/project`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${auth_token}`,
-          // The 'Content-Type' should not be set when sending FormData,
-          // it automatically sets the correct headers.
-        },
-        body: formDataToSend,
-        
-      });
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          throw new Error("Unauthorized - please check your token");
-        }
-        throw new Error("Failed to submit project");
-      }
-
-      const result = await response.json();
-      toast.success("Project added successfully!");
-      navigate('/projects'); // Redirect to projects page
-    } catch (error) {
-      toast.error(error.message || "Failed to add project");
-    }
+    addProject(formData);
+    setName('');
+    setDescription('');
+    setDeadline('');
+    setFile(null);
   };
 
   return (
@@ -65,7 +49,7 @@ const AddProject = () => {
       <div className="p-4 sm:ml-64 flex-1">
         <h2 className="text-2xl font-bold mb-4">Add New Project</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleAddProject} className="space-y-4">
           {/* Name */}
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
@@ -73,8 +57,8 @@ const AddProject = () => {
               type="text"
               id="name"
               name="name"
-              value={formData.name}
-              onChange={handleChange}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className="mt-1 block w-full p-2 border border-gray-300 rounded"
               required
             />
@@ -86,8 +70,8 @@ const AddProject = () => {
             <textarea
               id="description"
               name="description"
-              value={formData.description}
-              onChange={handleChange}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               className="mt-1 block w-full p-2 border border-gray-300 rounded"
               rows="4"
               required
@@ -101,8 +85,8 @@ const AddProject = () => {
               type="date"
               id="deadline"
               name="deadline"
-              value={formData.deadline}
-              onChange={handleChange}
+              value={deadline}
+              onChange={(e) => setDeadline(e.target.value)}
               className="mt-1 block w-full p-2 border border-gray-300 rounded"
               required
             />
@@ -115,7 +99,7 @@ const AddProject = () => {
               type="file"
               id="file"
               name="file"
-              onChange={handleChange}
+              onChange={handleFileChange}
               className="mt-1 block w-full p-2 border border-gray-300 rounded"
             />
           </div>
@@ -136,3 +120,111 @@ const AddProject = () => {
 };
 
 export default AddProject;
+
+
+
+
+
+// import React, { useState, useContext, useEffect } from 'react';
+// // import { toast } from 'react-toastify';
+// import Sidebar from '../components/Sidebar';
+// import { ProjectContext } from '../context/ProjectContext';
+
+// const AddProject = () => {
+//   const { addProject } = useContext(ProjectContext);
+//   const [name, setName] = useState('');
+//   const [description, setDescription] = useState('');
+//   const [deadline, setDeadline] = useState('');
+//   const [user_id, setUser_id] = useState('');
+
+//   //get curent user id
+//   const user = JSON.parse(localStorage.getItem('user'));
+
+
+//   // Handle form submission
+//   const handleAddProject = (e) => {
+//     e.preventDefault();
+//     addProject(name, description, deadline, user.id);
+//     setName('');
+//     setDescription('');
+//     setDeadline('');
+
+//   };
+
+//   return (
+//     <div className="flex">
+//       <Sidebar />
+//       <div className="p-4 sm:ml-64 flex-1">
+//         <h2 className="text-2xl font-bold mb-4">Add New Project</h2>
+
+//         <form onSubmit={handleAddProject} className="space-y-4">
+//           {/* Name */}
+//           <div>
+//             <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+//             <input
+//               type="text"
+//               id="name"
+//               name="name"
+//               value={name}
+//               onChange={(e) => setName(e.target.value)}
+//               className="mt-1 block w-full p-2 border border-gray-300 rounded"
+//               required
+//             />
+//           </div>
+
+//           {/* Description */}
+//           <div>
+//             <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
+//             <textarea
+//               id="description"
+//               name="description"
+//               value={description}
+//               onChange={(e) => setDescription(e.target.value)}
+//               className="mt-1 block w-full p-2 border border-gray-300 rounded"
+//               rows="4"
+//               required
+//             />
+//           </div>
+
+//           {/* Deadline */}
+//           <div>
+//             <label htmlFor="deadline" className="block text-sm font-medium text-gray-700">Deadline</label>
+//             <input
+//               type="date"
+//               id="deadline"
+//               name="deadline"
+//               value={deadline}
+//               onChange={(e) => setDeadline(e.target.value)}
+//               className="mt-1 block w-full p-2 border border-gray-300 rounded"
+//               required
+//             />
+//           </div>
+
+//           {/* File Attachment */}
+//           {/* <div>
+//             <label htmlFor="file" className="block text-sm font-medium text-gray-700">Attachment</label>
+//             <input
+//               type="file"
+//               id="file"
+//               name="file"
+//               onChange={handleChange}
+//               className="mt-1 block w-full p-2 border border-gray-300 rounded"
+//             />
+//           </div> */}
+
+//           {/* Submit Button */}
+//           <div>
+//             <button
+//               type="submit"
+//               className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+//             >
+//               Add Project
+//             </button>
+//           </div>
+//         </form>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default AddProject;

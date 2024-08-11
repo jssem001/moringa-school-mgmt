@@ -178,6 +178,7 @@ const loginUser = async (email, password) => {
     if (data.access_token) {
       setAuthToken(data.access_token);
       localStorage.setItem('access_token', data.access_token);
+      localStorage.setItem('user', JSON.stringify(data.user));
       setCurrentUser(data.user);
       setPermissions(permissionsConfig[data.is_admin ? 'admin' : (data.is_student ? 'student' : 'instructor')] || {});
       toast.success('Logged in Successfully!');
