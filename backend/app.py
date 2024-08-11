@@ -543,7 +543,7 @@ def send_email(to, subject, template,):
     mail.send(msg)
 # Create a new task
 @app.route('/tasks', methods=['POST'])
-# @jwt_required()
+@jwt_required()
 def create_task():
     data = request.get_json()
 
@@ -572,9 +572,9 @@ def create_task():
     db.session.add(task)
 
     # Log the activity
-    # current_user_id = get_jwt_identity()
-    # activity = Activities(user_id=current_user_id, task_id=task.id, activity="Created a new task")
-    # db.session.add(activity)
+    current_user_id = get_jwt_identity()
+    activity = Activities(user_id=current_user_id, project_id=task.project_id, task_id=task.id, activity="Created a new task")
+    db.session.add(activity)
 
 
     db.session.commit()
@@ -632,7 +632,7 @@ def get_task(id):
 
 # Update task
 @app.route('/tasks/<int:id>', methods=['PATCH'])
-# @jwt_required()
+@jwt_required()
 def update_task(id):
     data = request.get_json()
     task = Task.query.get(id)
@@ -660,9 +660,9 @@ def update_task(id):
         task.status = data['status']
 
     # Log the activity
-    # current_user_id = get_jwt_identity()
-    # activity = Activities(user_id=current_user_id, project_id=task.project_id, activity="Updated a task")
-    # db.session.add(activity)
+    current_user_id = get_jwt_identity()
+    activity = Activities(user_id=current_user_id, project_id=task.project_id, task_id=task.id, activity="Updated a task")
+    db.session.add(activity)
 
 
     db.session.commit()
@@ -670,22 +670,22 @@ def update_task(id):
 
 # Delete task
 @app.route('/tasks/<int:id>', methods=['DELETE'])
-# @jwt_required()
+@jwt_required()
 def delete_task(id):
     task = Task.query.get_or_404(id)
 
-    # current_user_id = get_jwt_identity()
-    # if task.user_id != current_user_id:
-    #     return jsonify({'message': 'You are not authorized to access this resource'}), 404
+    current_user_id = get_jwt_identity()
+    if task.user_id != current_user_id:
+        return jsonify({'message': 'You are not authorized to access this resource'}), 404
     
     if not task:
         return jsonify({'message': 'Task not found'}), 404
 
 
     # Log the activity
-    # current_user_id = get_jwt_identity()
-    # activity = Activities(user_id=current_user_id, project_id=task.id, activity="Deleted a task")
-    # db.session.add(activity)
+    current_user_id = get_jwt_identity()
+    activity = Activities(user_id=current_user_id, project_id=task.project_id, task_id=task.id, activity="Deleted a task")
+    db.session.add(activity)
 
     db.session.delete(task)
     db.session.commit()
@@ -834,7 +834,7 @@ def create_comment():
 
     # Log the activity
     current_user_id = get_jwt_identity()
-    activity = Activities(user_id=current_user_id, activity="Added a Comment")
+    activity = Activities(user_id=current_user_id, activity="Comment Added")
     db.session.add(activity)
 
     db.session.commit()
