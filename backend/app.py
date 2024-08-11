@@ -168,31 +168,6 @@ def logout():
 
 
 # Updating Profile(You have to be logged in to update your profile) - OK
-# @app.route('/user', methods=['PUT'])
-# @jwt_required()
-# def update_profile():
-#     data = request.get_json()
-
-#     loggedin_user_id = get_jwt_identity()
-#     user = User.query.get(loggedin_user_id)
-#     if user is None:
-#         return jsonify({"message": "User not found"}), 404
-    
-
-#     if 'email' in data and data['email'] != user.email:
-#         email_exists = User.query.filter_by(email=data['email']).first()
-#         if email_exists:
-#             return jsonify({"error": "Email already exists"}), 400
-
-#     user.name = data.get('name', user.name)
-#     user.email = user.email
-#     user.password = bcrypt.generate_password_hash( data['password'] ).decode('utf-8') 
-#     user.is_student= data.get('is_student', user.is_student)
-#     user.is_admin = data.get('is_admin', user.is_admin)
-#     user.is_instructor = data.get('is_instructor', user.is_instructor)
-#     db.session.commit()
-#     return jsonify({"success": "User updated successfully"}), 200
-
 @app.route('/user', methods=['PUT'])
 @jwt_required()
 def update_profile():
@@ -273,7 +248,7 @@ def get_all_users():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-#************fetching user by id- OK  
+#fetching user by id- OK  
 @app.route("/users/<int:id>", methods=["GET"])
 def get_user_by_id(id):
         user = User.query.get(id)
@@ -289,7 +264,7 @@ def get_user_by_id(id):
         }
         return jsonify(user_data), 200
 
-#*****fetch user by name***********
+#fetch user by name- OK
 @app.route("/users", methods=["GET"])
 def get_user_by_name():
     name = request.args.get('name')
@@ -309,7 +284,7 @@ def get_user_by_name():
         "is_instructor": user.is_instructor
     }
     return jsonify([user_data]), 200
-#**********************    
+ 
 
 
 #CRUD FOR PROJECTS

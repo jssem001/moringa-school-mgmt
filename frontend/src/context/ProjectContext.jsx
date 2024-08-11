@@ -1,3 +1,97 @@
+import React, { createContext, useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
+
+export const ProjectContext = createContext();
+
+export const ProjectProvider = ({ children }) => {
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchProjects = () => {
+    setLoading(true);
+    fetch('/project', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`, // Include the JWT token here
+      },
+    })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch projects');
+      }
+      return response.json();
+    })
+    .then((data) => {
+      setProjects(data);
+      toast.success('Projects loaded successfully!');
+      setLoading(false);
+    })
+    .catch((error) => {
+      console.error('Error fetching projects:', error);
+      toast.error('Error fetching projects');
+      setLoading(false);
+    });
+  };
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  return (
+    <ProjectContext.Provider value={{ projects, fetchProjects, loading }}>
+      {children}
+    </ProjectContext.Provider>
+  );
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // // src/context/ProjectContext.jsx
 // import { createContext, useContext, useEffect, useState } from "react";

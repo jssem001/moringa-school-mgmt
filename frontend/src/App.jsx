@@ -24,7 +24,7 @@ import Teams from "./pages/Teams";
 import Calendar from "./pages/Calendar";
 import AddTeam from "./pages/AddTeam"; // Import AddTeam component
 import { UserProvider } from "./context/UserContext";
-// import { ProjectProvider } from "./context/ProjectContext"; // Import ProjectProvider
+import { ProjectProvider } from "./context/ProjectContext";
 import { TaskProvider } from "./context/TaskContext";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
@@ -33,6 +33,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
+    <ProjectProvider>
     <TaskProvider>
     <Router>
       <UserProvider>
@@ -66,6 +67,7 @@ function App() {
       </UserProvider>
     </Router>
     </TaskProvider>
+    </ProjectProvider>
   );
 }
 
