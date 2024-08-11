@@ -451,8 +451,6 @@ def get_project(id):
 @app.route('/project/<int:id>', methods=['PUT'])
 @jwt_required()
 def update_project(id):
-    data = request.get_json()
-
     project = Project.query.get(id)
 
     if project is None:
@@ -461,18 +459,53 @@ def update_project(id):
     current_user_id = get_jwt_identity()
     if project.user_id != current_user_id:
         return jsonify({"message": "You are not authorized to access this resource"}), 404
-    
-    project.name = data.get('name', project.name)
-    project.description = data.get('description', project.description)
-    project.deadline = data.get('deadline', project.deadline)
-    # project.status = data.get('status', project.status)
-    project.file_attachments = data.get('file_attachments', project.file_attachments)
+
+    project.name = request.form.get('name', project.name)
+    project.description = request.form.get('description', project.description)
+    project.deadline = request.form.get('deadline', project.deadline)
+
+    if 'file_attachments' in request.files:
+        file = request.files['file_attachments']
+        # Save the file and update `file_attachments` in the database as needed
+        project.file_attachments = file.filename
 
     activity = Activities(user_id=current_user_id, project_id=project.id, activity="Updated project details")
     db.session.add(activity)
 
     db.session.commit()
     return jsonify({"success": "Project updated successfully"}), 200
+
+
+
+
+
+
+
+# @app.route('/project/<int:id>', methods=['PUT'])
+# @jwt_required()
+# def update_project(id):
+#     data = request.get_json()
+
+#     project = Project.query.get(id)
+
+#     if project is None:
+#         return jsonify({"message": "Project not found"}), 404
+
+#     current_user_id = get_jwt_identity()
+#     if project.user_id != current_user_id:
+#         return jsonify({"message": "You are not authorized to access this resource"}), 404
+    
+#     project.name = data.get('name', project.name)
+#     project.description = data.get('description', project.description)
+#     project.deadline = data.get('deadline', project.deadline)
+#     # project.status = data.get('status', project.status)
+#     project.file_attachments = data.get('file_attachments', project.file_attachments)
+
+#     activity = Activities(user_id=current_user_id, project_id=project.id, activity="Updated project details")
+#     db.session.add(activity)
+
+#     db.session.commit()
+#     return jsonify({"success": "Project updated successfully"}), 200
 
 #5. DELETING A PROJECT
 @app.route('/project/<int:id>', methods=['DELETE'])

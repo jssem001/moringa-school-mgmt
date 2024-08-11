@@ -98,9 +98,35 @@ export const ProjectProvider = ({ children }) => {
     });
   };
 
+//   Edit Project
+  const updateProject = (id, project) => {
+    fetch(`${server_url}/project/${id}`, {
+      method: 'PUT',
+      headers: {
+        // 'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`, // Include the JWT token here
+      },
+      body: project,
+    })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Failed to edit project');
+      }
+      return response.json();
+    })
+    .then((data) => {
+      setProjects(projects.map((project) => (project.id === id ? data : project)));
+      toast.success('Project edited successfully!');
+    })
+    .catch((error) => {
+      console.error('Error editing project:', error);
+      toast.error('Error editing project');
+    });
+  };    
+
 
   return (
-    <ProjectContext.Provider value={{ projects, singleProject, loading, addProject, fetchProjects, fetchProject  }}>
+    <ProjectContext.Provider value={{ projects, singleProject, loading, addProject, updateProject, fetchProjects, fetchProject  }}>
       {children}
     </ProjectContext.Provider>
   );
