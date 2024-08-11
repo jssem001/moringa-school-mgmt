@@ -10,8 +10,9 @@ export const ProjectProvider = ({ children }) => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
   const [authToken, setAuthToken] = useState(() => localStorage.getItem("access_token") || null);
+  const [singleProject, setSingleProject] = useState(null);  
 
-//   Fetch Projects
+//   Fetch Projects list
   const fetchProjects = () => {
     setLoading(true);
     fetch(`${server_url}/project`, {
@@ -43,6 +44,33 @@ export const ProjectProvider = ({ children }) => {
     fetchProjects();
   }, []);
 
+  //Fetch single project
+  const fetchProject = (id) => {
+      fetch(`${server_url}/project/${id}`, {
+          method: 'GET',
+          headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${authToken}`, // Include the JWT token here
+          },
+      })
+      .then((response) => {
+          if (!response.ok) {
+              throw new Error('Failed to fetch project');
+          }
+          return response.json();
+      })
+      .then((data) => {
+          setSingleProject(data);
+          toast.success('Project loaded successfully!');
+      })
+      .catch((error) => {
+          console.error('Error fetching project:', error);
+          toast.error('Error fetching project');
+      });
+  }
+
+
+
 //   Add A Project
   const addProject = (project) => {
     fetch(`${server_url}/project`, {
@@ -72,7 +100,7 @@ export const ProjectProvider = ({ children }) => {
 
 
   return (
-    <ProjectContext.Provider value={{ projects, loading, addProject, fetchProjects  }}>
+    <ProjectContext.Provider value={{ projects, singleProject, loading, addProject, fetchProjects, fetchProject  }}>
       {children}
     </ProjectContext.Provider>
   );
