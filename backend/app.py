@@ -1,6 +1,7 @@
 #app.py
 import random
 import os
+import logging
 from flask import Flask, request, jsonify
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
@@ -321,6 +322,7 @@ def create_event():
 @jwt_required()
 def get_projects():
     current_user_id = get_jwt_identity()
+    logging.info(f"Current User ID: {current_user_id}")
 
     user = User.query.get(current_user_id)
 
@@ -328,6 +330,23 @@ def get_projects():
         return jsonify({"message": "You are not authorized to access this resource"}), 404
     
     projects = Project.query.filter_by(user_id=current_user_id).all()
+    project_data = []
+    for project in projects:
+        logging.info(f"Processing project: {project.name}")
+        project_data.append({
+            "id": project.id,
+            "name": project.name,
+            "description": project.description,
+            "deadline": project.deadline,
+            "status": project.status,
+            "file_attachments": project.file_attachments
+        })
+    return jsonify(project_data), 200
+
+#GET ALL PROJECTS***************
+@app.route('/projects', methods=['GET'])
+def get_all_projects():
+    projects = Project.query.all()
     project_data = []
     for project in projects:
         project_data.append({
@@ -339,6 +358,8 @@ def get_projects():
             "file_attachments": project.file_attachments
         })
     return jsonify(project_data), 200
+# ****************
+
 
 # GETTING ONGOING PROJECTS - THIS SHOULD BE DEPENDENT ON THE STATUS OF THE PROJECT('IN PROGRESS' OR 'COMPLETED')
 @app.route('/ongoing', methods=['GET'])

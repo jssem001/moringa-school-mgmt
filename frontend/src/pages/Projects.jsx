@@ -1,9 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
+import { ProjectContext } from '../context/ProjectContext';
 
 const Projects = () => {
+  const { projects, loading, fetchProjects } = useContext(ProjectContext);
   const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const filteredProjects = projects.filter((project) =>
+    project.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="flex">
@@ -38,55 +48,68 @@ const Projects = () => {
         <main className="p-4">
           <h2 className="text-2xl font-bold mb-4">Projects</h2>
 
-          <div className="space-y-4">
-            {/* Placeholder for project items */}
-            <div className="flex items-start p-4 border rounded shadow-lg">
-              <div className="w-1/4 mr-4 flex-shrink-0">
-                <div className="w-full h-32 bg-gray-200 mb-2 rounded"></div>
-              </div>
+          {loading ? (
+            <p>Loading projects...</p>
+          ) : (
+            <div className="space-y-4">
+              {filteredProjects.map((project) => (
+                <div key={project.id} className="flex items-start p-4 border rounded shadow-lg">
+                  {/* <div className="w-1/4 mr-4 flex-shrink-0">
+                    <img
+                      src={project.image}
+                      alt={project.name}
+                      className="w-full h-32 object-cover mb-2 rounded"
+                    />
+                  </div> */}
 
-              <div className="flex-1">
-                <h3 className="text-xl font-semibold mb-2">Project Title</h3>
-                <p className="mb-2">Project Description</p>
-                <p className="text-sm text-gray-600">Start Date: --</p>
-                <p className="text-sm text-gray-600">Due Date: --</p>
-                <p className="text-sm text-gray-600">Status: --</p>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-semibold mb-2">{project.name}</h3>
+                    <p className="mb-2">{project.description}</p>
+                    {/* <p className="text-sm text-gray-600">Start Date: {project.startDate}</p>
+                    <p className="text-sm text-gray-600">Due Date: {project.dueDate}</p>
+                    <p className="text-sm text-gray-600">Status: {project.status}</p> */}
 
-                <div className="mt-2">
-                  <h4 className="font-semibold">Attached Files:</h4>
-                  <ul className="list-disc ml-4">
-                    <li>
+                    {project.attachedFiles && project.attachedFiles.length > 0 && (
+                      <div className="mt-2">
+                        <h4 className="font-semibold">Attached Files:</h4>
+                        <ul className="list-disc ml-4">
+                          {project.attachedFiles.map((file, index) => (
+                            <li key={index}>
+                              <a
+                                href={file.url}
+                                className="text-blue-500 hover:underline"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {file.name}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    <div className="mt-2 flex space-x-2">
                       <a
-                        href="#"
+                        href={project.githubLink}
                         className="text-blue-500 hover:underline"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        File Name
+                        View on GitHub
                       </a>
-                    </li>
-                  </ul>
+                      <Link to={`/edit-project/${project.id}`} className="text-yellow-500 hover:underline">
+                        Edit
+                      </Link>
+                      <Link to={`/projects/${project.id}`} className="text-green-500 hover:underline">
+                        View Details
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-
-                <div className="mt-2 flex space-x-2">
-                  <a
-                    href="#"
-                    className="text-blue-500 hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    View on GitHub
-                  </a>
-                  <Link to="#" className="text-yellow-500 hover:underline">
-                    Edit
-                  </Link>
-                  <Link to="#" className="text-green-500 hover:underline">
-                    View Details
-                  </Link>
-                </div>
-              </div>
+              ))}
             </div>
-          </div>
+          )}
         </main>
       </div>
     </div>

@@ -6,6 +6,7 @@ export const ProjectContext = createContext();
 export const ProjectProvider = ({ children }) => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [authToken, setAuthToken] = useState(() => localStorage.getItem("access_token") || null);
 
   const fetchProjects = () => {
     setLoading(true);
