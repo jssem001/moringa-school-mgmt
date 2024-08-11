@@ -1,6 +1,7 @@
 #app.py
 import random
 import os
+import logging
 from flask import Flask, request, jsonify
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
@@ -78,7 +79,18 @@ def login_user():
 
     if user and bcrypt.check_password_hash(user.password, password):
         access_token = create_access_token(identity=user.id)
-        return jsonify({"access_token":access_token})
+        user_data = {
+            "id": user.id,
+            "name": user.name,
+            "email": user.email,
+            "is_student": user.is_student,
+            "is_admin": user.is_admin,
+            "is_instructor": user.is_instructor
+            # Include any other fields you need
+        }
+
+
+        return jsonify({"access_token":access_token, "user": user_data}), 200
 
     else:
         return jsonify({"error": "Wrong Details Entered"}), 401
@@ -177,22 +189,21 @@ def update_profile():
     user = User.query.get(loggedin_user_id)
     if user is None:
         return jsonify({"message": "User not found"}), 404
-    
 
-    email_exists = User.query.filter_by(email=data['email']).first()
-    if email_exists:
-        return jsonify({"error": "Email already exists"}), 400
+    # Only check for existing email if the email is being changed
+    if 'email' in data and data['email'] != user.email:
+        email_exists = User.query.filter_by(email=data['email']).first()
+        if email_exists:
+            return jsonify({"error": "Email already exists"}), 400
 
+    # Update name and email
     user.name = data.get('name', user.name)
-    user.email = user.email
-    user.password = bcrypt.generate_password_hash( data['password'] ).decode('utf-8') 
-    user.is_student= data.get('is_student', user.is_student)
-    user.is_admin = data.get('is_admin', user.is_admin)
-    user.is_instructor = data.get('is_instructor', user.is_instructor)
+    user.email = data.get('email', user.email)
+
     db.session.commit()
     return jsonify({"success": "User updated successfully"}), 200
 
-#Update User Role-untested- OK 
+#Update User Role- OK 
 @app.route('/user/<int:user_id>/role', methods=['PUT'])
 def update_user_role(user_id):
     data = request.get_json()
@@ -249,7 +260,7 @@ def get_all_users():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-#************fetching user by id- OK  
+#fetching user by id- OK  
 @app.route("/users/<int:id>", methods=["GET"])
 def get_user_by_id(id):
         user = User.query.get(id)
@@ -265,7 +276,7 @@ def get_user_by_id(id):
         }
         return jsonify(user_data), 200
 
-#*****fetch user by name***********
+#fetch user by name- OK
 @app.route("/users", methods=["GET"])
 def get_user_by_name():
     name = request.args.get('name')
@@ -285,7 +296,7 @@ def get_user_by_name():
         "is_instructor": user.is_instructor
     }
     return jsonify([user_data]), 200
-#**********************    
+ 
 
 
 #CRUD FOR PROJECTS
@@ -299,21 +310,36 @@ def create_event():
     current_user = User.query.get(current_user_id)
 
     if current_user:
-       data = request.get_json()
-       new_event = Project(
-          name=data['name'],
-          description=data['description'],
-          deadline=data['deadline'],
-          file_attachments=data['file_attachments'],
-          user_id=current_user_id
-        )
-    db.session.add(new_event)
+        # Access form data
+        name = request.form['name']
+        description = request.form['description']
+        deadline = request.form['deadline']
+        user_id = current_user_id
 
-    activity = Activities(user_id=current_user_id, project_id=new_event.id, activity="Added a new project")
-    db.session.add(activity)
+        # Handle file upload
+        file_attachments = None
+        if 'file_attachments' in request.files:
+            file_attachments = request.files['file_attachments']
+            # Save the file or handle it as needed
+            # file_attachments.save(os.path.join(UPLOAD_FOLDER, file_attachments.filename))
+
+        new_event = Project(
+            name=name,
+            description=description,
+            deadline=deadline,
+            file_attachments=file_attachments.filename if file_attachments else None,
+            user_id=user_id
+        )
+
+        db.session.add(new_event)
+
+        activity = Activities(user_id=current_user_id, project_id=new_event.id, activity="Added a new project")
+        db.session.add(activity)
     
-    db.session.commit()
-    return jsonify({"success": "Project created successfully"}), 201
+        db.session.commit()
+        return jsonify({"success": "Project created successfully"}), 201
+    
+    return jsonify({"error": "User not found"}), 404
 
 
 #2. GETTING ALL PROJECTS BY THE USER
@@ -321,6 +347,7 @@ def create_event():
 @jwt_required()
 def get_projects():
     current_user_id = get_jwt_identity()
+    logging.info(f"Current User ID: {current_user_id}")
 
     user = User.query.get(current_user_id)
 
@@ -330,6 +357,7 @@ def get_projects():
     projects = Project.query.filter_by(user_id=current_user_id).all()
     project_data = []
     for project in projects:
+        logging.info(f"Processing project: {project.name}")
         project_data.append({
             "id": project.id,
             "name": project.name,
@@ -338,6 +366,24 @@ def get_projects():
             "file_attachments": project.file_attachments
         })
     return jsonify(project_data), 200
+
+#GET ALL PROJECTS***************
+@app.route('/projects', methods=['GET'])
+def get_all_projects():
+    projects = Project.query.all()
+    project_data = []
+    for project in projects:
+        project_data.append({
+            "id": project.id,
+            "name": project.name,
+            "description": project.description,
+            "deadline": project.deadline,
+            
+            "file_attachments": project.file_attachments
+        })
+    return jsonify(project_data), 200
+# ****************
+
 
 # GETTING ONGOING PROJECTS - THIS SHOULD BE DEPENDENT ON THE STATUS OF THE PROJECT('IN PROGRESS' OR 'COMPLETED')
 @app.route('/ongoing', methods=['GET'])
@@ -419,6 +465,7 @@ def update_project(id):
     project.name = data.get('name', project.name)
     project.description = data.get('description', project.description)
     project.deadline = data.get('deadline', project.deadline)
+    # project.status = data.get('status', project.status)
     project.file_attachments = data.get('file_attachments', project.file_attachments)
 
     activity = Activities(user_id=current_user_id, project_id=project.id, activity="Updated project details")

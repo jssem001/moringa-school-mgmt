@@ -24,7 +24,7 @@ import Teams from "./pages/Teams";
 import Calendar from "./pages/Calendar";
 import AddTeam from "./pages/AddTeam"; // Import AddTeam component
 import { UserProvider } from "./context/UserContext";
-// import { ProjectProvider } from "./context/ProjectContext"; // Import ProjectProvider
+import { ProjectProvider } from "./context/ProjectContext";
 import { TaskProvider } from "./context/TaskContext";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
@@ -33,6 +33,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
+    <ProjectProvider>
     <TaskProvider>
     <Router>
       <UserProvider>
@@ -47,8 +48,8 @@ function App() {
           <Route path="/projects" element={<Projects />} />
           <Route path="/tasks" element={<Task />} />
           <Route path="/add-project" element={<AddProject />} />
-          <Route path="/projects/:projectId" element={<SingleProject />} />
-          <Route path="/edit-project/:projectId" element={<EditProject />} />
+          <Route path="/projects/:id" element={<SingleProject />} />
+          <Route path="/edit-project/:id" element={<EditProject />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/analytics" element={<AnalyticsPage />} />
           <Route path="/usermgmt" element={<UserMgmt />} />
@@ -66,6 +67,7 @@ function App() {
       </UserProvider>
     </Router>
     </TaskProvider>
+    </ProjectProvider>
   );
 }
 
