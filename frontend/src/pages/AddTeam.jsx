@@ -194,24 +194,7 @@ const AddTeam = () => {
             ))}
           </div>
 
-          {/* Project Status */}
-          <div>
-            <label htmlFor="status" className="block text-sm font-medium mb-1">Project Status</label>
-            <select
-              id="status"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded"
-              required
-            >
-              {Object.keys(statusColors).map((statusKey) => (
-                <option key={statusKey} value={statusKey}>
-                  {statusKey.charAt(0).toUpperCase() + statusKey.slice(1)}
-                </option>
-              ))}
-            </select>
-          </div>
-
+          
           {/* Submit Button */}
           <button
             type="submit"
