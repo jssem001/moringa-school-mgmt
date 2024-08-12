@@ -16,7 +16,7 @@ const AddTeam = () => {
   const [teamName, setTeamName] = useState("");
   const [selectedProject, setSelectedProject] = useState("");
   const [numMembers, setNumMembers] = useState(1);
-  const [members, setMembers] = useState([{ email: "", role: "" }]);
+  const [members, setMembers] = useState([{ email: "", role: "", progress: 0 }]);
   const [status, setStatus] = useState("planning");
   const navigate = useNavigate();
   const auth_token = localStorage.getItem("auth_token"); // Assuming auth_token is stored in localStorage
@@ -46,11 +46,15 @@ const AddTeam = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    // Automatically set project status to 'completed' if all members have 100% progress
+    const allMembersComplete = members.every(member => member.progress === 100);
+    const updatedStatus = allMembersComplete ? "completed" : status;
+
     const teamData = {
       name: teamName,
       project: selectedProject,
       members,
-      status
+      status: updatedStatus
     };
 
     try {
@@ -74,7 +78,8 @@ const AddTeam = () => {
   useEffect(() => {
     const newMembers = Array.from({ length: numMembers }, (_, index) => ({
       email: members[index]?.email || "",
-      role: members[index]?.role || ""
+      role: members[index]?.role || "",
+      progress: members[index]?.progress || 0
     }));
     setMembers(newMembers);
   }, [numMembers]);
@@ -168,28 +173,28 @@ const AddTeam = () => {
                     required
                   />
                 </div>
+                <div>
+                  <label htmlFor={`progress${index}`} className="block text-sm font-medium mb-1">Progress (%)</label>
+                  <input
+                    type="number"
+                    id={`progress${index}`}
+                    value={member.progress}
+                    onChange={(e) => {
+                      const newMembers = [...members];
+                      newMembers[index].progress = Number(e.target.value);
+                      setMembers(newMembers);
+                    }}
+                    className="w-full p-2 border border-gray-300 rounded"
+                    min="0"
+                    max="100"
+                    required
+                  />
+                </div>
               </div>
             ))}
           </div>
 
-          {/* Project Status */}
-          <div>
-            <label htmlFor="status" className="block text-sm font-medium mb-1">Project Status</label>
-            <select
-              id="status"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded"
-              required
-            >
-              {Object.keys(statusColors).map((statusKey) => (
-                <option key={statusKey} value={statusKey}>
-                  {statusKey.charAt(0).toUpperCase() + statusKey.slice(1)}
-                </option>
-              ))}
-            </select>
-          </div>
-
+          
           {/* Submit Button */}
           <button
             type="submit"
