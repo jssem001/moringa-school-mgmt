@@ -23,30 +23,31 @@ export const TaskProvider = ({ children }) => {
     })
       .then(response => response.json())
       .then(data => {
-        console.log('Fetched tasks:', data); 
-        const tasksWithUserNames = data.map(task =>
-          fetchUserById(task.user_id)
-            .then(user => {
-              if (user) {
-                return { ...task, user_name: user.name };
-              } else {
-                return task;
-              }
-            })
+        const tasksWithDetails = data.map(task =>
+          Promise.all([
+            fetchUserById(task.user_id),
+            fetchProjectById(task.project_id)
+          ])
+          .then(([user, project]) => ({
+            ...task,
+            user_name: user?.name || 'Unknown',
+            project_name: project?.name || 'Unknown'
+          }))
         );
   
-        Promise.all(tasksWithUserNames)
+        Promise.all(tasksWithDetails)
           .then(updatedTasks => {
-            console.log('Updated tasks with user names:', updatedTasks);
             const done = updatedTasks.filter(task => task.status === 'done');
             const pending = updatedTasks.filter(task => task.status !== 'done');
             setTasks(pending);
             setDoneTasks(done);
           })
-          .catch(error => console.error('Failed to fetch tasks:', error));
+          .catch(error => console.error('Failed to fetch tasks with details:', error));
       })
       .catch(error => console.error('Failed to fetch tasks:', error));
   };
+
+
 
 
   // Add Task
@@ -63,17 +64,24 @@ export const TaskProvider = ({ children }) => {
       .then(data => {
         fetchUserById(data.user_id)
           .then(user => {
-            data.user_name = user.name; 
-            if (data.status === 'done') {
-              setDoneTasks([...doneTasks, data]);
-            } else {
-              setTasks([...tasks, data]);
-              toast.success('Task added');
-            }
+            return fetchProjectById(data.project_id)
+              .then(project => {
+                if (user && project) {
+                  data.user_name = user.name; 
+                  data.project_name = project.name;
+                }
+                if (data.status === 'done') {
+                  setDoneTasks([...doneTasks, data]);
+                } else {
+                  setTasks([...tasks, data]);
+                  toast.success('Task added');
+                }
+              });
           });
       })
       .catch(error => console.error('Failed to add task:', error));
   };
+
 
 
   // Update Task
@@ -123,8 +131,30 @@ export const TaskProvider = ({ children }) => {
 
   //Clear Done Tasks
   const clearDoneTasks = () => {
-    setDoneTasks([]);
-    }
+    const deletePromises = doneTasks.map(task =>
+      fetch(`${server_url}/tasks/${task.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Failed to delete task with ID: ${task.id}`);
+          }
+          return response.json();
+        })
+        .catch(error => console.error('Failed to delete task:', error))
+    );
+  
+    Promise.all(deletePromises)
+      .then(() => {
+        setDoneTasks([]);
+        toast.success('All done tasks have been cleared');
+      })
+      .catch(error => console.error('Failed to clear all done tasks:', error));
+  };
+
 
   // Fetch User Name
   const fetchUserName = (userId) => {
@@ -188,10 +218,70 @@ export const TaskProvider = ({ children }) => {
       });
   };
 
+  // Fetch Project by Name
+  const fetchProjectByName = (projectName) => {
+    return fetch(`${server_url}/projects`, {
+      headers: {
+        'Authorization': `Bearer ${authToken}`,
+      },
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Project not found or unauthorized');
+        }
+        return response.json();
+      })
+      .then(projects => {
+        const project = projects.find(project => project.name === projectName);
+        if (!project) {
+          toast.error('Project not found');
+          throw new Error('Project not found');
+        }
+        return project;
+      })
+      .catch(error => {
+        console.error('Failed to fetch project:', error);
+        return null;
+      });
+  };
+  
+  // Fetch Project by Id
+  const fetchProjectById = (projectId) => {
+    return fetch(`${server_url}/project/${projectId}`, {
+      headers: {
+        'Authorization': `Bearer ${authToken}`, // Include the Bearer token
+      },
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Project not found or unauthorized');
+        }
+        return response.json();
+      })
+      .then(project => project) 
+      .catch(error => {
+        console.error('Failed to fetch project:', error);
+        return null;
+      });
+  };
+
+
+  const contextData = { 
+    tasks, 
+    doneTasks, 
+    addTask, 
+    updateTask, 
+    updateTaskStatus, 
+    clearDoneTasks, 
+    fetchUserByName, 
+    fetchUserById,
+    fetchProjectByName,
+    fetchProjectById
+   }
 
 
   return (
-    <TaskContext.Provider value={{ tasks, doneTasks, addTask, updateTask, updateTaskStatus, clearDoneTasks, fetchUserByName, fetchUserById }}>
+    <TaskContext.Provider value={contextData}>
       {children}
     </TaskContext.Provider>
   );
