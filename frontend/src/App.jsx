@@ -56,8 +56,8 @@ function App() {
               <Route path="/usermgmt" element={<UserMgmt />} />
               <Route path="/templates" element={<Templates />} />
               <Route path="/add-template" element={<AddTemplate />} />
-              <Route path="/templates/:templateId" element={<SingleTemplate />} />
-              <Route path="/edit-template/:templateId" element={<EditTemplate />} />
+              <Route path="/templates/:id" element={<SingleTemplate />} />
+              <Route path="/edit-template/:id" element={<EditTemplate />} />
               <Route path="/update-profile" element={<UpdateProfile />} />
               <Route path="/teams" element={<Teams />} />
               <Route path="/calendar" element={<Calendar />} />
