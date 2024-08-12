@@ -477,36 +477,6 @@ def update_project(id):
 
 
 
-
-
-
-
-# @app.route('/project/<int:id>', methods=['PUT'])
-# @jwt_required()
-# def update_project(id):
-#     data = request.get_json()
-
-#     project = Project.query.get(id)
-
-#     if project is None:
-#         return jsonify({"message": "Project not found"}), 404
-
-#     current_user_id = get_jwt_identity()
-#     if project.user_id != current_user_id:
-#         return jsonify({"message": "You are not authorized to access this resource"}), 404
-    
-#     project.name = data.get('name', project.name)
-#     project.description = data.get('description', project.description)
-#     project.deadline = data.get('deadline', project.deadline)
-#     # project.status = data.get('status', project.status)
-#     project.file_attachments = data.get('file_attachments', project.file_attachments)
-
-#     activity = Activities(user_id=current_user_id, project_id=project.id, activity="Updated project details")
-#     db.session.add(activity)
-
-#     db.session.commit()
-#     return jsonify({"success": "Project updated successfully"}), 200
-
 #5. DELETING A PROJECT
 @app.route('/project/<int:id>', methods=['DELETE'])
 @jwt_required()
@@ -699,13 +669,17 @@ def delete_task(id):
 @app.route('/templates', methods=['POST'])
 @jwt_required()
 def create_template():
-    data = request.get_json()
+    # data = request.get_json()
 
     current_user_id = get_jwt_identity()
-    user_id = current_user_id
 
-    name = data.get('name')
-    link = data.get('link')
+    current_user=User.query.get(current_user_id)
+    
+    if current_user:
+        name = request.form['name']
+        link = request.form['link']
+        user_id = current_user_id
+    
     
 
     template = Template(

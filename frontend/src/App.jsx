@@ -28,11 +28,13 @@ import { UserProvider } from "./context/UserContext";
 import { ProjectProvider } from "./context/ProjectContext";
 import { TaskProvider } from "./context/TaskContext";
 import { ToastContainer } from "react-toastify";
+import { TemplateProvider } from "./context/TemplateContext";
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
     <ProjectProvider>
+      <TemplateProvider>
       <TaskProvider>
         <Router>
           <UserProvider>
@@ -66,6 +68,7 @@ function App() {
           </UserProvider>
         </Router>
       </TaskProvider>
+      </TemplateProvider>
     </ProjectProvider>
   );
 }
