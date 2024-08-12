@@ -2,10 +2,12 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import { ProjectContext } from '../context/ProjectContext';
+import ActivityLogModal from './ActivityLogModal';
 
 const Projects = () => {
   const { projects, loading, fetchProjects } = useContext(ProjectContext);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showActivityLog, setShowActivityLog] = useState(false); // State to manage the modal visibility
 
   useEffect(() => {
     fetchProjects();
@@ -15,20 +17,36 @@ const Projects = () => {
     project.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleOpenActivityLog = () => {
+    setShowActivityLog(true);
+  };
+
+  const handleCloseActivityLog = () => {
+    setShowActivityLog(false);
+  };
+
   return (
     <div className="flex">
       <Sidebar />
 
       <div className="p-4 sm:ml-64 flex-1">
-        <section className="mb-4">
-          <input
-            type="text"
-            placeholder="Search projects..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
-          />
-        </section>
+        <div className="flex justify-between items-center mb-4">
+          <section>
+            <input
+              type="text"
+              placeholder="Search projects..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded"
+            />
+          </section>
+          <button
+            onClick={handleOpenActivityLog}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Activity Log
+          </button>
+        </div>
 
         <section className="mb-4 flex space-x-4">
           <Link
@@ -59,9 +77,7 @@ const Projects = () => {
                   <div className="flex-1">
                     <h3 className="text-xl font-semibold mb-2">{project.name}</h3>
                     <p className="mb-2">{project.description}</p>
-                    
                     <p className="text-sm text-gray-600">Due Date: {project.deadline}</p>
-                    
 
                     {project.attachedFiles && project.attachedFiles.length > 0 && (
                       <div className="mt-2">
@@ -106,10 +122,13 @@ const Projects = () => {
           )}
         </main>
       </div>
+
+      {/* Activity Log Modal */}
+      {showActivityLog && (
+        <ActivityLogModal onClose={handleCloseActivityLog} />
+      )}
     </div>
   );
 };
 
 export default Projects;
-
-
