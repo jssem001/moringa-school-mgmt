@@ -5,24 +5,40 @@ import Sidebar from "../components/Sidebar";
 import { TemplateContext } from '../context/TemplateContext';
 
 const AddTemplate = () => {
-  const [formData, setFormData] = useState({ name: "", link: "" });
+  // const [formData, setFormData] = useState({ name: "", link: "" });
   const { addTemplate } = useContext(TemplateContext);
+  const [name, setName] = useState("");
+  const [link, setLink] = useState("");
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+  const user = JSON.parse(localStorage.getItem('user'));
+  const userId = user ? user.id : null;
+
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData({ ...formData, [name]: value });
+  // };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const templateFormData = new FormData();
-    templateFormData.append('name', formData.name);
-    templateFormData.append('link', formData.link);
-
-    addTemplate(templateFormData);
+    if(user){
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('link', link);
+    formData.append('user_id', userId);
+    
+    addTemplate(formData);
     navigate("/templates");
+
+    setName("");
+    setLink("");
+  
+    } else {
+      console.error('User not found in localStorage.');
+    }  
+
+     
   };
 
   return (
@@ -39,8 +55,8 @@ const AddTemplate = () => {
               type="text"
               id="name"
               name="name"
-              value={formData.name}
-              onChange={handleChange}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded"
               required
             />
@@ -53,8 +69,8 @@ const AddTemplate = () => {
               type="text"
               id="link"
               name="link"
-              value={formData.link}
-              onChange={handleChange}
+              value={link}
+              onChange={(e) => setLink(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded"
               required
             />

@@ -34,7 +34,7 @@ const StudentProfile = () => {
           <ul className="border-b-2 border-gray-700 mb-3">
             <li><span className="font-semibold">Name:</span> {currentUser.name} </li>
             <li><span className="font-semibold">Email:</span> {currentUser.email} </li>
-            <li><span className="font-semibold">Phone:</span> {currentUser.phone || "N/A"} </li>
+            {/* <li><span className="font-semibold">Phone:</span> {currentUser.phone || "N/A"} </li> */}
             <li><span className="font-semibold">Role:</span> {role} </li>
           </ul>
           <div className="grid grid-cols-3 gap-4 mb-4 border">

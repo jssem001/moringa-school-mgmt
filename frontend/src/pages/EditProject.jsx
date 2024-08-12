@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useCallback } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useParams} from 'react-router-dom';
 import { ProjectContext } from '../context/ProjectContext';
 import Sidebar from '../components/Sidebar';
@@ -7,7 +7,6 @@ const EditProject = () => {
   const { updateProject, fetchProject, singleProject, deleteProject } = useContext(ProjectContext);
   const { id } = useParams(); // Get project ID from URL
   const navigate = useNavigate();
-
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [deadline, setDeadline] = useState('');
@@ -22,7 +21,6 @@ const EditProject = () => {
       setName(singleProject.name);
       setDescription(singleProject.description);
       setDeadline(singleProject.deadline);
-      // Handle files if necessary
     }
   }, [singleProject]);
 
@@ -129,7 +127,7 @@ const EditProject = () => {
             type="submit"
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
-            Update Project
+            Save Changes
           </button>
           <button
             type="button"

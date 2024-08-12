@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from "react";
+import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import ResetPassword from "./pages/ResetPassword";
 import Login from "./pages/Login";
@@ -28,11 +28,13 @@ import { UserProvider } from "./context/UserContext";
 import { ProjectProvider } from "./context/ProjectContext";
 import { TaskProvider } from "./context/TaskContext";
 import { ToastContainer } from "react-toastify";
+import { TemplateProvider } from "./context/TemplateContext";
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
     <ProjectProvider>
+      <TemplateProvider>
       <TaskProvider>
         <Router>
           <UserProvider>
@@ -54,8 +56,8 @@ function App() {
               <Route path="/usermgmt" element={<UserMgmt />} />
               <Route path="/templates" element={<Templates />} />
               <Route path="/add-template" element={<AddTemplate />} />
-              <Route path="/templates/:templateId" element={<SingleTemplate />} />
-              <Route path="/edit-template/:templateId" element={<EditTemplate />} />
+              <Route path="/templates/:id" element={<SingleTemplate />} />
+              <Route path="/edit-template/:id" element={<EditTemplate />} />
               <Route path="/update-profile" element={<UpdateProfile />} />
               <Route path="/teams" element={<Teams />} />
               <Route path="/calendar" element={<Calendar />} />
@@ -66,6 +68,7 @@ function App() {
           </UserProvider>
         </Router>
       </TaskProvider>
+      </TemplateProvider>
     </ProjectProvider>
   );
 }

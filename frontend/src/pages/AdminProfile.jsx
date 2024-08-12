@@ -20,7 +20,7 @@ const AdminProfile = () => {
                     <ul className="border-b-2 border-gray-700 mb-3">
                         <li><span className="font-semibold">Name:</span> {currentUser.name} </li>
                         <li><span className="font-semibold">Email:</span> {currentUser.email} </li>
-                        <li><span className="font-semibold">Phone:</span> {currentUser.phone || "N/A"} </li>
+                        {/* <li><span className="font-semibold">Phone:</span> {currentUser.phone || "N/A"} </li> */}
                         <li><span className="font-semibold">Role:</span> {role} </li>
                     </ul>
                     <div className="grid grid-cols-3 gap-4 mb-4 border">
@@ -36,9 +36,9 @@ const AdminProfile = () => {
                     </div>
                     
                     <div className="grid grid-cols-2 gap-4 mb-4">
-                        <div className="flex items-center justify-center rounded bg-gray-700 h-28 ">
-                            <p className="text-2xl text-white">My Company Account</p>
-                        </div>
+                        <Link to="/usermgmt"><div className="flex items-center justify-center rounded bg-gray-700 h-28 ">
+                            <p className="text-2xl text-white">Assign Roles</p>
+                        </div></Link>
                         <div className="flex items-center justify-center rounded bg-gray-700 h-28 ">
                             <p className="text-2xl text-white">Settings</p>
                         </div>
@@ -61,3 +61,7 @@ const AdminProfile = () => {
 };
 
 export default AdminProfile;
+
+
+// small small change
+// Another small small change
