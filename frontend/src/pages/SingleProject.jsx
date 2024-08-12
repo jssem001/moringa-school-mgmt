@@ -29,6 +29,9 @@ const SingleProject = () => {
         <h2 className="text-3xl font-bold mb-4">{singleProject.name}</h2>
         <p className="text-gray-700 mb-2">{singleProject.description}</p>
         <p className="text-gray-700 mb-2">Due Date: {singleProject.deadline}</p>
+        <ul>
+          <li>Files: {singleProject.file_attachments}</li>
+        </ul>
         {/* Add more project details as needed */}
       </div>
     </div>
