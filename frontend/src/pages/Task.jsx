@@ -2,8 +2,13 @@ import React, { useContext, useState } from "react";
 import { TaskContext } from "../context/TaskContext";
 import Sidebar from "../components/Sidebar";
 
+
 const Task = () => {
-  const { tasks, doneTasks, addTask, updateTask, updateTaskStatus, clearDoneTasks, fetchUserByName } = useContext(TaskContext);
+  const { tasks, doneTasks, 
+    addTask, updateTask, 
+    updateTaskStatus, clearDoneTasks, 
+    fetchUserByName, fetchProjectByName
+    } = useContext(TaskContext);
 
   const [taskName, setTaskName] = useState("");
   const [taskStatus, setTaskStatus] = useState("to-do");
@@ -12,34 +17,46 @@ const Task = () => {
   const [editableTaskId, setEditableTaskId] = useState(null);
   const [editedTask, setEditedTask] = useState({ task_name: '', status: '', user_id: '', project_id: '' });
 
+  
   const handleAddTask = () => {
+
     if (taskName.trim() === "") return;
-
-    // Fetch the user ID based on the assigned user's name
-    fetchUserByName(assignedTo)
-      .then(user => {
-        if (user) {
-          const newTask = {
-            task_name: taskName,
-            status: taskStatus,
-            project_id: assignedProject,
-            user_id: user.id,
-          };
-
-          // Call addTask with the new task
-          addTask(newTask);
-
-          // Reset the form fields
-          setTaskName("");
-          setTaskStatus("to-do");
-          setAssignedTo("");
-          setAssignedProject("");
+  
+    // Fetch the project ID based on the assigned project's name
+    fetchProjectByName(assignedProject)
+      .then(project => {
+        if (project) {
+          // Fetch the user ID based on the assigned user's name
+          fetchUserByName(assignedTo)
+            .then(user => {
+              if (user) {
+                const newTask = {
+                  task_name: taskName,
+                  status: taskStatus,
+                  project_id: project.id,
+                  user_id: user.id,
+                };
+  
+                // Call addTask with the new task
+                addTask(newTask);
+  
+                // Reset the form fields
+                setTaskName("");
+                setTaskStatus("to-do");
+                setAssignedTo("");
+                setAssignedProject("");
+              } else {
+                console.error('User not found for the assigned name');
+              }
+            })
+            .catch(error => console.error('Failed to fetch user by name:', error));
         } else {
-          console.error('User not found for the assigned name');
+          console.error('Project not found for the assigned name');
         }
       })
-      .catch(error => console.error('Failed to fetch user by name:', error));
+      .catch(error => console.error('Failed to fetch project by name:', error));
   };
+  
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
@@ -104,9 +121,23 @@ const Task = () => {
                 type="text"
                 value={assignedProject}
                 onChange={(e) => setAssignedProject(e.target.value)}
-                placeholder="Assigned Project id"
+                placeholder="Assigned Project"
                 className="mt-2 w-full p-2 border border-gray-300 rounded"
               />
+              {/* <select
+              id="project options"
+              value={projectsDropdown}
+              onChange={(e) => setAssignedProject(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded"
+              required
+            >
+              <option value="">Select a project</option>
+              {projectsOptions.map((project) => (
+                <option key={project.id} value={project.id}>
+                  {project.name}
+                </option>
+              ))}
+            </select> */}
               <button
                 onClick={handleAddTask}
                 className="mt-2 px-4 py-2 bg-orange-200 text-black font-semibold rounded hover:text-white hover:bg-orange-300"
@@ -138,7 +169,7 @@ const Task = () => {
             {/* Task Tables */}
             <section className="mb-4">
               <h2 className="text-xl font-bold mb-2">To Do Tasks</h2>
-              <table className="w-full border-collapse border border-gray-300">
+              <table className="w-full border-collapse  border border-gray-300">
                 <thead>
                   <tr>
                     <th className="border border-gray-300 p-2">Task Name</th>
@@ -187,7 +218,7 @@ const Task = () => {
                             className="p-1 border border-gray-300 rounded"
                           />
                         ) : (
-                          task.project_id
+                          task.project_name
                         )}
                       </td>
                       <td className="border border-gray-300 p-2">
@@ -275,7 +306,7 @@ const Task = () => {
                         {task.user_name}
                       </td>
                       <td className="border border-gray-300 p-2">
-                        {task.project_id}
+                        {task.project_name}
                       </td>
                       <td className="border border-gray-300 p-2">
                         <select
