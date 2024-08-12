@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createContext, useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import ResetPassword from "./pages/ResetPassword";
 import Login from "./pages/Login";
@@ -22,7 +22,7 @@ import SingleTemplate from "./pages/SingleTemplate";
 import UpdateProfile from "./pages/UpdateProfile";
 import Teams from "./pages/Teams";
 import Calendar from "./pages/Calendar";
-import AddTeam from "./pages/AddTeam"; // Import AddTeam component
+import AddTeam from "./pages/AddTeam";
 import { UserProvider } from "./context/UserContext";
 import { ProjectProvider } from "./context/ProjectContext";
 import { TaskProvider } from "./context/TaskContext";
