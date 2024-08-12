@@ -1,61 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { server_url } from '../../config';
 import Sidebar from '../components/Sidebar';
+import { ProjectContext } from '../context/ProjectContext';
 
 const AddProject = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    deadline: '',
-    file: null
-  });
+  const { addProject } = useContext(ProjectContext);
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [deadline, setDeadline] = useState('');
+  const [file, setFile] = useState(null);
   const navigate = useNavigate();
-  const auth_token = localStorage.getItem('auth_token');
 
-  // Handle input changes
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    setFormData({
-      ...formData,
-      [name]: files ? files[0] : value
-    });
+  const user = JSON.parse(localStorage.getItem('user'));
+  const userId = user ? user.id : null;
+
+  // Handle file input change
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
   };
 
   // Handle form submission
-  const handleSubmit = async (e) => {
+  const handleAddProject = (e) => {
     e.preventDefault();
 
-    const formDataToSend = new FormData();
-    for (const key in formData) {
-      formDataToSend.append(key, formData[key]);
-    }
-
-    try {
-      const response = await fetch(`${server_url}/project`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${auth_token}`,
-          // The 'Content-Type' should not be set when sending FormData,
-          // it automatically sets the correct headers.
-        },
-        body: formDataToSend,
-        
-      });
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          throw new Error("Unauthorized - please check your token");
-        }
-        throw new Error("Failed to submit project");
+    if (user) {
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('description', description);
+      formData.append('deadline', deadline);
+      formData.append('user_id', userId);
+      if (file) {
+        formData.append('file_attachments', file);
       }
 
-      const result = await response.json();
-      toast.success("Project added successfully!");
-      navigate('/projects'); // Redirect to projects page
-    } catch (error) {
-      toast.error(error.message || "Failed to add project");
+      addProject(formData);
+      navigate('/projects');
+      
+      setName('');
+      setDescription('');
+      setDeadline('');
+      setFile(null);
+    } else {
+      console.error('User not found in localStorage.');
     }
   };
 
@@ -65,7 +51,7 @@ const AddProject = () => {
       <div className="p-4 sm:ml-64 flex-1">
         <h2 className="text-2xl font-bold mb-4">Add New Project</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleAddProject} className="space-y-4">
           {/* Name */}
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
@@ -73,8 +59,8 @@ const AddProject = () => {
               type="text"
               id="name"
               name="name"
-              value={formData.name}
-              onChange={handleChange}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className="mt-1 block w-full p-2 border border-gray-300 rounded"
               required
             />
@@ -86,8 +72,8 @@ const AddProject = () => {
             <textarea
               id="description"
               name="description"
-              value={formData.description}
-              onChange={handleChange}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               className="mt-1 block w-full p-2 border border-gray-300 rounded"
               rows="4"
               required
@@ -101,8 +87,8 @@ const AddProject = () => {
               type="date"
               id="deadline"
               name="deadline"
-              value={formData.deadline}
-              onChange={handleChange}
+              value={deadline}
+              onChange={(e) => setDeadline(e.target.value)}
               className="mt-1 block w-full p-2 border border-gray-300 rounded"
               required
             />
@@ -115,7 +101,7 @@ const AddProject = () => {
               type="file"
               id="file"
               name="file"
-              onChange={handleChange}
+              onChange={handleFileChange}
               className="mt-1 block w-full p-2 border border-gray-300 rounded"
             />
           </div>
@@ -136,3 +122,6 @@ const AddProject = () => {
 };
 
 export default AddProject;
+
+
+

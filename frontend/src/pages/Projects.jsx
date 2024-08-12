@@ -1,84 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { server_url } from '../../config';
+import React, { useState, useContext, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
+import { ProjectContext } from '../context/ProjectContext';
 
 const Projects = () => {
-  const [projects, setProjects] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [deleteProjectId, setDeleteProjectId] = useState(null);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const navigate = useNavigate();
-  const auth_token = localStorage.getItem('auth_token'); // Assuming auth_token is stored in localStorage
+  const { projects, loading, fetchProjects } = useContext(ProjectContext);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  // Fetch projects on component mount
   useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const response = await fetch(`${server_url}/project`, {
-          headers: {
-            'Content-Type': 'application/json',
-            "Authorization": `Bearer ${auth_token}`
-          },
-        });
-        const data = await response.json();
-        setProjects(data);
-      } catch (error) {
-        toast.error("Failed to fetch projects");
-      }
-    };
-
     fetchProjects();
-  }, [auth_token]);
+  }, []);
 
-  // Filter projects based on the search term
   const filteredProjects = projects.filter((project) =>
-    project.title.toLowerCase().includes(searchTerm.toLowerCase())
+    project.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  // Show the delete confirmation dialog
-  const handleDeleteClick = (projectId) => {
-    setDeleteProjectId(projectId);
-    setShowDeleteConfirm(true);
-  };
-
-  // Confirm deletion of the project
-  const confirmDelete = async () => {
-    try {
-      const response = await fetch(`${server_url}/project/${deleteProjectId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          "Authorization": `Bearer ${auth_token}`
-        },
-      });
-      const result = await response.json();
-      if (result.success) {
-        toast.success("Project deleted successfully!");
-        setProjects(projects.filter(p => p.id !== deleteProjectId));
-        setShowDeleteConfirm(false);
-        setDeleteProjectId(null);
-      } else {
-        toast.error(result.error || "An error occurred");
-      }
-    } catch (error) {
-      toast.error("Failed to delete project");
-    }
-  };
-
-  // Cancel deletion of the project
-  const cancelDelete = () => {
-    setShowDeleteConfirm(false);
-    setDeleteProjectId(null);
-  };
 
   return (
     <div className="flex">
       <Sidebar />
 
       <div className="p-4 sm:ml-64 flex-1">
-        {/* Search Section */}
         <section className="mb-4">
           <input
             type="text"
@@ -89,7 +30,6 @@ const Projects = () => {
           />
         </section>
 
-        {/* Buttons Section */}
         <section className="mb-4 flex space-x-4">
           <Link
             to="/add-project"
@@ -105,105 +45,70 @@ const Projects = () => {
           </Link>
         </section>
 
-        {/* Main content area */}
         <main className="p-4">
           <h2 className="text-2xl font-bold mb-4">Projects</h2>
 
-          <div className="space-y-4">
-            {filteredProjects.map((project) => (
-              <div key={project.id} className="flex items-start p-4 border rounded shadow-lg">
-                {/* Project Image */}
-                <div className="w-1/4 mr-4 flex-shrink-0">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-32 object-cover mb-2 rounded"
-                  />
-                </div>
+          {loading ? (
+            <p>Loading projects...</p>
+          ) : filteredProjects.length === 0 ? (
+            <p>No projects yet. Add your first project above...</p>
+          ) : (
+            <div className="space-y-4">
+              {filteredProjects.map((project) => (
+                <div key={project.id} className="flex items-start p-4 border rounded shadow-lg">
+                  <div className="flex-1">
+                    <h3 className="text-xl font-semibold mb-2">{project.name}</h3>
+                    <p className="mb-2">{project.description}</p>
+                    
+                    <p className="text-sm text-gray-600">Due Date: {project.deadline}</p>
+                    
 
-                {/* Project Details */}
-                <div className="flex-1">
-                  <h3 className="text-xl font-semibold mb-2">{project.title}</h3>
-                  <p className="mb-2">{project.description}</p>
-                  <p className="text-sm text-gray-600">Start Date: {project.startdate}</p>
-                  <p className="text-sm text-gray-600">Due Date: {project.duedate}</p>
-                  <p className="text-sm text-gray-600">Status: {project.status}</p>
+                    {project.attachedFiles && project.attachedFiles.length > 0 && (
+                      <div className="mt-2">
+                        <h4 className="font-semibold">Attached Files:</h4>
+                        <ul className="list-disc ml-4">
+                          {project.attachedFiles.map((file, index) => (
+                            <li key={index}>
+                              <a
+                                href={file.url}
+                                className="text-blue-500 hover:underline"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {file.name}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
 
-                  {/* Attached Files Section */}
-                  {project.attachedFiles && project.attachedFiles.length > 0 && (
-                    <div className="mt-2">
-                      <h4 className="font-semibold">Attached Files:</h4>
-                      <ul className="list-disc ml-4">
-                        {project.attachedFiles.map((file, index) => (
-                          <li key={index}>
-                            <a
-                              href={file.url}
-                              className="text-blue-500 hover:underline"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              {file.name}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
+                    <div className="mt-2 flex space-x-2">
+                      <a
+                        href={project.githubLink}
+                        className="text-blue-500 hover:underline"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        View on GitHub
+                      </a>
+                      <Link to={`/edit-project/${project.id}`} className="text-yellow-500 hover:underline">
+                        Edit
+                      </Link>
+                      <Link to={`/projects/${project.id}`} className="text-green-500 hover:underline">
+                        View Details
+                      </Link>
                     </div>
-                  )}
-
-                  {/* Action Links */}
-                  <div className="mt-2 flex space-x-2">
-                    <a
-                      href={project.githubLink}
-                      className="text-blue-500 hover:underline"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      View on GitHub
-                    </a>
-                    <Link to={`/edit-project/${project.id}`} className="text-yellow-500 hover:underline">
-                      Edit
-                    </Link>
-                    <button
-                      onClick={() => handleDeleteClick(project.id)}
-                      className="text-red-500 hover:underline"
-                    >
-                      Delete
-                    </button>
-                    <Link to={`/projects/${project.id}`} className="text-green-500 hover:underline">
-                      View Details
-                    </Link>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </main>
       </div>
-
-      {/* Delete Confirmation Dialog */}
-      {showDeleteConfirm && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-lg">
-            <h2 className="text-xl font-bold mb-4">Are you sure you want to delete this project?</h2>
-            <div className="flex justify-end space-x-4">
-              <button
-                onClick={confirmDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-              >
-                Delete
-              </button>
-              <button
-                onClick={cancelDelete}
-                className="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
 
 export default Projects;
+
