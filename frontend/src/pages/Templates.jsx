@@ -7,8 +7,8 @@ import { TemplateContext } from '../context/TemplateContext';
 const Templates = () => {
   const { templates, loading, fetchTemplates, deleteTemplate } = useContext(TemplateContext);
   const [searchTerm, setSearchTerm] = useState('');
-  const [deleteTemplateId, setDeleteTemplateId] = useState(null);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  // const [deleteTemplateId, setDeleteTemplateId] = useState(null);
+  // const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     fetchTemplates();
@@ -18,23 +18,23 @@ const Templates = () => {
     template.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleDeleteClick = (templateId) => {
-    setDeleteTemplateId(templateId);
-    setShowDeleteConfirm(true);
-  };
+  // const handleDeleteClick = (templateId) => {
+  //   setDeleteTemplateId(templateId);
+  //   setShowDeleteConfirm(true);
+  // };
 
-  const confirmDelete = () => {
-    if (deleteTemplateId) {
-      deleteTemplate(deleteTemplateId);
-    }
-    setShowDeleteConfirm(false);
-    setDeleteTemplateId(null);
-  };
+  // const confirmDelete = () => {
+  //   if (deleteTemplateId) {
+  //     deleteTemplate(deleteTemplateId);
+  //   }
+  //   setShowDeleteConfirm(false);
+  //   setDeleteTemplateId(null);
+  // };
 
-  const cancelDelete = () => {
-    setShowDeleteConfirm(false);
-    setDeleteTemplateId(null);
-  };
+  // const cancelDelete = () => {
+  //   setShowDeleteConfirm(false);
+  //   setDeleteTemplateId(null);
+  // };
 
   return (
     <div className="flex">
@@ -76,9 +76,9 @@ const Templates = () => {
                       <Link to={`/edit-template/${template.id}`} className="text-yellow-500 hover:underline">
                         Edit
                       </Link>
-                      <button onClick={() => handleDeleteClick(template.id)} className="text-red-500 hover:underline">
+                      {/* <button className="text-red-500 hover:underline">
                         Delete
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                 </div>
@@ -87,7 +87,7 @@ const Templates = () => {
           )}
         </main>
       </div>
-      {showDeleteConfirm && (
+      {/* {showDeleteConfirm && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-lg">
             <h2 className="text-xl font-bold mb-4">Are you sure you want to delete this template?</h2>
@@ -101,7 +101,7 @@ const Templates = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

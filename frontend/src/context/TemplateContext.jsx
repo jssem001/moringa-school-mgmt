@@ -11,6 +11,7 @@ export const TemplateProvider = ({ children }) => {
   const [authToken, setAuthToken] = useState(() => localStorage.getItem("access_token") || null);
   const [singleTemplate, setSingleTemplate] = useState(null);
 
+  // Fetch Templates
   const fetchTemplates = () => {
     setLoading(true);
     fetch(`${server_url}/templates`, {
@@ -42,6 +43,7 @@ export const TemplateProvider = ({ children }) => {
     fetchTemplates();
   }, []);
 
+  // Fetch Single Template
   const fetchTemplate = (id) => {
     fetch(`${server_url}/templates/${id}`, {
       method: 'GET',
@@ -66,6 +68,7 @@ export const TemplateProvider = ({ children }) => {
     });
   };
 
+  // Add Template
   const addTemplate = (template) => {
     fetch(`${server_url}/templates`, {
       method: 'POST',
@@ -90,6 +93,7 @@ export const TemplateProvider = ({ children }) => {
     });
   };
 
+  // Update Template
   const updateTemplate = (id, template) => {
     fetch(`${server_url}/templates/${id}`, {
       method: 'PUT',
@@ -113,6 +117,8 @@ export const TemplateProvider = ({ children }) => {
       toast.error('Error editing template');
     });
   };
+
+  // Delete Template
 
   const deleteTemplate = (id) => {
     fetch(`${server_url}/templates/${id}`, {
