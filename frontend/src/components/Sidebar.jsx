@@ -54,14 +54,14 @@ const Sidebar = () => {
                     </li>
                     <li>
                         <Link to="/analytics"><div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
-                            <span class="flex-1 ms-3 whitespace-nowrap">Analysis</span>
+                            <span class="flex-1 ms-3 whitespace-nowrap">Analytics</span>
                         </div></Link>
                     </li>
                 </ul>
                 <ul class=" mt-[185px] space-y-2 font-semibold">
                     <li>
                         <Link to={profileLink}><div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
-                            <span class="flex-1 ms-3 whitespace-nowrap">User Profile</span>
+                            <span class="flex-1 ms-3 whitespace-nowrap">Dashboard</span>
                         </div></Link> 
                         <div onClick={logout} class="flex items-center p-2 text-black rounded-lg hover:text-white hover:bg-red-700 group">
                             <span class="flex-1 ms-3 whitespace-nowrap">Sign Out</span>
