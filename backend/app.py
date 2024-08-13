@@ -14,7 +14,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity, get_jwt
 
 
-from models import db, User, Project, Task, Activities, Template, Comment
+from models import db, User, Project, Task, Activities, Template, Comment, Team ,TeamMember
 
 bcrypt = Bcrypt()
 
@@ -951,6 +951,108 @@ def delete_comment(id):
 
     db.session.commit()
     return jsonify({'message': 'Comment deleted successfully'}), 200
+
+
+
+## CRUD FOR TEAM 
+
+# @app.route('/teams', methods=['POST'])
+# def create_team():
+#     data = request.get_json()
+#     new_team = Team(project_id=data['project_id'], name=data['name'])
+#     db.session.add(new_team)
+#     db.session.commit()
+#     return jsonify(new_team.serialize()), 201
+
+@app.route('/teams', methods=['POST'])
+def create_team():
+    data = request.get_json()
+    new_team = Team(project_id=data['project_id'], name=data['name'])
+    db.session.add(new_team)
+    db.session.commit()
+
+    # Add members to the new team
+    if 'members' in data:
+        for member in data['members']:
+            new_member = TeamMember(
+                team_id=new_team.id,
+                user_id=member['user_id'],
+                role=member['role'],
+                progress=member['progress']
+            )
+            db.session.add(new_member)
+
+    db.session.commit()
+    return jsonify(new_team.serialize()), 201
+
+
+
+
+@app.route('/teams/<int:team_id>', methods=['GET'])
+def get_team_details(team_id):
+    team = Team.query.get_or_404(team_id)
+    return jsonify(team.serialize()), 200
+
+
+@app.route('/teams/<int:team_id>', methods=['PUT'])
+def update_team(team_id):
+    data = request.get_json()
+    team = Team.query.get_or_404(team_id)
+
+    # Update team name
+    team.name = data.get('name', team.name)
+
+    # Update members
+    if 'members' in data:
+        # Clear existing members
+        TeamMember.query.filter_by(team_id=team_id).delete()
+        # Add new members
+        for member in data['members']:
+            new_member = TeamMember(
+                team_id=team.id,
+                user_id=member['user_id'],
+                role=member['role'],
+                progress=member['progress']
+            )
+            db.session.add(new_member)
+
+    db.session.commit()
+    return jsonify(team.serialize()), 200
+
+
+
+@app.route('/teams/<int:team_id>', methods=['DELETE'])
+def delete_team(team_id):
+    team = Team.query.get_or_404(team_id)
+    db.session.delete(team)
+    db.session.commit()
+    return jsonify({'message': 'Team deleted successfully'}), 204
+
+
+##3 CRUD FOR TEAMMEMBERS
+
+
+@app.route('/teams/<int:team_id>/members', methods=['POST'])
+def add_member_to_team(team_id):
+    data = request.get_json()
+    new_member = TeamMember(team_id=team_id, user_id=data['user_id'])
+    db.session.add(new_member)
+    db.session.commit()
+    return jsonify(new_member.serialize()), 201
+
+
+@app.route('/teams/<int:team_id>/members', methods=['GET'])
+def get_team_members(team_id):
+    members = TeamMember.query.filter_by(team_id=team_id).all()
+    return jsonify([{'user_id': member.user_id} for member in members]), 200
+
+
+@app.route('/teams/<int:team_id>/members/<int:user_id>', methods=['DELETE'])
+def remove_member_from_team(team_id, user_id):
+    member = TeamMember.query.filter_by(team_id=team_id, user_id=user_id).first_or_404()
+    db.session.delete(member)
+    db.session.commit()
+    return jsonify({'message': 'Member removed successfully'}), 204
 
 
 if __name__ == '__main__':
