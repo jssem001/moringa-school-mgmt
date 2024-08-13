@@ -391,18 +391,18 @@ def get_projects():
         })
 
         # THE USER SHOULD GET AN ALERT ONCE THE DATE FOR THE DEADLINE REACHES
-    for project in project_data:
-       deadline = datetime.strptime(project['deadline'], '%Y-%m-%d').date()
-        # deadline = project['deadline']
-    if deadline <= datetime.now().date():
-        # Send an alert (e.g., via email, notification, etc.)
-        user = User.query.get(current_user_id)
-        if user and user.email:
-            send_email(
-                    to=user.email,
-                    subject="Deadline reached for project",
-                    template=f"Alert: Deadline reached for project '{project['name']}'"
-                )
+    # for project in project_data:
+    # deadline = datetime.strptime(project['deadline'], '%Y-%m-%d').date()
+    # #     # deadline = project['deadline']
+    # if deadline <= datetime.now().date():
+    #     # Send an alert (e.g., via email, notification, etc.)
+    #     user = User.query.get(current_user_id)
+    #     if user and user.email:
+    #         send_email(
+    #                 to=user.email,
+    #                 subject="Deadline reached for project",
+    #                 template=f"Alert: Deadline reached for project '{project['name']}'"
+    #             )
         #print(f"Alert: Deadline reached for project '{project['name']}'")
         # You can also use a library like `smtplib` for email or `plyer` for notifications
         # to send a more sophisticated alert
@@ -688,13 +688,8 @@ def update_task(id):
 def delete_task(id):
     task = Task.query.get_or_404(id)
 
-    current_user_id = get_jwt_identity()
-    if task.user_id != current_user_id:
-        return jsonify({'message': 'You are not authorized to access this resource'}), 404
-    
     if not task:
         return jsonify({'message': 'Task not found'}), 404
-
 
     # Log the activity
     current_user_id = get_jwt_identity()
@@ -704,6 +699,30 @@ def delete_task(id):
     db.session.delete(task)
     db.session.commit()
     return jsonify({'message': 'Task deleted successfully'}), 200
+
+
+
+# @app.route('/tasks/<int:id>', methods=['DELETE'])
+# @jwt_required()
+# def delete_task(id):
+#     task = Task.query.get_or_404(id)
+
+#     current_user_id = get_jwt_identity()
+#     if task.user_id != current_user_id:
+#         return jsonify({'message': 'You are not authorized to access this resource'}), 404
+    
+#     if not task:
+#         return jsonify({'message': 'Task not found'}), 404
+
+
+#     # Log the activity
+#     current_user_id = get_jwt_identity()
+#     activity = Activities(user_id=current_user_id, project_id=task.project_id, task_id=task.id, activity="Deleted a task")
+#     db.session.add(activity)
+
+#     db.session.delete(task)
+#     db.session.commit()
+#     return jsonify({'message': 'Task deleted successfully'}), 200
 
 
 
