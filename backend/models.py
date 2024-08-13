@@ -217,7 +217,7 @@ from datetime import datetime
 db = SQLAlchemy()
 
 
-k
+
 class User(db.Model, SerializerMixin):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
