@@ -1,6 +1,7 @@
 // export default AnalyticsPage;
 import React , { useContext } from "react";
 import Sidebar from "../components/Sidebar";
+import { ProjectContext } from "../context/ProjectContext";
 import { TaskContext } from "../context/TaskContext";
 import TasksPie from "../Charts/TasksPie";
 import UserBarChart from "../Charts/UserBarChart";
@@ -8,6 +9,8 @@ import UserBarChart from "../Charts/UserBarChart";
 const AnalyticsPage = () => {
 
     const { tasks, doneTasks } = useContext(TaskContext);
+    const { projects } = useContext(ProjectContext);
+    console.log(projects);
 
     // Calculate the total number of tasks
     const totalTasks = tasks.length+doneTasks.length;
@@ -35,9 +38,13 @@ const AnalyticsPage = () => {
                 
                 <div class="grid grid-cols-2 gap-4 mb-4 border">
                     <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
-                        <p class="text-xl text-white ">
-                        Connected Projects
-                        </p>
+                        <select className="text-xl text-white bg-gray-400">
+                            {projects.map((project) => (
+                                <option key={project.id} value={project.id}>
+                                    {project.name}
+                                </option>
+                            ))}
+                        </select>
                     </div>
                     <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
                         <p class="text-2xl text-white ">
