@@ -65,11 +65,11 @@ return(
                     Sign Up
                   </Link>
                 </li> */}
-                <li>
+                {/* <li>
                   <Link to="/login" className="bg-orange-200 text-black text-base font-semibold rounded-md shadow-md hover:text-white hover:bg-orange-600 p-3">
                     Login
                   </Link>
-                </li>
+                </li> */}
               </>
               {/* ) : ( */}
               {/* <li>

@@ -1,122 +1,102 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+// src/pages/EditTemplate.jsx
+import React, { useState, useContext, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import Sidebar from "../components/Sidebar";
+import { TemplateContext } from '../context/TemplateContext';
 
 const EditTemplate = () => {
-  const { id } = useParams();
-  const [template, setTemplate] = useState(null);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [figmaLink, setFigmaLink] = useState("");
-  const [sqlDiagram, setSqlDiagram] = useState("");
-  const [imagePreviewUrl, setImagePreviewUrl] = useState("");
+  const { singleTemplate, updateTemplate, fetchTemplate, deleteTemplate } = useContext(TemplateContext);
+  const { id } = useParams(); 
+  const [name, setName] = useState('');
+  const [link, setLink] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch the template data by id
-    const fetchTemplate = async () => {
-      // Replace with your API call or data fetching logic
-      const fetchedTemplate = {
-        id,
-        title: "Sample Title",
-        description: "Sample Description",
-        figmaLink: "https://www.figma.com/file/sample",
-        sqlDiagram: "https://www.sqldiagram.com/sample",
-        imagePreviewUrl: "https://via.placeholder.com/150"
-      };
-      setTemplate(fetchedTemplate);
-      setTitle(fetchedTemplate.title);
-      setDescription(fetchedTemplate.description);
-      setFigmaLink(fetchedTemplate.figmaLink);
-      setSqlDiagram(fetchedTemplate.sqlDiagram);
-      setImagePreviewUrl(fetchedTemplate.imagePreviewUrl);
-    };
-    fetchTemplate();
+    fetchTemplate(id);
   }, [id]);
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    if (singleTemplate) {
+      setName(singleTemplate.name);
+      setLink(singleTemplate.link);
+    }
+  }, [singleTemplate]);
+
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log({ title, description, figmaLink, sqlDiagram, imagePreviewUrl });
-    navigate("/templates");
+
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('link', link);
+
+    try {
+      await updateTemplate(id, formData);
+      navigate('/templates');
+    } catch (error) {
+      console.error('Failed to update template:', error);
+    }
   };
 
-  if (!template) return <div>Loading...</div>;
+  const handleDelete = async () => {
+    try {
+      await deleteTemplate(id);
+      navigate('/templates'); 
+    } catch (error) {
+      console.error('Failed to delete template:', error);
+    }
+  };
 
   return (
     <div className="flex">
       <Sidebar />
-
       <div className="p-4 sm:ml-64 flex-1">
-        <section className="mb-4">
-          <h1 className="text-2xl font-bold mb-4">Edit Template</h1>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold mb-2">Title</label>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold mb-2">Description</label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded"
-                rows="4"
-                required
-              ></textarea>
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold mb-2">Figma Design Link</label>
-              <input
-                type="url"
-                value={figmaLink}
-                onChange={(e) => setFigmaLink(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold mb-2">SQL Diagram Link</label>
-              <input
-                type="url"
-                value={sqlDiagram}
-                onChange={(e) => setSqlDiagram(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold mb-2">Image Preview URL</label>
-              <input
-                type="url"
-                value={imagePreviewUrl}
-                onChange={(e) => setImagePreviewUrl(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-            </div>
-
+        <h1 className="text-2xl font-bold mb-4">Edit Template</h1>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label htmlFor="name" className="block mb-2 font-semibold">
+              Template Name:
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="link" className="block mb-2 font-semibold">
+              Template Link:
+            </label>
+            <input
+              type="text"
+              id="link"
+              name="link"
+              value={link}
+              onChange={(e) => setLink(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded"
+              required
+            />
+          </div>
+          <div class="flex justify-between items-center">
             <button
               type="submit"
-              className="px-4 py-2 bg-orange-300 text-white rounded hover:bg-orange-400"
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-orange-400"
             >
               Save Changes
             </button>
-          </form>
-          <button
-            onClick={() => navigate("/templates")}
-            className="mt-4 px-4 py-2 bg-blue-300 text-white rounded hover:bg-blue-400"
-          >
-            Back to Templates
-          </button>
-        </section>
+            <button
+              type="submit"
+              onClick={handleDelete}
+              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-orange-400"
+            >
+              Delete Template
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

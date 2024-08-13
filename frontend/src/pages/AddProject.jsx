@@ -1,204 +1,128 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import abstractImage from '../images/abstract-wavy.jpeg'; // Path to the abstract image
+import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Sidebar from '../components/Sidebar';
+import { ProjectContext } from '../context/ProjectContext';
 
 const AddProject = () => {
-  const [project, setProject] = useState({
-    title: '',
-    description: '',
-    githubLink: '',
-    image: '',
-    date: '',
-    duedate: '',
-    status: 'In Progress',
-  });
-  const [attachedFiles, setAttachedFiles] = useState([]);
+  const { addProject } = useContext(ProjectContext);
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [deadline, setDeadline] = useState('');
+  const [file, setFile] = useState(null);
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setProject({ ...project, [e.target.name]: e.target.value });
-  };
+  const user = JSON.parse(localStorage.getItem('user'));
+  const userId = user ? user.id : null;
 
+  // Handle file input change
   const handleFileChange = (e) => {
-    setAttachedFiles(e.target.files);
+    setFile(e.target.files[0]);
   };
 
-  const handleSubmit = async (e) => {
+  // Handle form submission
+  const handleAddProject = (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append('title', project.title);
-    formData.append('description', project.description);
-    formData.append('githubLink', project.githubLink);
-    formData.append('image', project.image);
-    formData.append('date', project.date);
-    formData.append('duedate', project.duedate);
-    formData.append('status', project.status);
-    for (let i = 0; i < attachedFiles.length; i++) {
-      formData.append('files', attachedFiles[i]);
-    }
 
-    try {
-      const response = await fetch('http://localhost:5000/api/projects', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (response.ok) {
-        navigate('/projects');
-      } else {
-        console.error('Failed to add project');
+    if (user) {
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('description', description);
+      formData.append('deadline', deadline);
+      formData.append('user_id', userId);
+      if (file) {
+        formData.append('file_attachments', file);
       }
-    } catch (error) {
-      console.error('Error:', error);
+
+      addProject(formData);
+      navigate('/projects');
+      
+      setName('');
+      setDescription('');
+      setDeadline('');
+      setFile(null);
+    } else {
+      console.error('User not found in localStorage.');
     }
   };
 
   return (
-    <div className="relative overflow-hidden p-6 max-w-3xl mx-auto">
-      <button
-        onClick={() => navigate('/projects')}
-        className="absolute top-6 left-6 px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 z-20"
-      >
-        Back to Projects
-      </button>
+    <div className="flex">
+      <Sidebar />
+      <div className="p-4 sm:ml-64 flex-1">
+        <h2 className="text-2xl font-bold mb-4">Add New Project</h2>
 
-      <div className="absolute inset-0 z-10">
-        <img
-          src={abstractImage}
-          alt="Abstract"
-          className="w-full h-full object-cover blur-lg"
-          style={{ position: 'absolute', top: 0, left: 0 }}
-        />
-        <div className="absolute inset-0 bg-black opacity-40"></div>
-      </div>
-
-      <div className="relative flex flex-col items-center bg-white p-6 rounded shadow-lg z-20 mt-24">
-        <h2 className="text-3xl font-bold mb-4">Add Project</h2>
-        <form onSubmit={handleSubmit} className="w-full space-y-4">
-          {/* Form fields */}
+        <form onSubmit={handleAddProject} className="space-y-4">
+          {/* Name */}
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">Project Title</label>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
             <input
               type="text"
-              name="title"
-              placeholder="Project Title"
-              value={project.title}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              id="name"
+              name="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="mt-1 block w-full p-2 border border-gray-300 rounded"
               required
             />
           </div>
 
+          {/* Description */}
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">Project Description</label>
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
             <textarea
+              id="description"
               name="description"
-              placeholder="Project Description"
-              value={project.description}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="mt-1 block w-full p-2 border border-gray-300 rounded"
+              rows="4"
               required
             />
           </div>
 
+          {/* Deadline */}
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">GitHub Link</label>
-            <input
-              type="url"
-              name="githubLink"
-              placeholder="GitHub Link"
-              value={project.githubLink}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">Image URL</label>
-            <input
-              type="url"
-              name="image"
-              placeholder="Image URL"
-              value={project.image}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">Project Date</label>
+            <label htmlFor="deadline" className="block text-sm font-medium text-gray-700">Deadline</label>
             <input
               type="date"
-              name="date"
-              value={project.date}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              id="deadline"
+              name="deadline"
+              value={deadline}
+              onChange={(e) => setDeadline(e.target.value)}
+              className="mt-1 block w-full p-2 border border-gray-300 rounded"
               required
             />
           </div>
 
+          {/* File Attachment */}
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">Due Date</label>
-            <input
-              type="date"
-              name="duedate"
-              value={project.duedate}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">Project Status</label>
-            <select
-              name="status"
-              value={project.status}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            >
-              <option value="In Progress">In Progress</option>
-              <option value="Completed">Completed</option>
-              <option value="On Hold">On Hold</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">Attach Files</label>
+            <label htmlFor="file" className="block text-sm font-medium text-gray-700">Attachment</label>
             <input
               type="file"
-              name="files"
-              multiple
+              id="file"
+              name="file"
               onChange={handleFileChange}
-              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 block w-full p-2 border border-gray-300 rounded"
             />
           </div>
 
+          {/* Submit Button */}
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">Select Template (Optional)</label>
-            <Link
-              to="/templates"
-              className="text-blue-600 hover:underline"
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             >
-              Choose a template
-            </Link>
+              Add Project
+            </button>
           </div>
-
-          <button
-            type="submit"
-            className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300"
-          >
-            Add Project
-          </button>
         </form>
       </div>
     </div>
   );
 };
 
-
-
 export default AddProject;
+
+
 
 
