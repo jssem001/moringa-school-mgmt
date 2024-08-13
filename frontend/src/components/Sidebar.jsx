@@ -41,11 +41,11 @@ const Sidebar = () => {
                             <span class="flex-1 ms-3 whitespace-nowrap">Tasks</span>
                         </div></Link>
                     </li>
-                    <li>
+                    {/* <li>
                         <Link to="/calendar"><div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
                             <span class="flex-1 ms-3 whitespace-nowrap">Calendar</span>
                         </div></Link>
-                    </li>
+                    </li> */}
                     
                     <li>
                         <Link to="/teams"><div class="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
