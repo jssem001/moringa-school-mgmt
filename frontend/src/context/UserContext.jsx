@@ -98,24 +98,31 @@ const UserProvider = ({ children }) => {
 
 
   //All Users
-  const fetchUsers= async () => {
-    setLoading(false);
+  const fetchUsers = () => {
+    // setLoading(true);
     fetch(`${server_url}/users`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${authToken}`,
-      },
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`,
+        },
     })
-    .then((response) => response.json())
-    .then((data) => {
-      setAllUsers(data);  // fetched users
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
     })
-    .catch((error) => {
-      toast.error(`Failed to fetch users: ${error.message}`);
+    .then(data => {
+        setAllUsers(data);
     })
-    .finally(() => setLoading(false));
-  };
+    .catch(error => {
+        toast.error(`Failed to fetch users: ${error.message}`);
+    })
+    .finally(() => {
+        // setLoading(false);
+    });
+};
 
 
   // Register a new user
@@ -137,7 +144,7 @@ const UserProvider = ({ children }) => {
       if (data.success) {
         toast.success("Registered successfully!");
         console.log("Registered successfully!");
-        navigate("/login"); // Navigate after successful registration
+        navigate("/"); // Navigate after successful registration
         // console.log("User registered successfully");
         return data
       } else {
@@ -171,11 +178,14 @@ const loginUser = async (email, password) => {
     if (data.access_token) {
       setAuthToken(data.access_token);
       localStorage.setItem('access_token', data.access_token);
+      localStorage.setItem('user', JSON.stringify(data.user));
       setCurrentUser(data.user);
       setPermissions(permissionsConfig[data.is_admin ? 'admin' : (data.is_student ? 'student' : 'instructor')] || {});
       toast.success('Logged in Successfully!');
       console.log('Logged in Successfully!');
-      navigate('/dashboard');
+      
+      navigate('/analytics')
+
     } else {
       toast.error(data.error || 'Login failed');
     }
@@ -229,7 +239,7 @@ const loginUser = async (email, password) => {
         setCurrentUser(null);
         setAuthToken(null);
         toast.success(result.success);
-        navigate("/login");
+        navigate("/");
       } else {
         toast.error(result.error || "Logout failed");
       }
@@ -241,29 +251,49 @@ const loginUser = async (email, password) => {
   };
 
   // Update user profile
-  const updateUser = async (name, phoneNumber, profileImage, password) => {
+  // const updateUser = (name, email) => {
+  //   setLoading(true);
+  //   try {
+  //     const result = await fetchWithRetry(`${server_url}/user`, {
+  //       method: 'PUT',
+  //       body: JSON.stringify({ name, email }),
+  //       headers: {
+  //         'Content-type': 'application/json',
+  //         'Authorization': `Bearer ${authToken}`,
+  //       },
+  //     });
+  //     if (result.success) {
+  //       toast.success(result.success);
+  //       setCurrentUser({ ...currentUser, name, email });
+  //     } else {
+  //       toast.error(result.error || "Update failed");
+  //     }
+  //   } catch (error) {
+  //     toast.error(`Failed to update user: ${error.message}`);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  const updateUser = (name, email) => {
     setLoading(true);
-    try {
-      const result = await fetchWithRetry(`${server_url}/user`, {
-        method: 'PUT',
-        body: JSON.stringify({ name, phoneNumber, profileImage, password }),
-        headers: {
-          'Content-type': 'application/json',
-          'Authorization': `Bearer ${authToken}`,
-        },
-      });
-      if (result.success) {
-        toast.success(result.success);
-        setCurrentUser({ ...currentUser, name, phoneNumber, profileImage });
+    fetch(`${server_url}/user`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`, 
+      },
+      body: JSON.stringify({ name, email }),
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        toast.success(data.success);
+        setCurrentUser({ ...currentUser, name, email });
       } else {
-        toast.error(result.error || "Update failed");
+        toast.error(data.error || "Update failed");
       }
-    } catch (error) {
-      toast.error(`Failed to update user: ${error.message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
+    })
+  }
 
   // Update user role
   const updateRole = (userId, newRole) => {

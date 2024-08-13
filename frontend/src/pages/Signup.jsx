@@ -117,17 +117,6 @@ export default function Signup() {
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Phone Number</label>
-                <input 
-                  type="tel" 
-                  value={phone_number || ""} 
-                  onChange={(e) => setPhone_number(e.target.value)} 
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
-                  placeholder="+1234567890" 
-                  required 
-                />
-              </div>
-              <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">Role</label>
                 <select 
                   value={role}
@@ -153,7 +142,7 @@ export default function Signup() {
             </form>
             <p className="mt-6 text-center text-sm text-gray-600">
               Already have an account?{' '}
-              <Link to="/login" className="text-blue-600 font-medium  hover:underline hover:text-blue-600">
+              <Link to="/" className="text-blue-600 font-medium  hover:underline hover:text-blue-600">
                 Log In
               </Link>
             </p>
