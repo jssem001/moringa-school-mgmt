@@ -688,13 +688,8 @@ def update_task(id):
 def delete_task(id):
     task = Task.query.get_or_404(id)
 
-    current_user_id = get_jwt_identity()
-    if task.user_id != current_user_id:
-        return jsonify({'message': 'You are not authorized to access this resource'}), 404
-    
     if not task:
         return jsonify({'message': 'Task not found'}), 404
-
 
     # Log the activity
     current_user_id = get_jwt_identity()
@@ -704,6 +699,30 @@ def delete_task(id):
     db.session.delete(task)
     db.session.commit()
     return jsonify({'message': 'Task deleted successfully'}), 200
+
+
+
+# @app.route('/tasks/<int:id>', methods=['DELETE'])
+# @jwt_required()
+# def delete_task(id):
+#     task = Task.query.get_or_404(id)
+
+#     current_user_id = get_jwt_identity()
+#     if task.user_id != current_user_id:
+#         return jsonify({'message': 'You are not authorized to access this resource'}), 404
+    
+#     if not task:
+#         return jsonify({'message': 'Task not found'}), 404
+
+
+#     # Log the activity
+#     current_user_id = get_jwt_identity()
+#     activity = Activities(user_id=current_user_id, project_id=task.project_id, task_id=task.id, activity="Deleted a task")
+#     db.session.add(activity)
+
+#     db.session.delete(task)
+#     db.session.commit()
+#     return jsonify({'message': 'Task deleted successfully'}), 200
 
 
 

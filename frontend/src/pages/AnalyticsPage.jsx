@@ -39,6 +39,7 @@ const AnalyticsPage = () => {
                 <div class="grid grid-cols-2 gap-4 mb-4 border">
                     <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
                         <select className="text-xl text-white bg-gray-400">
+                            <option value="">Select Project</option>
                             {projects.map((project) => (
                                 <option key={project.id} value={project.id}>
                                     {project.name}
