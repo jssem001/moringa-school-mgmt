@@ -335,14 +335,14 @@ def create_event():
         
 
 
-        try:
-          deadline = datetime.strptime(deadline, '%Y-%m-%d').date()  # Convert to date object
+        # try:
+        #   deadline = datetime.strptime(deadline, '%Y-%m-%d').date()  # Convert to date object
 
-          if deadline < datetime.now().date():
-            return jsonify({'error': 'Deadline cannot be in the past.'}), 400
+        #   if deadline < datetime.now().date():
+        #     return jsonify({'error': 'Deadline cannot be in the past.'}), 400
           
-        except ValueError:
-          return jsonify({'error': 'Invalid date format. Please use YYYY-MM-DD.'}), 400
+        # except ValueError:
+        #   return jsonify({'error': 'Invalid date format. Please use YYYY-MM-DD.'}), 400
 
         db.session.add(new_event)
 
@@ -392,8 +392,9 @@ def get_projects():
 
         # THE USER SHOULD GET AN ALERT ONCE THE DATE FOR THE DEADLINE REACHES
     for project in project_data:
-    #    deadline = datetime.strptime(project['deadline'], '%Y-%m-%d').date()
-    # if deadline <= datetime.now().date():
+       deadline = datetime.strptime(project['deadline'], '%Y-%m-%d').date()
+        # deadline = project['deadline']
+    if deadline <= datetime.now().date():
         # Send an alert (e.g., via email, notification, etc.)
         user = User.query.get(current_user_id)
         if user and user.email:
@@ -832,33 +833,6 @@ def delete_template(id):
     db.session.commit()
     return jsonify({'message': 'Template deleted successfully'}), 200
 
-
-
-
-
-
-
-
-# def delete_template(id):
-     
-#     current_user_id = get_jwt_identity()
-#     if template.user_id != current_user_id:
-#         return jsonify({'message': 'You are not authorized to access this resource'}), 404
-
-#     template = Template.query.get(id)
-
-#     if not template:
-#         return jsonify({'message': 'Template not found'}), 404
-
-#     db.session.delete(template)
-
-#     # Log the activity
-#     current_user_id = get_jwt_identity()
-#     activity = Activities(user_id=current_user_id, activity="Deleted A Template")
-#     db.session.add(activity)
-
-#     db.session.commit()
-#     return jsonify({'message': 'Template deleted successfully'}), 200
 
 #CRUD FOR COMMENTS
 
