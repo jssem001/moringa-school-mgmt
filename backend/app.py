@@ -391,18 +391,18 @@ def get_projects():
         })
 
         # THE USER SHOULD GET AN ALERT ONCE THE DATE FOR THE DEADLINE REACHES
-    for project in project_data:
-       deadline = datetime.strptime(project['deadline'], '%Y-%m-%d').date()
-        # deadline = project['deadline']
-    if deadline <= datetime.now().date():
-        # Send an alert (e.g., via email, notification, etc.)
-        user = User.query.get(current_user_id)
-        if user and user.email:
-            send_email(
-                    to=user.email,
-                    subject="Deadline reached for project",
-                    template=f"Alert: Deadline reached for project '{project['name']}'"
-                )
+    # for project in project_data:
+    # deadline = datetime.strptime(project['deadline'], '%Y-%m-%d').date()
+    # #     # deadline = project['deadline']
+    # if deadline <= datetime.now().date():
+    #     # Send an alert (e.g., via email, notification, etc.)
+    #     user = User.query.get(current_user_id)
+    #     if user and user.email:
+    #         send_email(
+    #                 to=user.email,
+    #                 subject="Deadline reached for project",
+    #                 template=f"Alert: Deadline reached for project '{project['name']}'"
+    #             )
         #print(f"Alert: Deadline reached for project '{project['name']}'")
         # You can also use a library like `smtplib` for email or `plyer` for notifications
         # to send a more sophisticated alert
