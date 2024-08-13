@@ -180,11 +180,20 @@ const loginUser = async (email, password) => {
       localStorage.setItem('access_token', data.access_token);
       localStorage.setItem('user', JSON.stringify(data.user));
       setCurrentUser(data.user);
-      setPermissions(permissionsConfig[data.is_admin ? 'admin' : (data.is_student ? 'student' : 'instructor')] || {});
-      toast.success('Logged in Successfully!');
-      console.log('Logged in Successfully!');
+
       
-      navigate('/analytics')
+      setPermissions(permissionsConfig[data.user.is_admin ? 'admin' : (data.user.is_student ? 'student' : 'instructor')] || {});
+      toast.success('Logged in Successfully!');
+      
+      if (data.user.is_student) {
+        navigate('/studentprofile');
+      } else if (data.user.is_admin) {
+        navigate('/adminprofile');
+      } else if (data.user.is_instructor) {
+        navigate('/instructorprofile');
+      } else {
+        navigate('/analytics'); 
+      }
 
     } else {
       toast.error(data.error || 'Login failed');
