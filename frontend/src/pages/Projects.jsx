@@ -5,9 +5,9 @@ import { ProjectContext } from '../context/ProjectContext';
 import ActivityLogModal from './ActivityLogModal';
 
 const Projects = () => {
-  const { projects, loading, fetchProjects } = useContext(ProjectContext);
+  const { projects, loading, fetchProjects, error } = useContext(ProjectContext);
   const [searchTerm, setSearchTerm] = useState('');
-  const [showActivityLog, setShowActivityLog] = useState(false); // State to manage the modal visibility
+  const [showActivityLog, setShowActivityLog] = useState(false);
 
   useEffect(() => {
     fetchProjects();
@@ -68,6 +68,8 @@ const Projects = () => {
 
           {loading ? (
             <p>Loading projects...</p>
+          ) : error ? (
+            <p className="text-red-500">Failed to load projects: {error.message}</p>
           ) : filteredProjects.length === 0 ? (
             <p>No projects yet. Add your first project above...</p>
           ) : (
@@ -100,14 +102,16 @@ const Projects = () => {
                     )}
 
                     <div className="mt-2 flex space-x-2">
-                      <a
-                        href={project.githubLink}
-                        className="text-blue-500 hover:underline"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        View on GitHub
-                      </a>
+                      {project.githubLink && (
+                        <a
+                          href={project.githubLink}
+                          className="text-blue-500 hover:underline"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          View on GitHub
+                        </a>
+                      )}
                       <Link to={`/edit-project/${project.id}`} className="text-yellow-500 hover:underline">
                         Edit
                       </Link>
