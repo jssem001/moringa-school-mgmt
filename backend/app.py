@@ -301,22 +301,71 @@ def get_user_by_name():
 
 #CRUD FOR PROJECTS
 
-#1. ADDING A PROJECT
+# #1. ADDING A PROJECT
+# @app.route('/project', methods=['POST'])
+# @jwt_required()
+# def create_event():
+#     current_user_id = get_jwt_identity()
+
+#     current_user = User.query.get(current_user_id)
+
+#     if current_user:
+#         # Access form data
+#         name = request.form['name']
+#         description = request.form['description']
+#         deadline = request.form['deadline']
+#         user_id = current_user_id
+
+    
+#         # Handle file upload
+#         file_attachments = None
+#         if 'file_attachments' in request.files:
+#             file_attachments = request.files['file_attachments']
+#             # Save the file or handle it as needed
+#             # file_attachments.save(os.path.join(UPLOAD_FOLDER, file_attachments.filename))
+
+#         new_event = Project(
+#             name=name,
+#             description=description,
+#             deadline=deadline,
+#             file_attachments=file_attachments.filename if file_attachments else None,
+#             user_id=user_id
+#         )
+
+        
+
+
+#         try:
+#           deadline = datetime.strptime(deadline, '%Y-%m-%d').date()  # Convert to date object
+
+#           if deadline < datetime.now().date():
+#             return jsonify({'error': 'Deadline cannot be in the past.'}), 400
+          
+#         except ValueError:
+#           return jsonify({'error': 'Invalid date format. Please use YYYY-MM-DD.'}), 400
+
+#         db.session.add(new_event)
+
+#         activity = Activities(user_id=current_user_id, project_id=new_event.id, activity="Added a new project")
+#         db.session.add(activity)
+    
+#         db.session.commit()
+#         return jsonify({"success": "Project created successfully"}), 201
+    
+#     return jsonify({"error": "User not found"}), 404
 @app.route('/project', methods=['POST'])
 @jwt_required()
 def create_event():
-    current_user_id = get_jwt_identity()
-
+    current_user_id = get_jwt_identity()  # Get the instructor's ID
     current_user = User.query.get(current_user_id)
 
-    if current_user:
+    if current_user and current_user.is_instructor:
         # Access form data
         name = request.form['name']
         description = request.form['description']
         deadline = request.form['deadline']
-        user_id = current_user_id
+        student_id = request.form['student_id']  # Get the student's ID from the form
 
-    
         # Handle file upload
         file_attachments = None
         if 'file_attachments' in request.files:
@@ -329,44 +378,82 @@ def create_event():
             description=description,
             deadline=deadline,
             file_attachments=file_attachments.filename if file_attachments else None,
-            user_id=user_id
+            user_id=student_id  # Assign the project to the student
         )
 
-        
-
-
         try:
-          deadline = datetime.strptime(deadline, '%Y-%m-%d').date()  # Convert to date object
-
-          if deadline < datetime.now().date():
-            return jsonify({'error': 'Deadline cannot be in the past.'}), 400
-          
+            deadline = datetime.strptime(deadline, '%Y-%m-%d').date()  # Convert to date object
+            if deadline < datetime.now().date():
+                return jsonify({'error': 'Deadline cannot be in the past.'}), 400
         except ValueError:
-          return jsonify({'error': 'Invalid date format. Please use YYYY-MM-DD.'}), 400
+            return jsonify({'error': 'Invalid date format. Please use YYYY-MM-DD.'}), 400
 
         db.session.add(new_event)
 
-        activity = Activities(user_id=current_user_id, project_id=new_event.id, activity="Added a new project")
+        activity = Activities(
+            user_id=current_user_id,
+            project_id=new_event.id,
+            activity=f"Instructor {current_user.name} assigned a new project"
+        )
         db.session.add(activity)
-    
         db.session.commit()
-        return jsonify({"success": "Project created successfully"}), 201
+        return jsonify({"success": "Project assigned successfully"}), 201
+
+    return jsonify({"error": "User not found or not authorized"}), 404
+
+
+
+
+
+# #2. GETTING ALL PROJECTS BY THE USER
+
+# def send_email(to, subject, template,):
+#     msg = Message(subject,
+#                   recipients=[to],
+#                   html=template,
+#                   sender=app.config['MAIL_USERNAME'])
+#     mail.send(msg)
+
+# @app.route('/project', methods=['GET'])
+# @jwt_required()
+# def get_projects():
+#     current_user_id = get_jwt_identity()
+#     logging.info(f"Current User ID: {current_user_id}")
+
+#     user = User.query.get(current_user_id)
+
+#     if user is None:
+#         return jsonify({"message": "You are not authorized to access this resource"}), 404
     
-    return jsonify({"error": "User not found"}), 404
+#     projects = Project.query.filter_by(user_id=current_user_id).all()
+#     project_data = []
+#     for project in projects:
+#         logging.info(f"Processing project: {project.name}")
+#         project_data.append({
+#             "id": project.id,
+#             "name": project.name,
+#             "description": project.description,
+#             "deadline": project.deadline,
+#             "file_attachments": project.file_attachments
+#         })
 
+#         # THE USER SHOULD GET AN ALERT ONCE THE DATE FOR THE DEADLINE REACHES
+#     for project in project_data:
+#        deadline = datetime.strptime(project['deadline'], '%Y-%m-%d').date()
+#     if deadline <= datetime.now().date():
+#         # Send an alert (e.g., via email, notification, etc.)
+#         user = User.query.get(current_user_id)
+#         if user and user.email:
+#             send_email(
+#                     to=user.email,
+#                     subject="Deadline reached for project",
+#                     template=f"Alert: Deadline reached for project '{project['name']}'"
+#                 )
+#         #print(f"Alert: Deadline reached for project '{project['name']}'")
+#         # You can also use a library like `smtplib` for email or `plyer` for notifications
+#         # to send a more sophisticated alert
 
-
-
-
-#2. GETTING ALL PROJECTS BY THE USER
-
-def send_email(to, subject, template,):
-    msg = Message(subject,
-                  recipients=[to],
-                  html=template,
-                  sender=app.config['MAIL_USERNAME'])
-    mail.send(msg)
-
+#     return jsonify(project_data), 200
 @app.route('/project', methods=['GET'])
 @jwt_required()
 def get_projects():
@@ -377,8 +464,15 @@ def get_projects():
 
     if user is None:
         return jsonify({"message": "You are not authorized to access this resource"}), 404
-    
-    projects = Project.query.filter_by(user_id=current_user_id).all()
+
+    # Check if the user is an instructor
+    if user.is_instructor:
+        # If the user is an instructor, retrieve all projects assigned to their students
+        projects = Project.query.filter_by(user_id=user.id).all()  # Assuming user.id is the instructor's ID
+    else:
+        # If the user is a student, retrieve their own projects
+        projects = Project.query.filter_by(user_id=current_user_id).all()
+
     project_data = []
     for project in projects:
         logging.info(f"Processing project: {project.name}")
@@ -390,23 +484,19 @@ def get_projects():
             "file_attachments": project.file_attachments
         })
 
-        # THE USER SHOULD GET AN ALERT ONCE THE DATE FOR THE DEADLINE REACHES
-    for project in project_data:
-       deadline = datetime.strptime(project['deadline'], '%Y-%m-%d').date()
-    if deadline <= datetime.now().date():
-        # Send an alert (e.g., via email, notification, etc.)
-        user = User.query.get(current_user_id)
-        if user and user.email:
-            send_email(
+        # Check if the deadline has been reached
+        deadline = datetime.strptime(project.deadline, '%Y-%m-%d').date()
+        if deadline <= datetime.now().date():
+            # Send an alert (e.g., via email, notification, etc.)
+            if user and user.email:
+                send_email(
                     to=user.email,
                     subject="Deadline reached for project",
-                    template=f"Alert: Deadline reached for project '{project['name']}'"
+                    template=f"Alert: Deadline reached for project '{project.name}'"
                 )
-        #print(f"Alert: Deadline reached for project '{project['name']}'")
-        # You can also use a library like `smtplib` for email or `plyer` for notifications
-        # to send a more sophisticated alert
 
     return jsonify(project_data), 200
+
 
 
 
@@ -1053,6 +1143,15 @@ def delete_team(team_id):
     db.session.delete(team)
     db.session.commit()
     return jsonify({'message': 'Team deleted successfully'}), 204
+
+
+# @app.route('/teams/<int:team_id>', methods=['DELETE'])
+# def delete_team(id):
+#     team = Team.query.get_or_404(id)
+#     db.session.delete(team)
+#     db.session.commit()
+#     return jsonify({'message': 'Team deleted successfully'}), 204
+
 
 
 ##3 CRUD FOR TEAMMEMBERS
