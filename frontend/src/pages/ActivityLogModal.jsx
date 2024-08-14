@@ -4,7 +4,7 @@ import { UserContext } from '../context/UserContext';
 
 const ActivityLogModal = ({ onClose }) => {
   const { activities, fetchActivities } = useContext(ProjectContext);
-  const {allUsers} = useContext(UserContext);
+  const {allUsers, fetchUsers} = useContext(UserContext);
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState({
     user: '',
@@ -14,6 +14,7 @@ const ActivityLogModal = ({ onClose }) => {
 
   useEffect(()=> {
     fetchActivities();
+    fetchUsers();
   }, [])
 
   const handleSearch = (e) => {
@@ -42,13 +43,22 @@ const ActivityLogModal = ({ onClose }) => {
     return true;
   };
 
+  // const filteredActivities = activities.filter(activity => {
+  //   return (
+  //     (filter.user ? activity.user_id === filter.user : true) &&
+  //     (filter.actionType ? activity.activity.includes(filter.actionType) : true) &&
+  //     (searchTerm ? activity.activity.includes(searchTerm) : true) &&
+  //     applyDateRangeFilter(activity.timestamp)
+  //   );
+  // });
+
   const filteredActivities = activities.filter(activity => {
-    // Implement filtering logic based on searchTerm and filter state
+    const userId = filter.user; // Ensure userId is a string or number that matches activity.user_id
+  
     return (
-      
-      (filter.user ? activity.user_id.includes(filter.user) : true) &&
+      (userId ? String(activity.user_id) === String(userId) : true) && // Convert both to string for comparison
       (filter.actionType ? activity.activity.includes(filter.actionType) : true) &&
-      (searchTerm ? activity.activity.includes(searchTerm) : true) &&
+      (searchTerm ? activity.activity.toLowerCase().includes(searchTerm.toLowerCase()) : true) &&
       applyDateRangeFilter(activity.timestamp)
     );
   });
@@ -83,7 +93,7 @@ const ActivityLogModal = ({ onClose }) => {
             onChange={handleFilterChange}
             className="p-2 border border-gray-300 rounded"
           >
-            <option value="">Filter by user</option>
+            <option value="">All Users</option>
             {uniqueUsers.map((user, index) => (
               <option key={index} value={user}>
                 {allUsers.find(u => u.id === user)?.name || user}
@@ -97,7 +107,7 @@ const ActivityLogModal = ({ onClose }) => {
             onChange={handleFilterChange}
             className="p-2 border border-gray-300 rounded"
           >
-            <option value="">Filter by date range</option>
+            <option value="">All Time</option>
             <option value="Last 24 hours">Last 24 hours</option>
             <option value="Last 7 days">Last 7 days</option>
             <option value="Last 30 days">Last 30 days</option>
@@ -109,27 +119,18 @@ const ActivityLogModal = ({ onClose }) => {
             onChange={handleFilterChange}
             className="p-2 border border-gray-300 rounded"
           >
-            <option value="">Filter by action type</option>
+            <option value="">All Actions</option>
             <option value="Created">Created</option>
             <option value="Updated">Updated</option>
             <option value="Deleted">Deleted</option>
           </select>
         </div>
 
-        {/* <div className="overflow-y-auto max-h-64">
-          <ul className="space-y-2">
-            {filteredActivities.map((activity, index) => (
-              <li key={index} className="p-2 border-b">
-                <strong>{activity.user_id}:</strong> {activity.activity} on {new Date(activity.timestamp).toLocaleString()}
-              </li>
-            ))}
-          </ul>
-        </div> */}
         <div className="overflow-y-auto max-h-64">
           <ul className="space-y-2">
             {filteredActivities.map((activity, index) => (
               <li key={index} className="p-2 border-b">
-                <strong>{allUsers.find(u => u.id === activity.user_id)?.name || activity.user_id}:</strong> 
+                <strong>{allUsers.find(u => u.id === activity.user_id)?.name || activity.user_id}: </strong> 
                 {activity.activity} on {new Date(activity.timestamp).toLocaleString()}
               </li>
             ))}
