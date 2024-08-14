@@ -79,7 +79,59 @@ export const TeamContextProvider = ({ children }) => {
             });
     };
 
+    //Add a team member
+    const addMemberToTeam = async (teamId, userId) => {
+        try {
+          const response = await fetch(`/teams/${teamId}/members`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ user_id: userId }),
+          });
     
+          if (!response.ok) {
+            throw new Error("Failed to add member");
+          }
+    
+          const newMember = await response.json();
+          // Update the local state to include the new member
+          setTeams((prevTeams) =>
+            prevTeams.map((team) =>
+              team.id === teamId
+                ? { ...team, members: [...team.members, newMember] }
+                : team
+            )
+          );
+          toast.success("Member added successfully");
+        } catch (error) {
+          toast.error(error.message || "Failed to add member");
+        }
+      }; 
+
+    // Edit Team
+    const updateTeam = async (teamId, updatedData) => {
+        try {
+          const response = await fetch(`/teams/${teamId}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${authToken}` // Add token if required
+            },
+            body: JSON.stringify(updatedData),
+          });
+    
+          if (!response.ok) {
+            throw new Error('Failed to update team');
+          }
+    
+          const updatedTeam = await response.json();
+          // Optionally, update state with the updated team
+          setTeams(teams.map(team => team.id === teamId ? updatedTeam : team));
+        } catch (error) {
+          console.error('Error updating team:', error);
+        }
+      };  
 
     // Delete Team
     const deleteTeam = (teamId) => {
@@ -106,7 +158,7 @@ export const TeamContextProvider = ({ children }) => {
 
 
     return (
-        <TeamContext.Provider value={{ teams, members, loading, addTeam, fetchTeams, fetchMembers, deleteTeam }} >
+        <TeamContext.Provider value={{ teams, members, loading, addTeam, updateTeam, fetchTeams, fetchMembers, deleteTeam }} >
             {children}
         </TeamContext.Provider>
     )
