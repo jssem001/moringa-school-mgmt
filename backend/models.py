@@ -246,7 +246,7 @@ class Project(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)
-    deadline = db.Column(db.Date, nullable=True)
+    deadline = db.Column(db.String, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     file_attachments = db.Column(db.String, nullable=True)  
 
@@ -261,7 +261,7 @@ class Task(db.Model, SerializerMixin):
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     task_name = db.Column(db.String, nullable=False)
-    deadline = db.Column(db.Date, nullable=True)
+    # deadline = db.Column(db.Date, nullable=True)
     status = db.Column(db.String, nullable=False)
     file_attachments = db.Column(db.String, nullable=True)
 

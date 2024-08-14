@@ -923,33 +923,6 @@ def delete_template(id):
     return jsonify({'message': 'Template deleted successfully'}), 200
 
 
-
-
-
-
-
-
-# def delete_template(id):
-     
-#     current_user_id = get_jwt_identity()
-#     if template.user_id != current_user_id:
-#         return jsonify({'message': 'You are not authorized to access this resource'}), 404
-
-#     template = Template.query.get(id)
-
-#     if not template:
-#         return jsonify({'message': 'Template not found'}), 404
-
-#     db.session.delete(template)
-
-#     # Log the activity
-#     current_user_id = get_jwt_identity()
-#     activity = Activities(user_id=current_user_id, activity="Deleted A Template")
-#     db.session.add(activity)
-
-#     db.session.commit()
-#     return jsonify({'message': 'Template deleted successfully'}), 200
-
 #CRUD FOR COMMENTS
 
 # Create a new comment
