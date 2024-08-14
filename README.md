@@ -29,7 +29,7 @@ This app is designed to allow administrators, students, and instructors to maxim
 * Remove students from the program
 
 
-## SETUP INSTRUCTION
+## SETUP INSTRUCTIONS
 For the frontend, head to the frontend folder using your terminal and run `npm install` to install the dependencies
 Then run `npm run dev` to start up the frontend port.
 
