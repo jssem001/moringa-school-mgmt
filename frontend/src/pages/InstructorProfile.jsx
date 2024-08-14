@@ -51,9 +51,11 @@ const InstructorProfile = () => {
                           </div>
                         </Link>
                     </div>
-                    <div className="flex items-center justify-center h-48 mb-4 rounded bg-cyan-800 ">
-                        <p className="text-2xl text-white">Student Information</p>
-                    </div>
+                    <Link to="/student-info">
+                      <div className="flex items-center justify-center h-48 mb-4 rounded bg-cyan-800 cursor-pointer">
+                          <p className="text-2xl text-white">Student Information</p>
+                      </div>
+                    </Link>
                     <div className="grid grid-cols-2 gap-4">
                         {/* Add more widgets if needed */}
                     </div>
