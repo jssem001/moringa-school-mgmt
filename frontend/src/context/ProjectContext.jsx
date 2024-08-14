@@ -10,7 +10,8 @@ export const ProjectProvider = ({ children }) => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
   const [authToken, setAuthToken] = useState(() => localStorage.getItem("access_token") || null);
-  const [singleProject, setSingleProject] = useState(null);  
+  const [singleProject, setSingleProject] = useState(null);
+  const [activities, setActivities] = useState([]);
 
 //   Fetch Projects list
   const fetchProjects = () => {
@@ -149,9 +150,37 @@ export const ProjectProvider = ({ children }) => {
     });
   }
 
+  //Fetch Activities
+  const fetchActivities = () => {
+    setLoading(true);
+    fetch(`${server_url}/activities`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`, 
+      },
+    })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch activities');
+      }
+      return response.json();
+    })
+    .then((data) => {
+      setActivities(data);
+      toast.success('Activities loaded successfully!');
+      setLoading(false);
+    })
+    .catch((error) => {
+      console.error('Error fetching activities:', error);
+      toast.error('Error fetching activities');
+      setLoading(false);
+    });
+  }
+
 
   return (
-    <ProjectContext.Provider value={{ projects, singleProject, loading, addProject, updateProject, deleteProject, fetchProjects, fetchProject  }}>
+    <ProjectContext.Provider value={{ projects, singleProject, activities, loading, addProject, updateProject, deleteProject, fetchProjects, fetchProject, fetchActivities  }}>
       {children}
     </ProjectContext.Provider>
   );
