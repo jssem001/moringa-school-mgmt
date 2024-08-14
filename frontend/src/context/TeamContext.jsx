@@ -55,7 +55,7 @@ export const TeamContextProvider = ({ children }) => {
         fetchMembers();
     }, [authToken]);
 
-
+    // Add Team
     const addTeam = (formData) => {
         fetch(`${server_url}/teams`, {
             method: "POST",
@@ -79,9 +79,34 @@ export const TeamContextProvider = ({ children }) => {
             });
     };
 
+    
+
+    // Delete Team
+    const deleteTeam = (teamId) => {
+        fetch(`${server_url}/teams/${teamId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${authToken}`
+            },
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to delete team");
+                }
+                toast.success("Team deleted successfully");
+            })
+            .catch((error) => {
+                toast.error(error.message || "Failed to delete team");
+            })
+            .finally(() => {
+                fetchTeams();
+            });
+    };
+
 
     return (
-        <TeamContext.Provider value={{ teams, members, loading, addTeam, fetchTeams, fetchMembers }} >
+        <TeamContext.Provider value={{ teams, members, loading, addTeam, fetchTeams, fetchMembers, deleteTeam }} >
             {children}
         </TeamContext.Provider>
     )

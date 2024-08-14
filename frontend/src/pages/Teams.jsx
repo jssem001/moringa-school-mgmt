@@ -7,7 +7,7 @@ import { ProjectContext } from "../context/ProjectContext";
 
 
 const Teams = () => {
-  const { teams, members, fetchTeams, fetchMembers } = useContext(TeamContext);
+  const { teams, members, fetchTeams, fetchMembers, deleteTeam } = useContext(TeamContext);
   const {allUsers, fetchUsers} = useContext(UserContext);
   const {projects, fetchProjects} = useContext(ProjectContext);
   const [searchTerm, setSearchTerm] = useState("");
@@ -32,6 +32,18 @@ const Teams = () => {
   const getProjectName = (projectId) => {
     const project = projects.find((project) => project.id === projectId);
     return project ? project.name : "Unknown Project";
+  };
+
+  const handleDeleteClick = async (teamId) => {
+    if (window.confirm("Are you sure you want to delete this team?")) {
+      try {
+        await deleteTeam(teamId);
+        // Optionally, refresh the teams list
+        await fetchTeams();
+      } catch (error) {
+        console.error("Error deleting team:", error);
+      }
+    }
   };
 
   // Placeholder for filteredTeams
@@ -86,7 +98,7 @@ const Teams = () => {
                 <h3 className="text-xl font-semibold mb-2">{team.name}</h3>
                 <p className="mb-2 text-gray-700">{getProjectName(team.project_id)}</p>
 
-                <ul className="list-disc pl-5 mb-4">
+                <ul className=" mb-4">
                   {team.members.map((member, index) => (
                     <li key={index} className="mb-1">
                       <strong>Name:</strong> {getUserName(member.user_id)} <strong>Role:</strong> {member.role}
@@ -101,12 +113,12 @@ const Teams = () => {
                   >
                     Edit
                   </Link>
-                  <Link
-                    to={`/delete-team/${team.id}`}
+                  <button
+                    onClick={() => handleDeleteClick(team.id)}
                     className="text-red-500 hover:underline"
                   >
                     Delete
-                  </Link>
+                  </button>
                 </div>
               </div>
             ))}
