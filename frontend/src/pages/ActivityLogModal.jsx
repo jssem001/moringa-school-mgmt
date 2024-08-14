@@ -53,7 +53,8 @@ const ActivityLogModal = ({ onClose }) => {
       (searchTerm ? activity.activity.toLowerCase().includes(searchTerm.toLowerCase()) : true) &&
       applyDateRangeFilter(activity.timestamp)
     );
-  });
+  })
+  .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
   const uniqueUsers = [...new Set(activities.map(activity => activity.user_id))];
 
