@@ -1091,5 +1091,32 @@ def remove_member_from_team(team_id, user_id):
     return jsonify({'message': 'Member removed successfully'}), 204
 
 
+# *********** ACTIVITIES ************
+# Fetching all activities
+@app.route("/activities", methods=["GET"])
+@jwt_required()
+def get_activities():
+    try:
+        # Fetch all activities from the database
+        activities = Activities.query.all()
+
+        # Serialize the activity data
+        activity_list = [
+            {
+                "id": activity.id,
+                "user_id": activity.user_id,
+                "project_id": activity.project_id,
+                "task_id": activity.task_id,
+                "activity": activity.activity,
+                "timestamp": activity.timestamp
+            }
+            for activity in activities
+        ]
+        return jsonify(activity_list), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 if __name__ == '__main__':
     app.run(debug=True) 

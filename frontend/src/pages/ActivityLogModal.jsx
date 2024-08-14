@@ -1,13 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
+import { ProjectContext } from '../context/ProjectContext';
 
 const ActivityLogModal = ({ onClose }) => {
+  const { activities, fetchActivities } = useContext(ProjectContext);
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState({
-    project: '',
+    // project: '',
     user: '',
     dateRange: '',
     actionType: ''
   });
+
+  useEffect(()=> {
+    fetchActivities();
+  }, [])
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
@@ -18,6 +24,18 @@ const ActivityLogModal = ({ onClose }) => {
     setFilter({ ...filter, [e.target.name]: e.target.value });
     // Implement the filter logic here
   };
+
+  const filteredActivities = activities.filter(activity => {
+    // Implement filtering logic based on searchTerm and filter state
+    return (
+      
+      (filter.user ? activity.user_id.includes(filter.user) : true) &&
+      (filter.actionType ? activity.activity.includes(filter.actionType) : true) &&
+      (searchTerm ? activity.activity.includes(searchTerm) : true)
+    );
+  });
+
+  const uniqueUsers = [...new Set(activities.map(activity => activity.user_id))];
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -41,7 +59,7 @@ const ActivityLogModal = ({ onClose }) => {
         </div>
 
         <div className="mb-4 grid grid-cols-2 gap-4">
-          <select
+          {/* <select
             name="project"
             value={filter.project}
             onChange={handleFilterChange}
@@ -49,9 +67,9 @@ const ActivityLogModal = ({ onClose }) => {
           >
             <option value="">Filter by project</option>
             {/* Populate with projects */}
-            <option value="Project 1">Project 1</option>
+            {/* <option value="Project 1">Project 1</option>
             <option value="Project 2">Project 2</option>
-          </select>
+          </select> */} 
 
           <select
             name="user"
@@ -60,9 +78,9 @@ const ActivityLogModal = ({ onClose }) => {
             className="p-2 border border-gray-300 rounded"
           >
             <option value="">Filter by user</option>
-            {/* Populate with users */}
-            <option value="User 1">User 1</option>
-            <option value="User 2">User 2</option>
+            {uniqueUsers.map((user, index) => (
+              <option key={index} value={user}>{user}</option>
+            ))}
           </select>
 
           <select
@@ -91,14 +109,11 @@ const ActivityLogModal = ({ onClose }) => {
 
         <div className="overflow-y-auto max-h-64">
           <ul className="space-y-2">
-            {/* Replace with actual activity log data */}
-            <li className="p-2 border-b">
-              <strong>Project 1:</strong> Task "Setup Project" was created by User 1 on 2024-08-10
-            </li>
-            <li className="p-2 border-b">
-              <strong>Project 2:</strong> Task "Design Homepage" was updated by User 2 on 2024-08-11
-            </li>
-            {/* More activity log items */}
+            {filteredActivities.map((activity, index) => (
+              <li key={index} className="p-2 border-b">
+                <strong>{activity.userName}:</strong> {activity.description} on {new Date(activity.timestamp).toLocaleString()}
+              </li>
+            ))}
           </ul>
         </div>
       </div>
