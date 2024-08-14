@@ -311,16 +311,18 @@ def send_email(to, subject, template,):
 @app.route('/project', methods=['POST'])
 @jwt_required()
 def create_event():
-    current_user_id = get_jwt_identity()  # Get the instructor's ID
+    current_user_id = get_jwt_identity()
+
     current_user = User.query.get(current_user_id)
 
-    if current_user and current_user.is_instructor:
+    if current_user:
         # Access form data
         name = request.form['name']
         description = request.form['description']
         deadline = request.form['deadline']
-        student_id = request.form['student_id']  # Get the student's ID from the form
+        user_id = current_user_id
 
+    
         # Handle file upload
         file_attachments = None
         if 'file_attachments' in request.files:
@@ -333,24 +335,26 @@ def create_event():
             description=description,
             deadline=deadline,
             file_attachments=file_attachments.filename if file_attachments else None,
-            user_id=student_id  # Assign the project to the student
+            user_id=user_id
         )
 
-        try:
-            deadline = datetime.strptime(deadline, '%Y-%m-%d').date()  # Convert to date object
-            if deadline < datetime.now().date():
-                return jsonify({'error': 'Deadline cannot be in the past.'}), 400
-        except ValueError:
-            return jsonify({'error': 'Invalid date format. Please use YYYY-MM-DD.'}), 400
+        
+
+
+        # try:
+        #   deadline = datetime.strptime(deadline, '%Y-%m-%d').date()  # Convert to date object
+
+        #   if deadline < datetime.now().date():
+        #     return jsonify({'error': 'Deadline cannot be in the past.'}), 400
+          
+        # except ValueError:
+        #   return jsonify({'error': 'Invalid date format. Please use YYYY-MM-DD.'}), 400
 
         db.session.add(new_event)
 
-        activity = Activities(
-            user_id=current_user_id,
-            project_id=new_event.id,
-            activity=f"Instructor {current_user.name} assigned a new project"
-        )
+        activity = Activities(user_id=current_user_id, project_id=new_event.id, activity="Added a new project")
         db.session.add(activity)
+    
         db.session.commit()
 
         # Send email notification on project creation
@@ -366,6 +370,69 @@ def create_event():
         return jsonify({"success": "Project created successfully"}), 201
     
     return jsonify({"error": "User not found"}), 404
+
+
+
+
+
+# @app.route('/project', methods=['POST'])
+# @jwt_required()
+# def create_event():
+#     current_user_id = get_jwt_identity()  # Get the instructor's ID
+#     current_user = User.query.get(current_user_id)
+
+#     if current_user and current_user.is_instructor:
+#         # Access form data
+#         name = request.form['name']
+#         description = request.form['description']
+#         deadline = request.form['deadline']
+#         student_id = request.form['student_id']  # Get the student's ID from the form
+
+#         # Handle file upload
+#         file_attachments = None
+#         if 'file_attachments' in request.files:
+#             file_attachments = request.files['file_attachments']
+#             # Save the file or handle it as needed
+#             # file_attachments.save(os.path.join(UPLOAD_FOLDER, file_attachments.filename))
+
+#         new_event = Project(
+#             name=name,
+#             description=description,
+#             deadline=deadline,
+#             file_attachments=file_attachments.filename if file_attachments else None,
+#             user_id=student_id  # Assign the project to the student
+#         )
+
+#         try:
+#             deadline = datetime.strptime(deadline, '%Y-%m-%d').date()  # Convert to date object
+#             if deadline < datetime.now().date():
+#                 return jsonify({'error': 'Deadline cannot be in the past.'}), 400
+#         except ValueError:
+#             return jsonify({'error': 'Invalid date format. Please use YYYY-MM-DD.'}), 400
+
+#         db.session.add(new_event)
+
+#         activity = Activities(
+#             user_id=current_user_id,
+#             project_id=new_event.id,
+#             activity=f"Instructor {current_user.name} assigned a new project"
+#         )
+#         db.session.add(activity)
+#         db.session.commit()
+
+#         # Send email notification on project creation
+#         user = User.query.get(user_id)
+#         if user and user.email:
+#             send_email(
+#                 user.email,
+#                 'New Project Created',
+#                 f"<p>Hello {user.name},</p><p>You created a new project: {name}.</p><p>Thank you,</p><p>Moringa School Management</p>"
+#             )
+
+
+#         return jsonify({"success": "Project created successfully"}), 201
+    
+#     return jsonify({"error": "User not found"}), 404
 
 
 
@@ -1139,6 +1206,33 @@ def remove_member_from_team(team_id, user_id):
     db.session.delete(member)
     db.session.commit()
     return jsonify({'message': 'Member removed successfully'}), 204
+
+
+# *********** ACTIVITIES ************
+# Fetching all activities
+@app.route("/activities", methods=["GET"])
+@jwt_required()
+def get_activities():
+    try:
+        # Fetch all activities from the database
+        activities = Activities.query.all()
+
+        # Serialize the activity data
+        activity_list = [
+            {
+                "id": activity.id,
+                "user_id": activity.user_id,
+                "project_id": activity.project_id,
+                "task_id": activity.task_id,
+                "activity": activity.activity,
+                "timestamp": activity.timestamp
+            }
+            for activity in activities
+        ]
+        return jsonify(activity_list), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == '__main__':
