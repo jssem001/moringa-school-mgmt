@@ -343,3 +343,4 @@ class TeamMember(db.Model, SerializerMixin):
             #'email': self.user.email  # Include email from the User model
         }
 
+# small change
