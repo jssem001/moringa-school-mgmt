@@ -1108,6 +1108,11 @@ def delete_comment(id):
 #     db.session.commit()
 #     return jsonify(new_team.serialize()), 201
 
+@app.route('/teams', methods=['GET'])
+def get_teams():
+    teams = Team.query.all()
+    return jsonify([team.serialize() for team in teams]), 200
+
 @app.route('/teams', methods=['POST'])
 def create_team():
     data = request.get_json()

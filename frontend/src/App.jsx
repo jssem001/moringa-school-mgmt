@@ -23,7 +23,8 @@ import UpdateProfile from "./pages/UpdateProfile";
 import Teams from "./pages/Teams";
 import Calendar from "./pages/Calendar";
 import AddTeam from "./pages/AddTeam";
-import ActivityLogModal from "./pages/ActivityLogModal"; // Updated import path
+import ActivityLogModal from "./pages/ActivityLogModal";
+import { TeamContextProvider } from "./context/TeamContext"; 
 import { UserProvider } from "./context/UserContext";
 import { ProjectProvider } from "./context/ProjectContext";
 import { TaskProvider } from "./context/TaskContext";
@@ -33,6 +34,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
+    <TeamContextProvider>
     <ProjectProvider>
       <TemplateProvider>
       <TaskProvider>
@@ -70,6 +72,7 @@ function App() {
       </TaskProvider>
       </TemplateProvider>
     </ProjectProvider>
+    </TeamContextProvider>
   );
 }
 

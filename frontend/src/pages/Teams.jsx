@@ -1,49 +1,45 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
-import { server_url } from "../../config"; // Adjust path if needed
 import Sidebar from "../components/Sidebar"; // Ensure the path to Sidebar is correct
+import { TeamContext } from "../context/TeamContext";
+import { UserContext } from "../context/UserContext";
+import { ProjectContext } from "../context/ProjectContext";
 
-const statusColors = {
-  completed: "bg-green-500",
-  inProgress: "bg-orange-500",
-  stuck: "bg-red-300",
-  planning: "bg-gray-400"
-};
 
 const Teams = () => {
-  const [teams, setTeams] = useState([]);
+  const { teams, members, fetchTeams, fetchMembers } = useContext(TeamContext);
+  const {allUsers, fetchUsers} = useContext(UserContext);
+  const {projects, fetchProjects} = useContext(ProjectContext);
   const [searchTerm, setSearchTerm] = useState("");
-  const auth_token = localStorage.getItem("auth_token"); // Assuming auth_token is stored in localStorage
 
-  // Fetch teams on component mount
+  
   useEffect(() => {
-    const fetchTeams = async () => {
-      try {
-        const response = await fetch(`${server_url}/teams`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${auth_token}`
-          }
-        });
-        if (!response.ok) throw new Error("Failed to fetch teams");
-        const data = await response.json();
-        setTeams(data);
-      } catch (error) {
-        toast.error(error.message || "Failed to fetch teams");
-      }
+    const initializeData = async () => {
+      await fetchTeams();
+      await fetchMembers();
+      await fetchUsers();
+      await fetchProjects();
     };
+    initializeData();
+  }, []);
 
-    fetchTeams();
-  }, [auth_token]);
+  // Helper functions to get user name and project name by ID
+  const getUserName = (userId) => {
+    const user = allUsers.find((user) => user.id === userId);
+    return user ? user.name : "Unknown User";
+  };
 
-  // Filter teams based on the search term
+  const getProjectName = (projectId) => {
+    const project = projects.find((project) => project.id === projectId);
+    return project ? project.name : "Unknown Project";
+  };
+
+  // Placeholder for filteredTeams
   const filteredTeams = teams.filter((team) =>
-    team.project.toLowerCase().includes(searchTerm.toLowerCase())
+    team.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Determine card color based on project status
-  const getCardColor = (status) => statusColors[status] || "bg-gray-200";
+  
 
   return (
     <div className="flex">
@@ -85,24 +81,19 @@ const Teams = () => {
             {filteredTeams.map((team) => (
               <div
                 key={team.id}
-                className={`p-4 border rounded shadow-md flex flex-col ${getCardColor(team.status)}`}
+                className="p-4 border rounded shadow-md flex flex-col bg-gray-200"
               >
-                {/* Team Details */}
-                <h3 className="text-xl font-semibold mb-2">{team.project}</h3>
-                <p className="mb-2 text-gray-700">
-                  Status: {team.status.charAt(0).toUpperCase() + team.status.slice(1)}
-                </p>
+                <h3 className="text-xl font-semibold mb-2">{team.name}</h3>
+                <p className="mb-2 text-gray-700">{getProjectName(team.project_id)}</p>
 
-                {/* Team Member List */}
                 <ul className="list-disc pl-5 mb-4">
                   {team.members.map((member, index) => (
                     <li key={index} className="mb-1">
-                      <strong>Email:</strong> {member.email} - <strong>Role:</strong> {member.role}
+                      <strong>Name:</strong> {getUserName(member.user_id)} <strong>Role:</strong> {member.role}
                     </li>
                   ))}
                 </ul>
 
-                {/* Action Links */}
                 <div className="mt-2 flex space-x-2">
                   <Link
                     to={`/edit-team/${team.id}`}
@@ -111,10 +102,10 @@ const Teams = () => {
                     Edit
                   </Link>
                   <Link
-                    to={`/teams/${team.id}`}
-                    className="text-blue-500 hover:underline"
+                    to={`/delete-team/${team.id}`}
+                    className="text-red-500 hover:underline"
                   >
-                    View Details
+                    Delete
                   </Link>
                 </div>
               </div>
