@@ -1127,7 +1127,7 @@ def create_team():
                 team_id=new_team.id,
                 user_id=member['user_id'],
                 role=member['role'],
-                progress=member['progress']
+                # progress=member['progress']
             )
             db.session.add(new_member)
 

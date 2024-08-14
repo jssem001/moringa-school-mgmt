@@ -9,8 +9,8 @@ export const TeamContextProvider = ({ children }) => {
     const [members, setMembers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [authToken, setAuthToken] = useState(() => localStorage.getItem("access_token") || null);
-    const [singleTeam, setSingleTeam] = useState(null);
 
+    // Fetch Teams
     const fetchTeams = async () => {
         setLoading(true);
         fetch(`${server_url}/teams`, {
@@ -30,6 +30,7 @@ export const TeamContextProvider = ({ children }) => {
             .finally(() => {setLoading(false)});
         };
     
+    //Fetch Memebers 
     const fetchMembers = async () => {
         setLoading(true);
         fetch(`${server_url}/teams/<int:team_id>/members`, {
@@ -49,17 +50,38 @@ export const TeamContextProvider = ({ children }) => {
             .finally(() => {setLoading(false)});
     }    
 
-
-
-
     useEffect(() => {
         fetchTeams();
         fetchMembers();
     }, [authToken]);
 
 
+    const addTeam = (formData) => {
+        fetch(`${server_url}/teams`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${authToken}`
+            },
+            body: JSON.stringify(formData)
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to add team");
+                }
+                toast.success("Team added successfully");
+            })
+            .catch((error) => {
+                toast.error(error.message || "Failed to add team");
+            })
+            .finally(() => {
+                fetchTeams();
+            });
+    };
+
+
     return (
-        <TeamContext.Provider value={{ teams, members, loading, fetchTeams, fetchMembers }} >
+        <TeamContext.Provider value={{ teams, members, loading, addTeam, fetchTeams, fetchMembers }} >
             {children}
         </TeamContext.Provider>
     )
