@@ -1,11 +1,12 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { ProjectContext } from '../context/ProjectContext';
+import { UserContext } from '../context/UserContext';
 
 const ActivityLogModal = ({ onClose }) => {
   const { activities, fetchActivities } = useContext(ProjectContext);
+  const {allUsers} = useContext(UserContext);
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState({
-    // project: '',
     user: '',
     dateRange: '',
     actionType: ''
@@ -25,13 +26,30 @@ const ActivityLogModal = ({ onClose }) => {
     // Implement the filter logic here
   };
 
+  const applyDateRangeFilter = (activityDate) => {
+    if (!filter.dateRange) return true;
+    const date = new Date(activityDate);
+    const now = new Date();
+    if (filter.dateRange === 'Last 24 hours') {
+      return date >= new Date(now.setDate(now.getDate() - 1));
+    }
+    if (filter.dateRange === 'Last 7 days') {
+      return date >= new Date(now.setDate(now.getDate() - 7));
+    }
+    if (filter.dateRange === 'Last 30 days') {
+      return date >= new Date(now.setDate(now.getDate() - 30));
+    }
+    return true;
+  };
+
   const filteredActivities = activities.filter(activity => {
     // Implement filtering logic based on searchTerm and filter state
     return (
       
       (filter.user ? activity.user_id.includes(filter.user) : true) &&
       (filter.actionType ? activity.activity.includes(filter.actionType) : true) &&
-      (searchTerm ? activity.activity.includes(searchTerm) : true)
+      (searchTerm ? activity.activity.includes(searchTerm) : true) &&
+      applyDateRangeFilter(activity.timestamp)
     );
   });
 
@@ -59,18 +77,6 @@ const ActivityLogModal = ({ onClose }) => {
         </div>
 
         <div className="mb-4 grid grid-cols-2 gap-4">
-          {/* <select
-            name="project"
-            value={filter.project}
-            onChange={handleFilterChange}
-            className="p-2 border border-gray-300 rounded"
-          >
-            <option value="">Filter by project</option>
-            {/* Populate with projects */}
-            {/* <option value="Project 1">Project 1</option>
-            <option value="Project 2">Project 2</option>
-          </select> */} 
-
           <select
             name="user"
             value={filter.user}
@@ -79,7 +85,9 @@ const ActivityLogModal = ({ onClose }) => {
           >
             <option value="">Filter by user</option>
             {uniqueUsers.map((user, index) => (
-              <option key={index} value={user}>{user}</option>
+              <option key={index} value={user}>
+                {allUsers.find(u => u.id === user)?.name || user}
+              </option>
             ))}
           </select>
 
@@ -90,6 +98,7 @@ const ActivityLogModal = ({ onClose }) => {
             className="p-2 border border-gray-300 rounded"
           >
             <option value="">Filter by date range</option>
+            <option value="Last 24 hours">Last 24 hours</option>
             <option value="Last 7 days">Last 7 days</option>
             <option value="Last 30 days">Last 30 days</option>
           </select>
@@ -107,11 +116,21 @@ const ActivityLogModal = ({ onClose }) => {
           </select>
         </div>
 
+        {/* <div className="overflow-y-auto max-h-64">
+          <ul className="space-y-2">
+            {filteredActivities.map((activity, index) => (
+              <li key={index} className="p-2 border-b">
+                <strong>{activity.user_id}:</strong> {activity.activity} on {new Date(activity.timestamp).toLocaleString()}
+              </li>
+            ))}
+          </ul>
+        </div> */}
         <div className="overflow-y-auto max-h-64">
           <ul className="space-y-2">
             {filteredActivities.map((activity, index) => (
               <li key={index} className="p-2 border-b">
-                <strong>{activity.userName}:</strong> {activity.description} on {new Date(activity.timestamp).toLocaleString()}
+                <strong>{allUsers.find(u => u.id === activity.user_id)?.name || activity.user_id}:</strong> 
+                {activity.activity} on {new Date(activity.timestamp).toLocaleString()}
               </li>
             ))}
           </ul>
