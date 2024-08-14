@@ -238,23 +238,7 @@ class User(db.Model, SerializerMixin):
     def validate_email(self, key, email):
         assert '@' in email, 'Invalid email address'
         return email
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(200), nullable=False)
-    is_student = db.Column(db.Boolean, default=False)
-    is_instructor = db.Column(db.Boolean, default=False) 
-    is_admin = db.Column(db.Boolean, default=False)
-
-    tasks = db.relationship('Task', back_populates='user', lazy=True)
-    templates = db.relationship('Template', back_populates='user', lazy=True)
-    projects = db.relationship('Project', back_populates='user', lazy=True)
-    comments = db.relationship('Comment', back_populates='user', lazy=True)
-
-    @validates('email')
-    def validate_email(self, key, email):
-        assert '@' in email, 'Invalid email address'
-        return email
+   
 
   
 class Project(db.Model, SerializerMixin):  
@@ -322,13 +306,13 @@ class Activities(db.Model):
 # New Team Model
 class Team(db.Model, SerializerMixin):
     __tablename__ = 'team'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
     name = db.Column(db.String(100), nullable=False)
 
     # Relationships
     project = db.relationship('Project', back_populates='teams')
-    members = db.relationship('TeamMember', back_populates='team', lazy=True)
+    members = db.relationship('TeamMember', back_populates='team', cascade='all, delete-orphan')
 
     def serialize(self):
         return {
@@ -356,6 +340,6 @@ class TeamMember(db.Model, SerializerMixin):
             'user_id': self.user_id,
             'role': self.role,
             'progress': self.progress,
-            'email': self.user.email  # Include email from the User model
+            #'email': self.user.email  # Include email from the User model
         }
 
