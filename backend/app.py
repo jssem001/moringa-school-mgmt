@@ -100,8 +100,8 @@ def login_user():
 # RESETTING PASSWORD WHEN USER FORGETS
 app.config['MAIL_SERVER'] = 'sandbox.smtp.mailtrap.io'  # Replace with your mail server
 app.config['MAIL_PORT'] = 2525 # Replace with your mail server port
-app.config['MAIL_USERNAME'] = "83cd77f3e10577"  # Replace with your email address
-app.config['MAIL_PASSWORD'] = '605ba9440905c8'  # Replace with your email password
+app.config['MAIL_USERNAME'] = "47944be92d11e6"  # Replace with your email address
+app.config['MAIL_PASSWORD'] = '77eaae86c8e97e'  # Replace with your email password
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 
@@ -300,6 +300,12 @@ def get_user_by_name():
 
 
 #CRUD FOR PROJECTS
+def send_email(to, subject, template,):
+    msg_1 = Message(subject,
+                  recipients=[to],
+                  html=template,
+                  sender=app.config['MAIL_USERNAME'])
+    mail.send(msg_1)
 
 #1. ADDING A PROJECT
 @app.route('/project', methods=['POST'])
@@ -350,6 +356,17 @@ def create_event():
         db.session.add(activity)
     
         db.session.commit()
+
+        # Send email notification on project creation
+        user = User.query.get(user_id)
+        if user and user.email:
+            send_email(
+                user.email,
+                'New Project Created',
+                f"<p>Hello {user.name},</p><p>You created a new project: {name}.</p><p>Thank you,</p><p>Moringa School Management</p>"
+            )
+
+
         return jsonify({"success": "Project created successfully"}), 201
     
     return jsonify({"error": "User not found"}), 404
@@ -391,18 +408,18 @@ def get_projects():
         })
 
         # THE USER SHOULD GET AN ALERT ONCE THE DATE FOR THE DEADLINE REACHES
-    # for project in project_data:
-    # deadline = datetime.strptime(project['deadline'], '%Y-%m-%d').date()
-    # #     # deadline = project['deadline']
-    # if deadline <= datetime.now().date():
-    #     # Send an alert (e.g., via email, notification, etc.)
-    #     user = User.query.get(current_user_id)
-    #     if user and user.email:
-    #         send_email(
-    #                 to=user.email,
-    #                 subject="Deadline reached for project",
-    #                 template=f"Alert: Deadline reached for project '{project['name']}'"
-    #             )
+    for project in project_data:
+        deadline = datetime.strptime(project['deadline'], '%Y-%m-%d').date()
+
+        if deadline <= datetime.now().date():
+        # Send an alert (e.g., via email, notification, etc.)
+            user = User.query.get(current_user_id)
+            if user and user.email:
+                send_email(
+                    to=user.email,
+                    subject="Deadline reached for project",
+                    template=f"Alert: Deadline reached for project '{project['name']}'"
+                )
         #print(f"Alert: Deadline reached for project '{project['name']}'")
         # You can also use a library like `smtplib` for email or `plyer` for notifications
         # to send a more sophisticated alert
@@ -1072,6 +1089,33 @@ def remove_member_from_team(team_id, user_id):
     db.session.delete(member)
     db.session.commit()
     return jsonify({'message': 'Member removed successfully'}), 204
+
+
+# *********** ACTIVITIES ************
+# Fetching all activities
+@app.route("/activities", methods=["GET"])
+@jwt_required()
+def get_activities():
+    try:
+        # Fetch all activities from the database
+        activities = Activities.query.all()
+
+        # Serialize the activity data
+        activity_list = [
+            {
+                "id": activity.id,
+                "user_id": activity.user_id,
+                "project_id": activity.project_id,
+                "task_id": activity.task_id,
+                "activity": activity.activity,
+                "timestamp": activity.timestamp
+            }
+            for activity in activities
+        ]
+        return jsonify(activity_list), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == '__main__':
