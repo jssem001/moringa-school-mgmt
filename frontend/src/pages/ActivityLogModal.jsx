@@ -19,12 +19,12 @@ const ActivityLogModal = ({ onClose }) => {
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
-    // Implement the search logic here
+    
   };
 
   const handleFilterChange = (e) => {
     setFilter({ ...filter, [e.target.name]: e.target.value });
-    // Implement the filter logic here
+    
   };
 
   const applyDateRangeFilter = (activityDate) => {
@@ -43,20 +43,12 @@ const ActivityLogModal = ({ onClose }) => {
     return true;
   };
 
-  // const filteredActivities = activities.filter(activity => {
-  //   return (
-  //     (filter.user ? activity.user_id === filter.user : true) &&
-  //     (filter.actionType ? activity.activity.includes(filter.actionType) : true) &&
-  //     (searchTerm ? activity.activity.includes(searchTerm) : true) &&
-  //     applyDateRangeFilter(activity.timestamp)
-  //   );
-  // });
 
   const filteredActivities = activities.filter(activity => {
-    const userId = filter.user; // Ensure userId is a string or number that matches activity.user_id
+    const userId = filter.user;
   
     return (
-      (userId ? String(activity.user_id) === String(userId) : true) && // Convert both to string for comparison
+      (userId ? String(activity.user_id) === String(userId) : true) && 
       (filter.actionType ? activity.activity.includes(filter.actionType) : true) &&
       (searchTerm ? activity.activity.toLowerCase().includes(searchTerm.toLowerCase()) : true) &&
       applyDateRangeFilter(activity.timestamp)
