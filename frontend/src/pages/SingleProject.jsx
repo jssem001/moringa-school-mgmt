@@ -36,22 +36,19 @@ const SingleProject = () => {
             </div>
             <div className="mb-6">
               <h2 className="text-xl font-semibold">Attached Files</h2>
+              <p className="text-gray-700">{singleProject.file_attachment}</p>
               {files.length > 0 ? (
                 <ul className="list-disc pl-5">
                   {files.map((file, index) => (
-                    <li key={index} className="mb-2">
-                      <a
-                        href={`/uploads/${file}`}
-                        download
-                        className="text-blue-600 hover:underline"
-                      >
+                    <li key={index} className="text-gray-700">
+                      <a href={file} target="_blank" rel="noopener noreferrer">
                         {file}
                       </a>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p className="text-gray-500">No files attached.</p>
+                <p className="text-gray-700">No files attached</p>
               )}
             </div>
             <Link
