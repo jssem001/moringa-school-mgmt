@@ -50,10 +50,10 @@ const AnalyticsPage = () => {
             <div class="p-4 rounded-lg">
                 <h1 class="text-3xl mb-4 font-semibold text-center">Reports & Analytics</h1>
                 
-                <div class="grid grid-cols-2 gap-4 mb-4 border">
-                    <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
+                <div class="grid grid-cols-1 gap-4 mb-4 border">
+                    <div class="flex items-center justify-center h-24 rounded bg-sky-950 ">
                         <select
-                            className="text-xl text-white bg-gray-400"
+                            className="text-xl text-white bg-sky-950 font-semibold"
                             value={selectedProjectId}
                             onChange={(e) => setSelectedProjectId(e.target.value)}
                         >
@@ -67,11 +67,11 @@ const AnalyticsPage = () => {
                             ))}
                         </select>
                     </div>
-                    <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
+                    {/* <div class="flex items-center justify-center h-24 rounded bg-gray-400 ">
                         <p class="text-2xl text-white ">
                         Search
                         </p>
-                    </div>
+                    </div> */}
                     
                 </div>
                 <div class="grid grid-cols-4 gap-4 mb-4 border">
@@ -111,7 +111,7 @@ const AnalyticsPage = () => {
                         <div class="mt-10  py-3"><UserBarChart /></div>           
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-4 mb-4">
+                {/* <div class="grid grid-cols-2 gap-4 mb-4">
                     <div class="flex items-center justify-center rounded bg-gray-400 h-28 ">
                         <p class="text-2xl text-white ">
                         Deadlines
@@ -132,7 +132,7 @@ const AnalyticsPage = () => {
                         +
                         </p>
                     </div>
-                </div>
+                </div> */}
                 
                 <div class="grid grid-cols-2 gap-4">
                     {/* Add more widgets if needed */}
