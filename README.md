@@ -38,7 +38,7 @@ Then run `pipenv shell` to start up the virtual environment, and then run the `a
 
 
 ## LIVE SERVER
-You can view the app live at [Moringa Project Management System](https://facebook.github.io/create-react-app/docs/deployment).
+You can view the app live at [Moringa Project Management System](https://66bdd80c0f4773ae207ec798--famous-pavlova-721275.netlify.app/)
 
 
 ## LICENCE
