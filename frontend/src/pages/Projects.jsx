@@ -5,9 +5,9 @@ import { ProjectContext } from '../context/ProjectContext';
 import ActivityLogModal from './ActivityLogModal';
 
 const Projects = () => {
-  const { projects, loading, fetchProjects } = useContext(ProjectContext);
+  const { projects, loading, fetchProjects, error } = useContext(ProjectContext);
   const [searchTerm, setSearchTerm] = useState('');
-  const [showActivityLog, setShowActivityLog] = useState(false); // State to manage the modal visibility
+  const [showActivityLog, setShowActivityLog] = useState(false);
 
   useEffect(() => {
     fetchProjects();
@@ -42,7 +42,7 @@ const Projects = () => {
           </section>
           <button
             onClick={handleOpenActivityLog}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="px-4 py-2 bg-blue-500 font-semibold text-white rounded hover:bg-blue-400"
           >
             Activity Log
           </button>
@@ -51,13 +51,13 @@ const Projects = () => {
         <section className="mb-4 flex space-x-4">
           <Link
             to="/add-project"
-            className="inline-block px-4 py-2 bg-orange-300 text-white rounded hover:bg-orange-400"
+            className="inline-block px-4 py-2 bg-orange-200  font-semibold text-black rounded hover:bg-orange-400 hover:text-white"
           >
             Add New Project
           </Link>
           <Link
             to="/templates"
-            className="inline-block px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+            className="inline-block px-4 py-2 bg-purple-300 font-semibold text-black rounded hover:text-white hover:bg-purple-400"
           >
             Templates
           </Link>
@@ -68,6 +68,8 @@ const Projects = () => {
 
           {loading ? (
             <p>Loading projects...</p>
+          ) : error ? (
+            <p className="text-red-500">Failed to load projects: {error.message}</p>
           ) : filteredProjects.length === 0 ? (
             <p>No projects yet. Add your first project above...</p>
           ) : (
@@ -100,14 +102,16 @@ const Projects = () => {
                     )}
 
                     <div className="mt-2 flex space-x-2">
-                      <a
-                        href={project.githubLink}
-                        className="text-blue-500 hover:underline"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        View on GitHub
-                      </a>
+                      {project.githubLink && (
+                        <a
+                          href={project.githubLink}
+                          className="text-blue-500 hover:underline"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          View on GitHub
+                        </a>
+                      )}
                       <Link to={`/edit-project/${project.id}`} className="text-yellow-500 hover:underline">
                         Edit
                       </Link>

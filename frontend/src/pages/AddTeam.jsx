@@ -1,73 +1,74 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { server_url } from "../../config"; // Adjust path if needed
-import Sidebar from "../components/Sidebar"; // Ensure the path to Sidebar is correct
-
-const statusColors = {
-  completed: "bg-green-500",
-  inProgress: "bg-orange-500",
-  stuck: "bg-red-300",
-  planning: "bg-gray-400"
-};
+import { TeamContext } from "../context/TeamContext";
+import { ProjectContext } from "../context/ProjectContext";
+import { UserContext } from "../context/UserContext";
+import Sidebar from "../components/Sidebar";
 
 const AddTeam = () => {
-  const [projects, setProjects] = useState([]);
+  const { addTeam } = useContext(TeamContext);
+  const { projects, fetchProjects } = useContext(ProjectContext);
+  const { allUsers, fetchUsers } = useContext(UserContext);
   const [teamName, setTeamName] = useState("");
   const [selectedProject, setSelectedProject] = useState("");
   const [numMembers, setNumMembers] = useState(1);
-  const [members, setMembers] = useState([{ email: "", role: "", progress: 0 }]);
-  const [status, setStatus] = useState("planning");
+  const [members, setMembers] = useState([{ name: "", role: "" }]);
   const navigate = useNavigate();
-  const auth_token = localStorage.getItem("auth_token"); // Assuming auth_token is stored in localStorage
+  // const auth_token = localStorage.getItem("auth_token"); // Assuming auth_token is stored in localStorage
 
-  // Fetch projects on component mount
+  // Placeholder for fetching projects
   useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const response = await fetch(`${server_url}/projects`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${auth_token}`
-          }
-        });
-        if (!response.ok) throw new Error("Failed to fetch projects");
-        const data = await response.json();
-        setProjects(data);
-      } catch (error) {
-        toast.error(error.message || "Failed to fetch projects");
-      }
-    };
-
     fetchProjects();
-  }, [auth_token]);
+    fetchUsers();
+  }, []);
 
-  // Handle form submission
+  // Placeholder for form submission
+  // const handleSubmit = async (event) => {
+  //   event.preventDefault();
+
+  //   const formData = {
+  //     name: teamName,
+  //     project: selectedProject,
+  //     members,
+  //   };
+
+  //   try {
+  //     await addTeam(formData);
+  //     navigate("/teams"); // Redirect to teams page
+  //   } catch (error) {
+  //     toast.error(error.message || "Failed to add team");
+  //   }
+  // };
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Automatically set project status to 'completed' if all members have 100% progress
-    const allMembersComplete = members.every(member => member.progress === 100);
-    const updatedStatus = allMembersComplete ? "completed" : status;
+    const project_id = selectedProject
+    // const project = projects.find((p) => p.name === selectedProject);
+    // const project_id = project ? project.id : null;
 
-    const teamData = {
+    const membersWithIds = members.map((member) => {
+      const user = allUsers.find((u) => u.name === member.name);
+      return {
+        user_id: user ? user.id : null,
+        role: member.role,
+      };
+    });
+    // const membersWithIds = members.map((member) => {
+    //   const user = users.find((u) => u.name === member.name);
+    //   return {
+    //     user_id: user ? user.id : null,
+    //     role: member.role,
+    //   };
+    // });
+
+    const formData = {
       name: teamName,
-      project: selectedProject,
-      members,
-      status: updatedStatus
+      project_id: project_id,
+      members: membersWithIds,
     };
 
     try {
-      const response = await fetch(`${server_url}/teams`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${auth_token}`
-        },
-        body: JSON.stringify(teamData)
-      });
-      if (!response.ok) throw new Error("Failed to add team");
-      toast.success("Team added successfully!");
+      await addTeam(formData);
       navigate("/teams"); // Redirect to teams page
     } catch (error) {
       toast.error(error.message || "Failed to add team");
@@ -77,9 +78,8 @@ const AddTeam = () => {
   // Handle member fields based on number of members
   useEffect(() => {
     const newMembers = Array.from({ length: numMembers }, (_, index) => ({
-      email: members[index]?.email || "",
+      name: members[index]?.name || "",
       role: members[index]?.role || "",
-      progress: members[index]?.progress || 0
     }));
     setMembers(newMembers);
   }, [numMembers]);
@@ -115,7 +115,7 @@ const AddTeam = () => {
               className="w-full p-2 border border-gray-300 rounded"
               required
             >
-              <option value="">Select a project</option>
+              <option value="">Select A Project</option>
               {projects.map((project) => (
                 <option key={project.id} value={project.id}>
                   {project.name}
@@ -144,14 +144,14 @@ const AddTeam = () => {
               <div key={index} className="space-y-2">
                 <h3 className="text-lg font-semibold">Member {index + 1}</h3>
                 <div>
-                  <label htmlFor={`email${index}`} className="block text-sm font-medium mb-1">Email</label>
+                  <label htmlFor={`name${index}`} className="block text-sm font-medium mb-1">Name</label>
                   <input
-                    type="email"
-                    id={`email${index}`}
-                    value={member.email}
+                    type="text"
+                    id={`name${index}`}
+                    value={member.name}
                     onChange={(e) => {
                       const newMembers = [...members];
-                      newMembers[index].email = e.target.value;
+                      newMembers[index].name = e.target.value;
                       setMembers(newMembers);
                     }}
                     className="w-full p-2 border border-gray-300 rounded"
@@ -173,28 +173,10 @@ const AddTeam = () => {
                     required
                   />
                 </div>
-                <div>
-                  <label htmlFor={`progress${index}`} className="block text-sm font-medium mb-1">Progress (%)</label>
-                  <input
-                    type="number"
-                    id={`progress${index}`}
-                    value={member.progress}
-                    onChange={(e) => {
-                      const newMembers = [...members];
-                      newMembers[index].progress = Number(e.target.value);
-                      setMembers(newMembers);
-                    }}
-                    className="w-full p-2 border border-gray-300 rounded"
-                    min="0"
-                    max="100"
-                    required
-                  />
-                </div>
               </div>
             ))}
           </div>
 
-          
           {/* Submit Button */}
           <button
             type="submit"

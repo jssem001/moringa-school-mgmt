@@ -24,12 +24,16 @@ const AdminProfile = () => {
                         <li><span className="font-semibold">Role:</span> {role} </li>
                     </ul>
                     <div className="grid grid-cols-3 gap-4 mb-4 border">
+                        <Link to="/projects">
                         <div className="flex items-center justify-center h-24 rounded bg-gray-700 ">
-                            <Link to="/projects"><p className="text-2xl text-white">Projects</p></Link>
+                            <p className="text-2xl text-white">Projects</p>
                         </div>
+                        </Link>
+                        <Link to ="/student-info">
                         <div className="flex items-center justify-center h-24 rounded bg-gray-700 ">
                             <p className="text-2xl text-white">Student Information</p>
                         </div>
+                        </Link>
                         <div className="flex items-center justify-center h-24 rounded bg-gray-700 ">
                             <p className="text-2xl text-white">Calendar</p>
                         </div>
