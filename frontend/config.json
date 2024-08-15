@@ -1,3 +1,3 @@
 {
-"server_url":"http://127.0.0.1:5000"
+    "server_url":"postgresql://moringa_school_system_user:IvxMUBAHD4AePVSPo5fN8rCBWeSyWlvZ@dpg-cqus0maj1k6c73dkqsv0-a.oregon-postgres.render.com/moringa_school_system"
 }
