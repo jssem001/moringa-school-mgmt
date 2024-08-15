@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Link } from 'react-router-dom';
 import { UserContext } from "../context/UserContext";
 import logo from '../images/MoringaLogo.png';
-import backgroundImage from '../images/abstract-wavy.jpeg'; // Ensure correct import if inside src
+import backgroundImage from '../images/abstract-wavy.jpeg'; 
 
 const Sidebar = () => {
     const { currentUser, logout } = useContext(UserContext);
