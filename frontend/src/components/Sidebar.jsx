@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Link } from 'react-router-dom';
 import { UserContext } from "../context/UserContext";
 import logo from '../images/MoringaLogo.png';
-import backgroundImage from '../images/abstract-wavy.jpeg'; // Ensure correct import if inside src
+import backgroundImage from '../images/abstract-wavy.jpeg'; 
 
 const Sidebar = () => {
     const { currentUser, logout } = useContext(UserContext);
@@ -24,9 +24,9 @@ const Sidebar = () => {
                     className="h-screen px-3 py-4 overflow-y-auto border-r-2 border-black"
                     style={{ 
                         backgroundImage: `url(${backgroundImage})`, 
-                        backgroundSize: 'cover', // Ensure the image covers the whole area
-                        backgroundRepeat: 'no-repeat', 
-                        backgroundPosition: 'center' // Center the background image
+                        // backgroundSize: 'cover', // Ensure the image covers the whole area
+                        // backgroundRepeat: 'no-repeat', 
+                        // backgroundPosition: 'center' // Center the background image
                     }}
                 >
                     <div className="flex items-center ml-4 mb-5">
@@ -64,7 +64,7 @@ const Sidebar = () => {
                         <li>
                             <Link to="/analytics">
                                 <div className="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
-                                    <span className="flex-1 ms-3 whitespace-nowrap">Analysis</span>
+                                    <span className="flex-1 ms-3 whitespace-nowrap">Analytics</span>
                                 </div>
                             </Link>
                         </li>
@@ -73,7 +73,7 @@ const Sidebar = () => {
                         <li>
                             <Link to={profileLink}>
                                 <div className="flex items-center p-2 text-black rounded-lg dark:text-black hover:shadow hover:bg-orange-100 group">
-                                    <span className="flex-1 ms-3 whitespace-nowrap">User Profile</span>
+                                    <span className="flex-1 ms-3 whitespace-nowrap">Dashboard</span>
                                 </div>
                             </Link> 
                             <div onClick={logout} className="flex items-center p-2 text-black rounded-lg hover:text-white hover:bg-red-700 group cursor-pointer">
