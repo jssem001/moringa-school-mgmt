@@ -42,7 +42,7 @@ const Projects = () => {
           </section>
           <button
             onClick={handleOpenActivityLog}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="px-4 py-2 bg-blue-500 font-semibold text-white rounded hover:bg-blue-400"
           >
             Activity Log
           </button>
@@ -51,13 +51,13 @@ const Projects = () => {
         <section className="mb-4 flex space-x-4">
           <Link
             to="/add-project"
-            className="inline-block px-4 py-2 bg-orange-300 text-white rounded hover:bg-orange-400"
+            className="inline-block px-4 py-2 bg-orange-200  font-semibold text-black rounded hover:bg-orange-400 hover:text-white"
           >
             Add New Project
           </Link>
           <Link
             to="/templates"
-            className="inline-block px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+            className="inline-block px-4 py-2 bg-purple-300 font-semibold text-black rounded hover:text-white hover:bg-purple-400"
           >
             Templates
           </Link>

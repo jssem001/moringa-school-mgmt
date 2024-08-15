@@ -93,13 +93,13 @@ const Teams = () => {
         <section className="mb-4 flex space-x-4">
           <Link
             to="/add-team"
-            className="px-4 py-2 bg-orange-300 font-semibold text-black rounded hover:bg-orange-400 hover:text-white hover:font-semibold"
+            className="px-4 py-2 bg-orange-200 font-semibold text-black rounded hover:bg-orange-400 hover:text-white hover:font-semibold"
           >
             Add New Team
           </Link>
           <Link
             to="/projects"
-            className="px-4 py-2 bg-green-600 font-semibold text-white rounded hover:bg-green-700"
+            className="px-4 py-2 bg-purple-300 font-semibold text-black rounded hover:bg-purple-400 hover:text-white hover:font-semibold"
           >
             Projects
           </Link>
