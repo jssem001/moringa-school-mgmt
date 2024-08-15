@@ -17,6 +17,12 @@ from flask_jwt_extended import JWTManager, jwt_required, create_access_token, ge
 from models import db, User, Project, Task, Activities, Template, Comment, Team ,TeamMember
 
 bcrypt = Bcrypt()
+from dotenv import load_dotenv
+from dotenv import dotenv_values
+
+load_dotenv()  # take environment variables from .env.
+# postgres_pwd = dotenv_values("POSTGRES_PWD")
+postgres_pwd =os.getenv("POSTGRES_PWD")
 
 app = Flask(__name__)
 
@@ -26,7 +32,8 @@ CORS(app, resources={r"/*": {"origins":"*"}}, supports_credentials=True)
 
 jwt = JWTManager(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://moringa_school_system_user:{postgres_pwd}"
+# 'sqlite:///app.db'
 app.config["SECRET_KEY"] = "jdhfvksdjkgh"+ str(random.randint(1, 1000000))
 app.config["JWT_SECRET_KEY"] = "evrfsejhfgvret"+ str(random.randint(1, 1000000))
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
