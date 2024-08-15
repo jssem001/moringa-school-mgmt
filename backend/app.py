@@ -1108,6 +1108,11 @@ def delete_comment(id):
 #     db.session.commit()
 #     return jsonify(new_team.serialize()), 201
 
+@app.route('/teams', methods=['GET'])
+def get_teams():
+    teams = Team.query.all()
+    return jsonify([team.serialize() for team in teams]), 200
+
 @app.route('/teams', methods=['POST'])
 def create_team():
     data = request.get_json()
@@ -1122,7 +1127,7 @@ def create_team():
                 team_id=new_team.id,
                 user_id=member['user_id'],
                 role=member['role'],
-                progress=member['progress']
+                # progress=member['progress']
             )
             db.session.add(new_member)
 
@@ -1156,7 +1161,7 @@ def update_team(team_id):
                 team_id=team.id,
                 user_id=member['user_id'],
                 role=member['role'],
-                progress=member['progress']
+                # progress=member['progress']
             )
             db.session.add(new_member)
 

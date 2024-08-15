@@ -4,7 +4,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import LandingPage from "./pages/LandingPage";
-import StudentOverview from "./pages/StudentOverview"; // Import StudentOverview
+import StudentOverview from "./pages/StudentOverview";
 import InstructorProfile from "./pages/InstructorProfile";
 import AdminProfile from "./pages/AdminProfile";
 import Projects from "./pages/Projects";
@@ -22,8 +22,9 @@ import SingleTemplate from "./pages/SingleTemplate";
 import UpdateProfile from "./pages/UpdateProfile";
 import Teams from "./pages/Teams";
 import AddTeam from "./pages/AddTeam";
-import ActivityLogModal from "./pages/ActivityLogModal"; // Import ActivityLogModal
-import StudentInfo from "./pages/StudentInfo"; // Import StudentInfo
+import ActivityLogModal from "./pages/ActivityLogModal"; 
+import StudentInfo from "./pages/StudentInfo"; 
+import { TeamContextProvider } from "./context/TeamContext";
 import { UserProvider } from "./context/UserContext";
 import { ProjectProvider } from "./context/ProjectContext";
 import { TaskProvider } from "./context/TaskContext";
@@ -33,6 +34,7 @@ import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
+    <TeamContextProvider>
     <ProjectProvider>
       <TemplateProvider>
         <TaskProvider>
@@ -60,8 +62,8 @@ function App() {
                   <Route path="/update-profile" element={<UpdateProfile />} />
                   <Route path="/teams" element={<Teams />} />
                   <Route path="/add-team" element={<AddTeam />} />
-                  <Route path="/student-info" element={<StudentInfo />} /> {/* Page listing students */}
-                  <Route path="/student-overview/:id" element={<StudentOverview />} /> {/* Page for student details */}
+                  <Route path="/student-info" element={<StudentInfo />} /> 
+                  <Route path="/student-overview/:id" element={<StudentOverview />} /> 
                   <Route path="*" element={<div>Page Not Found</div>} />
                 </Routes>
                 <ToastContainer />
@@ -70,6 +72,7 @@ function App() {
         </TaskProvider>
       </TemplateProvider>
     </ProjectProvider>
+    </TeamContextProvider>
   );
 }
 
