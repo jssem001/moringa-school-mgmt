@@ -64,8 +64,8 @@ const SingleProject = () => {
             </div>
             <div className="mb-6">
               <h2 className="text-xl font-semibold">Attached Files</h2>
-              <p className="text-gray-700">{singleProject.file_attachment}</p>
-              {files.length > 0 ? (
+              <p className="text-gray-700">{singleProject.file_attachments}</p>
+              {/* {files.length > 0 ? (
                 <ul className="list-disc pl-5">
                   {files.map((file, index) => (
                     <li key={index} className="mb-2">
@@ -80,7 +80,7 @@ const SingleProject = () => {
                 </ul>
               ) : (
                 <p className="text-gray-700">No files attached</p>
-              )}
+              )} */}
             </div>
 
             <div className="mb-6">
