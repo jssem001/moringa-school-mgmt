@@ -40,6 +40,30 @@ Then run `pipenv shell` to start up the virtual environment, and then run the `a
 ## LIVE SERVER
 You can view the app live at [Moringa Project Management System](https://66bdd80c0f4773ae207ec798--famous-pavlova-721275.netlify.app/)
 
+## SOME PAGES
+1. Student Dashboard
+![student](https://github.com/nimrodnjau/images/blob/main/WhatsApp%20Image%202024-08-16%20at%2013.13.07.jpeg)
+
+2. Admin Dashboard
+![admin](https://github.com/nimrodnjau/images/blob/main/Admin.jpeg)
+
+3. Instructor Dashboard
+![instructor](https://github.com/nimrodnjau/images/blob/main/instructor.jpeg)
+
+4. Reports and Analytics page
+![analysis](https://github.com/nimrodnjau/images/blob/main/WhatsApp%20Image%202024-08-16%20at%2013.12.17.jpeg)
+
+5. Teams page
+![teams](https://github.com/nimrodnjau/images/blob/main/WhatsApp%20Image%202024-08-16%20at%2013.12.12.jpeg)
+
+6. Templates page
+![templates](https://github.com/nimrodnjau/images/blob/main/WhatsApp%20Image%202024-08-16%20at%2013.12.31.jpeg)
+
+7. Login page
+![login](https://github.com/nimrodnjau/images/blob/main/WhatsApp%20Image%202024-08-16%20at%2013.12.49.jpeg)
+
+8. Tasks page
+![tasks](https://github.com/nimrodnjau/images/blob/main/tasks.jpeg)
 
 ## LICENCE
 Real Estate Listing App is licensed under the MIT License.
