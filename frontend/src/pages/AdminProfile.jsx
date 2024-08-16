@@ -24,36 +24,43 @@ const AdminProfile = () => {
                         <li><span className="font-semibold">Role:</span> {role} </li>
                     </ul>
                     <div className="grid grid-cols-3 gap-4 mb-4 border">
+                        <Link to="/projects">
                         <div className="flex items-center justify-center h-24 rounded bg-gray-700 ">
-                            <p className="text-2xl text-white">Courses</p>
+                            <p className="text-2xl text-white">Projects</p>
                         </div>
+                        </Link>
+                        <Link to ="/student-info">
                         <div className="flex items-center justify-center h-24 rounded bg-gray-700 ">
                             <p className="text-2xl text-white">Student Information</p>
                         </div>
+                        </Link>
                         <div className="flex items-center justify-center h-24 rounded bg-gray-700 ">
                             <p className="text-2xl text-white">Calendar</p>
                         </div>
                     </div>
                     
                     <div className="grid grid-cols-2 gap-4 mb-4">
-                        <Link to="/usermgmt"><div className="flex items-center justify-center rounded bg-gray-700 h-28 ">
+                        <Link to="/usermgmt">
+                        <div className="flex items-center justify-center rounded bg-gray-700 h-28 ">
                             <p className="text-2xl text-white">Assign Roles</p>
-                        </div></Link>
-                        <div className="flex items-center justify-center rounded bg-gray-700 h-28 ">
-                            <p className="text-2xl text-white">Settings</p>
                         </div>
-                        <div className="flex items-center justify-center rounded bg-gray-700 h-28 ">
-                            <p className="text-2xl text-white">Reports</p>
-                        </div>
+                        </Link>
                         <Link to="/update-profile">
                           <div className="flex items-center justify-center rounded bg-gray-700 h-28 cursor-pointer">
                             <p className="text-2xl text-white">Update Profile</p>
                           </div>
                         </Link>
+                        {/* <div className="flex items-center justify-center rounded bg-gray-700 h-28 ">
+                            <p className="text-2xl text-white">Settings</p>
+                        </div>
+                        <div className="flex items-center justify-center rounded bg-gray-700 h-28 ">
+                            <p className="text-2xl text-white">Reports</p>
+                        </div> */}
+                        
                     </div>
-                    <div className="flex items-center justify-center h-48 mb-4 rounded bg-gray-700 ">
+                    <Link to="/analytics"><div className="flex items-center justify-center h-48 mb-4 rounded bg-gray-700 ">
                         <p className="text-2xl text-white">Analytics</p>
-                    </div>
+                    </div></Link>
                 </div>
             </div>
         </>
