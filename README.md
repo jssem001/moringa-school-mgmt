@@ -66,4 +66,4 @@ You can view the app live at [Moringa Project Management System](https://66bdd80
 ![tasks](https://github.com/nimrodnjau/images/blob/main/tasks.jpeg)
 
 ## LICENCE
-Real Estate Listing App is licensed under the MIT License.
+MORINGA School Management App is licensed under the MIT License.
