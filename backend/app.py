@@ -13,16 +13,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity, get_jwt
 
-# small change
+
 from models import db, User, Project, Task, Activities, Template, Comment, Team ,TeamMember
 
 bcrypt = Bcrypt()
-from dotenv import load_dotenv
-from dotenv import dotenv_values
-
-load_dotenv()  # take environment variables from .env.
-# postgres_pwd = dotenv_values("POSTGRES_PWD")
-postgres_pwd =os.getenv("POSTGRES_PWD")
 
 app = Flask(__name__)
 
@@ -32,8 +26,7 @@ CORS(app, resources={r"/*": {"origins":"*"}}, supports_credentials=True)
 
 jwt = JWTManager(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://moringa_school_system_user:{postgres_pwd}"
-# 'sqlite:///app.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 app.config["SECRET_KEY"] = "jdhfvksdjkgh"+ str(random.randint(1, 1000000))
 app.config["JWT_SECRET_KEY"] = "evrfsejhfgvret"+ str(random.randint(1, 1000000))
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
@@ -1179,11 +1172,9 @@ def update_team(team_id):
 
 @app.route('/teams/<int:team_id>', methods=['DELETE'])
 def delete_team(team_id):
-    # Delete team and its members
     team = Team.query.get_or_404(team_id)
     db.session.delete(team)
     db.session.commit()
-
     return jsonify({'message': 'Team deleted successfully'}), 204
 
 
@@ -1197,17 +1188,11 @@ def delete_team(team_id):
 
 
 ##3 CRUD FOR TEAMMEMBERS
+
+
 @app.route('/teams/<int:team_id>/members', methods=['POST'])
 def add_member_to_team(team_id):
     data = request.get_json()
-
-    if 'user_id' not in data:
-        return jsonify({'message': 'User ID is required'}), 400
-
-    if TeamMember.query.filter_by(team_id=team_id, user_id=data['user_id']).first():
-        return jsonify({'message': 'Member already exists'}), 400
-
-    # Add member to the team
     new_member = TeamMember(team_id=team_id, user_id=data['user_id'])
     db.session.add(new_member)
     db.session.commit()
@@ -1223,10 +1208,6 @@ def get_team_members(team_id):
 @app.route('/teams/<int:team_id>/members/<int:user_id>', methods=['DELETE'])
 def remove_member_from_team(team_id, user_id):
     member = TeamMember.query.filter_by(team_id=team_id, user_id=user_id).first_or_404()
-
-    if not member:
-        return jsonify({'message': 'Member not found'}), 404
-    
     db.session.delete(member)
     db.session.commit()
     return jsonify({'message': 'Member removed successfully'}), 204

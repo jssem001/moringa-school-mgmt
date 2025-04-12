@@ -5,8 +5,8 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import LandingPage from "./pages/LandingPage";
 import StudentOverview from "./pages/StudentOverview";
-import InstructorProfile from "./pages/InstructorProfile";
 import StudentProfile from "./pages/StudentProfile";
+import InstructorProfile from "./pages/InstructorProfile";
 import AdminProfile from "./pages/AdminProfile";
 import Projects from "./pages/Projects";
 import Task from "./pages/Task";
@@ -46,9 +46,9 @@ function App() {
                   <Route path="/" element={<Login />} />
                   <Route path="/reset-password" element={<ResetPassword />} />
                   <Route path="/signup" element={<Signup />} />
+                  <Route path="/studentprofile" element={<StudentProfile />} />
                   <Route path="/instructorprofile" element={<InstructorProfile />} />
                   <Route path="/adminprofile" element={<AdminProfile />} />
-                  <Route path="/studentprofile" element={<StudentProfile />} />
                   <Route path="/projects" element={<Projects />} />
                   <Route path="/tasks" element={<Task />} />
                   <Route path="/add-project" element={<AddProject />} />
