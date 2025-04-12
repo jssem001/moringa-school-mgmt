@@ -93,13 +93,13 @@ const Teams = () => {
         <section className="mb-4 flex space-x-4">
           <Link
             to="/add-team"
-            className="px-4 py-2 bg-orange-300 text-white rounded hover:bg-blue-700"
+            className="px-4 py-2 bg-orange-200 font-semibold text-black rounded hover:bg-orange-400 hover:text-white hover:font-semibold"
           >
             Add New Team
           </Link>
           <Link
             to="/projects"
-            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+            className="px-4 py-2 bg-purple-300 font-semibold text-black rounded hover:bg-purple-400 hover:text-white hover:font-semibold"
           >
             Projects
           </Link>
@@ -138,13 +138,13 @@ const Teams = () => {
                   </div>
                 ) : (
                   <>
-                    <h3 className="text-xl font-semibold mb-2">{team.name}</h3>
-                    <p className="mb-2 text-gray-700">Project: {getProjectName(team.project_id)}</p>
+                    <h3 className="text-xl font-semibold mb-2 text-sky-800">{team.name}</h3>
+                    <p className="mb-2 text-gray-700"><strong>Project:</strong> {getProjectName(team.project_id)}</p>
 
                     <ul className="mb-4">
                       {team.members.map((member, index) => (
                         <li key={index} className="mb-1">
-                          <strong>Name:</strong> {getUserName(member.user_id)} <strong>Role:</strong> {member.role}
+                          <strong>Member:</strong> {getUserName(member.user_id)} <strong>Role:</strong> {member.role}
                         </li>
                       ))}
                     </ul>

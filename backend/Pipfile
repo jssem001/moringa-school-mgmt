@@ -12,6 +12,8 @@ sqlalchemy-serializer = "*"
 datetime = "*"
 flask-cors = "*"
 flask-mail = "*"
+gunicorn = "*"
+python-dotenv = "*"
 
 [dev-packages]
 

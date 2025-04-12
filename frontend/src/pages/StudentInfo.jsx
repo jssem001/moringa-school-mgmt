@@ -53,12 +53,12 @@ const StudentInfo = () => {
                                         <td className="px-6 py-4">Student</td>
                                         <td className="px-6 py-4">Active</td>
                                         <td className="px-6 py-4 text-right">
-                                            <button 
+                                            {/* <button 
                                                 className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                                                 onClick={() => handleViewDetails(student.id)}
                                             >
                                                 View Details
-                                            </button>
+                                            </button> */}
                                         </td>
                                     </tr>
                                 ))}
